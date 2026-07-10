@@ -824,13 +824,14 @@ export default function Header() {
                             title={item.label}
                             onMouseEnter={() => preloadOnHover(item.href)}
                             className={cn(
-                              "relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300",
+                              "relative inline-flex h-10 items-center justify-center gap-2 rounded-full border px-4 transition-colors duration-300",
                               isCurrent
                                 ? "border-blue-600/20 bg-blue-600/10 text-blue-600"
                                 : "border-transparent text-slate-500 hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600"
                             )}
                           >
                             <Shield className="h-4 w-4" aria-hidden="true" />
+                            <span className="type-body font-normal">{item.label}</span>
                           </Link>
                         ) : (
                           <Link href={item.href} onMouseEnter={() => preloadOnHover(item.href)}>

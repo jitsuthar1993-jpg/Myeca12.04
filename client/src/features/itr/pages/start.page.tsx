@@ -471,12 +471,25 @@ export default function ITRStartPage() {
           <Link href="/" aria-label="MyeCA.in home" className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
             <BrandLockup logoSize="sm" wordmarkSize="sm" compact />
           </Link>
-          <span className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">ITR form selector</span>
+          <span className="text-xs font-black uppercase text-slate-500 sm:tracking-[0.12em]">ITR selector</span>
         </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-4 pb-32 pt-5 sm:px-6 sm:pt-8">
-        <h1 className="sr-only">Individual ITR form selector</h1>
+        <section className="mb-4 rounded-lg border border-blue-100 bg-white p-4 shadow-sm sm:mb-5 sm:rounded-2xl sm:p-6">
+          <Badge className="hidden border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50 sm:inline-flex">AY 2026-27 paid filing path</Badge>
+          <h1 className="text-xl font-black tracking-tight text-slate-950 sm:mt-3 sm:text-3xl">
+            File AY 2026-27 ITR with scope clarity before payment.
+          </h1>
+          <p className="mt-1.5 text-sm font-semibold leading-5 text-slate-600 sm:mt-2 sm:leading-6">
+            Check my ITR scope from public filing facts, then continue to guided filing or CA-assisted review when your case needs it.
+          </p>
+          <div className="mt-4 hidden flex-wrap items-center gap-2 text-xs font-bold text-slate-600 sm:flex">
+            {["Form recommendation", "Document checklist", "Clear next step"].map((item) => (
+              <span key={item} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">{item}</span>
+            ))}
+          </div>
+        </section>
 
         <AnimatePresence initial={false} mode="wait" custom={direction}>
           <m.section
@@ -667,16 +680,17 @@ export default function ITRStartPage() {
               variant="outline"
               onClick={goBack}
               disabled={currentStep === 0}
-              className="h-12 min-w-[104px] rounded-xl font-black"
+              aria-label="Back"
+              className="h-11 min-w-12 rounded-lg px-3 font-black sm:h-12 sm:min-w-[104px] sm:rounded-xl"
             >
               <ChevronLeft className="h-4 w-4" />
-              Back
+              <span className="hidden sm:inline">Back</span>
             </Button>
             <Button
               type="button"
               onClick={isResultStep ? handleContinue : goNext}
               disabled={isLoading}
-              className="h-12 flex-1 rounded-xl bg-blue-700 font-black text-white shadow-sm hover:bg-blue-800"
+              className="h-11 flex-1 rounded-lg bg-blue-700 font-black text-white shadow-sm hover:bg-blue-800 sm:h-12 sm:rounded-xl"
             >
               {isResultStep ? "Continue to MY ITR" : "Next"}
               {isResultStep ? <ArrowRight className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}

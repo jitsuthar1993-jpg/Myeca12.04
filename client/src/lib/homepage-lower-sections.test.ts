@@ -20,16 +20,16 @@ describe("homepage lower-section redesign", () => {
     expect(home).not.toContain("Compact mobile summaries");
     expect(home).not.toContain("Know your number? Check the ITR path.");
     expect(home).toContain("<NoticeComplianceSection />");
-    expect(home).toContain(`<Suspense fallback={<SectionFallback />}>
-          <NoticeComplianceSection />
-        </Suspense>
+    expect(home.indexOf("<GSTNoticeSection />")).toBeGreaterThan(
+      home.indexOf("<NoticeComplianceSection />"),
+    );
 
-        <Suspense fallback={<SectionFallback />}>
-          <GSTNoticeSection />`);
-
-    // Hero typewriter stays out of the accessibility tree and respects reduced motion.
-    expect(home).toContain("prefers-reduced-motion");
-    expect(home).toContain('aria-label="File your Income Tax Returns, GST Returns, TDS Returns, and Compliances"');
+    // The filing promise is complete on first paint and does not resemble a stalled animation.
+    expect(home).toContain('File your <span className="text-blue-600">Income Tax Return</span> for AY 2026-27');
+    expect(home).not.toContain("HeroTypewriter");
+    expect(home).not.toContain("Free Notice Assistance");
+    expect(home).toContain("Notice guidance included for eligible filing cases");
+    expect(home).toContain('className="hidden border-b border-slate-200 bg-white py-12 md:block md:py-16"');
   });
 
   it("frames desktop lower sections around trust, personas, and scope-first action", () => {

@@ -43,12 +43,9 @@ describe("public growth roadmap implementation", () => {
   it("keeps the homepage hero stable and conversion-focused", () => {
     const source = readSource("client/src/pages/home.page.tsx");
 
-    expect(source).toContain("Income Tax Returns");
-    expect(source).toContain("GST Returns");
-    expect(source).toContain("TDS Returns");
-    expect(source).toContain("Compliances");
-    expect(source).toContain("Expert eCA Assistance");
-    expect(source).toContain("Free Notice Assistance");
+    expect(source).toContain('File your <span className="text-blue-600">Income Tax Return</span> for AY 2026-27');
+    expect(source).toContain("Expert eCA assistance");
+    expect(source).toContain("Notice guidance included for eligible filing cases");
     expect(source).toContain("ITR FILING 2026-27 STARTED");
     expect(source).toContain("rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent");
     expect(source).toContain("text-emerald-800");
@@ -56,8 +53,8 @@ describe("public growth roadmap implementation", () => {
     expect(source).not.toContain("ITR Filing Started");
     expect(source).not.toContain("<HeroTypingPhrase");
     expect(source).not.toContain("with expert CA assistance");
-    expect(source).toContain("justify-center text-center text-blue-600");
-    expect(source).toContain("animate-pulse");
+    expect(source).not.toContain("HeroTypewriter");
+    expect(source).not.toContain("animate-pulse");
     expect(source).toContain("Start Filing Now");
     expect(source).toContain("Free Tax Calculator");
     expect(source).toContain("heroProofItems");
@@ -79,8 +76,8 @@ describe("public growth roadmap implementation", () => {
     expect(heroSource).toContain("text-emerald-800");
     expect(heroSource).not.toContain("text-emerald-700/85");
     expect(heroSource).not.toContain("m-hero-rise");
-    expect(source).toContain('window.matchMedia("(max-width: 767px)")');
-    expect(source).toContain("setShouldAnimateTypewriter(!reduceMotionQuery.matches && !mobileQuery.matches)");
+    expect(source).not.toContain('window.matchMedia("(max-width: 767px)")');
+    expect(source).not.toContain("setShouldAnimateTypewriter");
     expect(contrastRatio("#065f46", "#ffffff")).toBeGreaterThanOrEqual(4.5);
   });
 
@@ -91,6 +88,9 @@ describe("public growth roadmap implementation", () => {
     expect(appSource).toContain("PublicMobileConversionBar");
     expect(barSource).toContain("Start ITR");
     expect(barSource).toContain("Talk to Expert");
+    expect(barSource).toContain("Get GST help");
+    expect(barSource).toContain("GST services");
+    expect(barSource).toContain("data-mobile-conversion-context");
     expect(barSource).toContain("/which-itr-form-to-file");
     expect(barSource).toContain("HIDDEN_PATH_PREFIXES");
     expect(barSource).toContain('"/auth"');
@@ -117,7 +117,7 @@ describe("public growth roadmap implementation", () => {
     expect(headerSource).not.toContain(">Blog<");
     expect(headerSource).not.toContain("Check ITR Plan");
     expect(headerSource).not.toContain("hidden lg:flex text-slate-400");
-    expect(headerSource).not.toContain(">Trust<");
+    expect(headerSource).toContain("{item.label}");
     expect(headerSource).not.toContain("Trust & Security");
   });
 
@@ -139,7 +139,9 @@ describe("public growth roadmap implementation", () => {
   it("uses stronger route-level conversion and SEO copy", () => {
     const itrStartSource = readSource("client/src/features/itr/pages/start.page.tsx");
 
-    expect(itrStartSource).toContain("Individual ITR form selector");
+    expect(itrStartSource).toContain("ITR selector");
+    expect(itrStartSource).toContain("Check my ITR scope");
+    expect(itrStartSource).toContain("File AY 2026-27 ITR with scope clarity before payment");
     expect(itrStartSource).toContain("Individual filing facts");
     expect(itrStartSource).toContain("recommendItrForm");
     expect(itrStartSource).toContain("ITR_START_STEPS");

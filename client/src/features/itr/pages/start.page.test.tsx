@@ -66,7 +66,10 @@ describe("ITR start form selector page", () => {
   it("renders a focused first step instead of the full selector", () => {
     render(<ITRStartPage />);
 
-    expect(screen.getByRole("heading", { name: /Individual ITR form selector/i })).toHaveClass("sr-only");
+    expect(screen.getByText("ITR selector")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /File AY 2026-27 ITR/i })).toHaveClass("text-xl", "sm:text-3xl");
+    expect(screen.getByText("AY 2026-27 paid filing path")).toHaveClass("hidden", "sm:inline-flex");
+    expect(screen.getByText("Form recommendation").parentElement).toHaveClass("hidden", "sm:flex");
     expect(screen.queryByTestId("itr-selector-progress-card")).not.toBeInTheDocument();
     expect(screen.getByTestId("itr-selector-bottom-bar")).toHaveClass("fixed", "bottom-0");
     expect(screen.getByTestId("itr-selector-progress-strip").textContent).toBe("");
@@ -77,6 +80,7 @@ describe("ITR start form selector page", () => {
     expect(screen.queryByText("Recommended form")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Continue to MY ITR/i })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Back$/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /^Back$/i })).toHaveClass("min-w-12", "sm:min-w-[104px]");
     expect(screen.getByRole("button", { name: /^Next$/i })).toBeEnabled();
 
     expect(screen.queryByText("Taxpayer type")).not.toBeInTheDocument();

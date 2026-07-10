@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, ReceiptText } from "lucide-react";
 import { Link } from "wouter";
 import { trackPublicCtaClick } from "@/lib/public-conversion-events";
 
@@ -45,10 +45,25 @@ function getScrollThreshold() {
   return Math.max(360, window.innerHeight * 0.9);
 }
 
+type MobileConversionContext = "itr" | "gst";
+
+function getMobileConversionContext(pathname: string): MobileConversionContext {
+  if (pathname === "/services/gst-registration" || pathname === "/services/gst-returns") return "gst";
+  if (typeof document === "undefined" || typeof document.elementFromPoint !== "function") return "itr";
+
+  const activeSection = document
+    .elementFromPoint(window.innerWidth / 2, window.innerHeight / 2)
+    ?.closest<HTMLElement>("[data-mobile-conversion-context]");
+  return activeSection?.dataset.mobileConversionContext === "gst" ? "gst" : "itr";
+}
+
 export default function PublicMobileConversionBar({ currentPath = "/" }: { currentPath?: string }) {
   const normalizedPath = useMemo(() => normalizePath(currentPath), [currentPath]);
   const [hasScrolledPastFirstViewport, setHasScrolledPastFirstViewport] = useState(false);
   const [isFormFocused, setIsFormFocused] = useState(false);
+  const [conversionContext, setConversionContext] = useState<MobileConversionContext>(() =>
+    getMobileConversionContext(normalizedPath),
+  );
   const isHiddenPath = HIDDEN_PATH_PREFIXES.some(
     (prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`),
   );
@@ -60,6 +75,7 @@ export default function PublicMobileConversionBar({ currentPath = "/" }: { curre
 
     const updateScrollState = () => {
       setHasScrolledPastFirstViewport(window.scrollY > getScrollThreshold());
+      setConversionContext(getMobileConversionContext(normalizedPath));
     };
 
     const frame = window.requestAnimationFrame(updateScrollState);
@@ -98,6 +114,16 @@ export default function PublicMobileConversionBar({ currentPath = "/" }: { curre
 
   if (isHiddenPath || isFormFocused || !hasScrolledPastFirstViewport || !isScrolledNow) return null;
 
+  const isGstContext = conversionContext === "gst";
+  const primaryHref = isGstContext
+    ? "/expert-consultation?service=gst-returns&source=public_mobile_sticky_bar"
+    : "/which-itr-form-to-file?source=public_mobile_sticky_bar";
+  const secondaryHref = isGstContext
+    ? "/services/gst-returns"
+    : "/expert-consultation?service=itr-filing&source=public_mobile_sticky_bar";
+  const primaryLabel = isGstContext ? "Get GST help" : "Start ITR";
+  const secondaryLabel = isGstContext ? "GST services" : "Talk to Expert";
+
   return (
     <nav
       aria-label="Public conversion actions"
@@ -105,20 +131,20 @@ export default function PublicMobileConversionBar({ currentPath = "/" }: { curre
     >
       <div className="mx-auto grid max-w-md grid-cols-[1fr_1fr] gap-2">
         <Link
-          href="/which-itr-form-to-file?source=public_mobile_sticky_bar"
-          onClick={() => trackPublicCtaClick("Start ITR Filing", "public_mobile_sticky_bar")}
+          href={primaryHref}
+          onClick={() => trackPublicCtaClick(isGstContext ? "Get GST help" : "Start ITR Filing", "public_mobile_sticky_bar")}
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 text-sm font-black text-white shadow-sm shadow-blue-200 transition hover:bg-blue-700"
         >
-          Start ITR
+          {primaryLabel}
           <ArrowRight className="h-4 w-4" />
         </Link>
         <Link
-          href="/expert-consultation?service=itr-filing&source=public_mobile_sticky_bar"
-          onClick={() => trackPublicCtaClick("Talk to Expert", "public_mobile_sticky_bar")}
+          href={secondaryHref}
+          onClick={() => trackPublicCtaClick(secondaryLabel, "public_mobile_sticky_bar")}
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-black text-blue-700 transition hover:bg-blue-100"
         >
-          <MessageCircle className="h-4 w-4" />
-          Talk to Expert
+          {isGstContext ? <ReceiptText className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+          {secondaryLabel}
         </Link>
       </div>
     </nav>

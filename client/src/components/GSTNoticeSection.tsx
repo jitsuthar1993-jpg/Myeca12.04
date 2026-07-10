@@ -39,7 +39,7 @@ const gstServices = [
 
 export default function GSTNoticeSection() {
   return (
-    <section id="gst-notices" className="scroll-mt-20 border-b border-slate-200 bg-[#F8FAFC] py-14">
+    <section id="gst-notices" data-mobile-conversion-context="gst" className="scroll-mt-20 border-b border-slate-200 bg-[#F8FAFC] py-14">
       <div className="container mx-auto px-4">
         <m.div
           initial={{ opacity: 0, y: 18 }}

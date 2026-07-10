@@ -13,7 +13,7 @@ import {
   Bot
 } from "lucide-react";
 import { Link } from "wouter";
-import { Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
+import { Suspense, useRef, type CSSProperties } from "react";
 import { useMobileScrollReveal } from "@/hooks/use-mobile-scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,13 +51,6 @@ const SectionFallback = () => (
   </div>
 );
 
-const HERO_TYPING_PHRASES = [
-  "Income Tax Returns",
-  "GST Returns",
-  "TDS Returns",
-  "Compliances",
-];
-
 const heroProofItems = [
   "Secure documents",
   "Scope before payment",
@@ -71,80 +64,6 @@ const pricingPlans = [
   { title: "Assisted", price: "₹999", detail: "Expert-assisted filing", mobileDetail: "Expert-assisted filing", note: "Review scope shown upfront", highlight: true },
   { title: "Complex cases", price: "Scope first", detail: "Capital gains, NRI, business", mobileDetail: "Capital gains, NRI", note: "Documents reviewed before quote", highlight: false },
 ];
-
-const HeroTypewriter = ({ phrases }: { phrases: readonly string[] }) => {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [typedLength, setTypedLength] = useState(phrases[0].length);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [shouldAnimateTypewriter, setShouldAnimateTypewriter] = useState(false);
-  const currentPhrase = phrases[phraseIndex];
-
-  useEffect(() => {
-    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mobileQuery = window.matchMedia("(max-width: 767px)");
-    const syncTypewriterMode = () => {
-      setShouldAnimateTypewriter(!reduceMotionQuery.matches && !mobileQuery.matches);
-    };
-
-    syncTypewriterMode();
-    reduceMotionQuery.addEventListener("change", syncTypewriterMode);
-    mobileQuery.addEventListener("change", syncTypewriterMode);
-
-    return () => {
-      reduceMotionQuery.removeEventListener("change", syncTypewriterMode);
-      mobileQuery.removeEventListener("change", syncTypewriterMode);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!shouldAnimateTypewriter) return;
-
-    const typingDelay = isDeleting ? 38 : 76;
-    const holdDelay = 1250;
-    const switchDelay = 220;
-    const delay = !isDeleting && typedLength === currentPhrase.length
-      ? holdDelay
-      : isDeleting && typedLength === 0
-        ? switchDelay
-        : typingDelay;
-
-    const timeout = window.setTimeout(() => {
-      if (!isDeleting && typedLength < currentPhrase.length) {
-        setTypedLength((length) => length + 1);
-        return;
-      }
-
-      if (!isDeleting) {
-        setIsDeleting(true);
-        return;
-      }
-
-      if (typedLength > 0) {
-        setTypedLength((length) => length - 1);
-        return;
-      }
-
-      setPhraseIndex((index) => (index + 1) % phrases.length);
-      setIsDeleting(false);
-    }, delay);
-
-    return () => window.clearTimeout(timeout);
-  }, [currentPhrase, typedLength, isDeleting, shouldAnimateTypewriter, phrases.length]);
-
-  const typedPhrase = shouldAnimateTypewriter ? currentPhrase.slice(0, typedLength) : phrases[0];
-
-  return (
-    <span
-      aria-hidden="true"
-      className="inline-flex min-w-[14ch] items-center justify-center text-center text-blue-600 sm:min-w-[18ch]"
-    >
-      <span>{typedPhrase || "\u00a0"}</span>
-      {shouldAnimateTypewriter && (
-        <span className="ml-1 inline-block h-[0.95em] w-1 animate-pulse bg-blue-600 align-[-0.08em]" />
-      )}
-    </span>
-  );
-};
 
 const HomePage = () => {
   const seo = HOME_SEO_CONFIG;
@@ -209,15 +128,11 @@ const HomePage = () => {
                   ITR FILING 2026-27 STARTED
                 </span>
 
-                <h1
-                  aria-label="File your Income Tax Returns, GST Returns, TDS Returns, and Compliances"
-                  className="type-hero-title mx-auto max-w-5xl text-center text-slate-950"
-                >
-                  File your{" "}
-                  <HeroTypewriter phrases={HERO_TYPING_PHRASES} />
+                <h1 className="type-hero-title mx-auto max-w-5xl text-center text-slate-950">
+                  File your <span className="text-blue-600">Income Tax Return</span> for AY 2026-27
                 </h1>
                 <p className="mx-auto mt-3 max-w-3xl text-center text-lg leading-8 text-slate-600 md:text-2xl">
-                  With <span className="font-bold text-slate-700">Expert eCA Assistance</span> and <span className="font-bold text-slate-700">Free Notice Assistance</span>.
+                  With <span className="font-bold text-slate-700">Expert eCA assistance</span>. Notice guidance included for eligible filing cases.
                 </p>
                 <span className="hero-filing-stamp mt-3 inline-flex rounded-[3px] border-2 border-dashed border-emerald-500/70 bg-transparent px-3 py-1 text-[0.68rem] font-black uppercase tracking-[0.18em] text-emerald-800 ring-1 ring-emerald-500/20 ring-offset-2 ring-offset-white xl:hidden">
                   ITR FILING 2026-27 STARTED
@@ -501,7 +416,7 @@ const HomePage = () => {
         </section>
 
         {/* Planning Tools Section */}
-        <section className="border-b border-slate-200 bg-white py-12 md:py-16">
+        <section className="hidden border-b border-slate-200 bg-white py-12 md:block md:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
               <div data-reveal className="flex max-w-2xl flex-col lg:max-w-none">

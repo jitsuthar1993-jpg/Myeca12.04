@@ -168,12 +168,15 @@ export default function LoginPage() {
 
   const temporaryLoginIcons = [UserRound, ShieldCheck, UserCog, UsersRound];
   const showConfirmationResend = Boolean(notice || (error && /confirm/i.test(error)));
+  const loginDescription = requestedRedirectPath?.startsWith("/itr/filing")
+    ? "Create your secure workspace to continue filing."
+    : "Open your secure tax workspace and continue where you left off.";
 
   return (
     <AuthPageShell
       variant="compact"
       title="Sign in to MyeCA"
-      description="Open your secure tax workspace and continue where you left off."
+      description={loginDescription}
       notice={reasonState}
       panelTitle="Account summary"
       panelDescription="Your latest filing and document status appear first."

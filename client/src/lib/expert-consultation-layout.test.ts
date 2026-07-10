@@ -37,5 +37,8 @@ describe("expert consultation layout contract", () => {
     expect(source).toContain('<Label htmlFor="public-email">Email *</Label>');
     expect(source).toContain("Trusted expert support");
     expect(source).toContain("What we check");
+    expect(source).toContain("CONTACT.whatsappAvailable");
+    expect(source).toContain('href={CONTACT.whatsappAvailable ? CONTACT.whatsappHref : "#consultation-form"}');
+    expect(source).toContain("isConsultationFormVisible");
   });
 });

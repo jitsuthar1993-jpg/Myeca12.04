@@ -128,6 +128,7 @@ export default function ExpertConsultationPage() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConsultationFormVisible, setIsConsultationFormVisible] = useState(false);
   const attribution = useMemo(() => captureCampaignAttribution(), [location]);
   const [serviceKey, setServiceKey] = useState("general");
   const [formData, setFormData] = useState({
@@ -168,6 +169,21 @@ export default function ExpertConsultationPage() {
       phone: current.phone || user.phoneNumber || "",
     }));
   }, [accountName, user?.email, user?.phoneNumber]);
+
+  useEffect(() => {
+    if (isAuthenticated || typeof IntersectionObserver === "undefined") return undefined;
+
+    const form = document.getElementById("consultation-form");
+    if (!form) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsConsultationFormVisible(entry.isIntersecting),
+      { threshold: 0.15 },
+    );
+    observer.observe(form);
+
+    return () => observer.disconnect();
+  }, [isAuthenticated]);
 
   const profile = SERVICE_PROFILES[serviceKey] || SERVICE_PROFILES.general;
   const isGstReturns = serviceKey === "gst-returns";
@@ -464,9 +480,9 @@ export default function ExpertConsultationPage() {
                 <Phone className="h-4 w-4" />
                 Request callback
               </a>
-              <a href={CONTACT.whatsappHref} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 text-sm font-normal text-emerald-700 transition hover:bg-emerald-100 sm:h-12 sm:px-5">
+              <a href={CONTACT.whatsappAvailable ? CONTACT.whatsappHref : "#consultation-form"} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 text-sm font-normal text-emerald-700 transition hover:bg-emerald-100 sm:h-12 sm:px-5">
                 <MessageCircle className="h-4 w-4" />
-                Message expert
+                {CONTACT.whatsappAvailable ? "Message expert" : "Request callback"}
               </a>
             </div>
 
@@ -644,18 +660,18 @@ export default function ExpertConsultationPage() {
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200 bg-white/95 px-4 py-3 shadow-2xl shadow-slate-950/10 backdrop-blur lg:hidden">
+      {!isConsultationFormVisible && <div data-testid="consultation-mobile-actions" className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200 bg-white/95 px-4 py-3 shadow-2xl shadow-slate-950/10 backdrop-blur lg:hidden">
         <div className="mx-auto grid max-w-md grid-cols-[0.85fr_1.15fr] gap-3">
-          <a href={CONTACT.callbackHref} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white text-sm font-normal text-slate-800">
+          <a href={CONTACT.whatsappAvailable ? CONTACT.whatsappHref : "#consultation-form"} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white text-sm font-normal text-slate-800">
             <Phone className="h-4 w-4" />
-            Help
+            {CONTACT.whatsappAvailable ? "Message" : "Form"}
           </a>
           <a href="#consultation-form" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-normal text-white shadow-lg shadow-blue-500/20">
             Get callback
             <ArrowRight className="h-4 w-4" />
           </a>
         </div>
-      </div>
+      </div>}
       </div>
     </>
   );
