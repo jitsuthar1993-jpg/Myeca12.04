@@ -644,7 +644,7 @@ GST compliance is a process problem before it is a tax problem. Build the monthl
         answer: "It helps confirm whether vendor invoices are reported and whether input tax credit can be claimed safely.",
       },
     ],
-    relatedPostIds: ["mye-ca-document-vault-guide", "startup-compliance-first-90-days"],
+    relatedPostIds: ["mye-ca-document-vault-guide", "startup-services-first-90-days-compliance-roadmap"],
     ctaLabel: "Explore GST Services",
     ctaHref: "/services/gst-registration",
     isFeatured: false,

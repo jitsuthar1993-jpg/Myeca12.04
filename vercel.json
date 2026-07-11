@@ -191,6 +191,26 @@
       "permanent": true
     },
     {
+      "source": "/status-tracker",
+      "destination": "/itr/status-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/blog/crypto-vda-tax-ay-2026-27",
+      "destination": "/blog/ay-2026-27-crypto-vda-tax-records-checklist",
+      "permanent": true
+    },
+    {
+      "source": "/blog/belated-revised-updated-return-ay-2026-27",
+      "destination": "/blog/how-to-file-belated-revised-updated-return-ay-2026-27",
+      "permanent": true
+    },
+    {
+      "source": "/blog/startup-compliance-first-90-days",
+      "destination": "/blog/startup-services-first-90-days-compliance-roadmap",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.myeca.in" }],
       "destination": "https://myeca.in/$1",

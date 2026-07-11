@@ -16,6 +16,7 @@
     "test:unit": "vitest run",
     "test:design-system": "vitest run client/src/lib/design-system-token-contract.test.ts client/src/components/ui/button.test.tsx client/src/components/ui/card.test.tsx",
     "test:smoke": "tsx scripts/smoke-routes.ts",
+    "audit:public-links": "tsx scripts/audit-public-links.ts",
     "test:cloudflare-pages": "npm run build && tsx scripts/check-cloudflare-pages.ts",
     "test:e2e": "npm.cmd run build && playwright test",
     "check:env": "tsx scripts/check-env.ts",
