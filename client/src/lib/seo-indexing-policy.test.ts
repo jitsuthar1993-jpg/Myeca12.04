@@ -70,6 +70,22 @@ describe("SEO indexing policy", () => {
         { destination: "/auth/login", permanent: true, source: "/login" },
         { destination: "/auth/register", permanent: true, source: "/register" },
         { destination: "/services/itr-for-salaried", permanent: true, source: "/salary" },
+        { destination: "/itr/status-tracker", permanent: true, source: "/status-tracker" },
+        {
+          destination: "/blog/ay-2026-27-crypto-vda-tax-records-checklist",
+          permanent: true,
+          source: "/blog/crypto-vda-tax-ay-2026-27",
+        },
+        {
+          destination: "/blog/how-to-file-belated-revised-updated-return-ay-2026-27",
+          permanent: true,
+          source: "/blog/belated-revised-updated-return-ay-2026-27",
+        },
+        {
+          destination: "/blog/startup-services-first-90-days-compliance-roadmap",
+          permanent: true,
+          source: "/blog/startup-compliance-first-90-days",
+        },
       ]),
     );
     expect(SEO_CONFIG["/which-itr-form-to-file"]).toBeDefined();
@@ -376,6 +392,11 @@ describe("SEO indexing policy", () => {
       "/services/activate/itr-filing",
       "/services/activate/partnership-deed",
       "/services/company-registration/mumbai",
+      "/experts/tax-gst-review",
+      "/experts/startup-compliance-review",
+      "/experts/direct-tax-review",
+      "/experts/ca-rahul-sharma",
+      "/experts/ca-priya-nair",
       "/experts/ca-amit-verma",
       "/search",
       "/documents/generator/will",

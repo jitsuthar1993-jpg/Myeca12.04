@@ -29,7 +29,14 @@ export const SPA_FALLBACK_EXACT_ROUTES = [
 
 const CITY_LANDING_SERVICE_SLUGS = ["company-registration", "gst-registration"] as const;
 const CITY_LANDING_CITY_SLUGS = ["bangalore", "mumbai", "delhi", "hyderabad", "chennai"] as const;
-const EXPERT_PROFILE_SLUGS = ["ca-rahul-sharma", "ca-priya-nair", "ca-amit-verma"] as const;
+const EXPERT_PROFILE_SLUGS = [
+  "tax-gst-review",
+  "startup-compliance-review",
+  "direct-tax-review",
+  "ca-rahul-sharma",
+  "ca-priya-nair",
+  "ca-amit-verma",
+] as const;
 const LEGACY_SERVICE_ACTIVATION_SLUGS = ["partnership-deed"] as const;
 const API_ROUTE_PREFIX = "/api";
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,120}$/;

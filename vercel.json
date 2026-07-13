@@ -211,6 +211,11 @@
       "permanent": true
     },
     {
+      "source": "/blog/schedule-fa-foreign-bank-%E2%82%B9u-espp-us-stocks",
+      "destination": "/blog/schedule-fa-foreign-bank-rsu-espp-us-stocks",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.myeca.in" }],
       "destination": "https://myeca.in/$1",
@@ -218,6 +223,12 @@
     }
   ],
   "rewrites": [
+    { "source": "/ais-viewer", "destination": "/index.html" },
+    { "source": "/bank-analyzer", "destination": "/index.html" },
+    { "source": "/business/virtual-cfo", "destination": "/index.html" },
+    { "source": "/calculators/withdrawal-planner", "destination": "/index.html" },
+    { "source": "/itr/status-tracker", "destination": "/index.html" },
+    { "source": "/services/funding-assistance", "destination": "/index.html" },
     { "source": "/api/health", "destination": "/api/index?route=health" },
     { "source": "/api/user/dashboard", "destination": "/api/index?route=user-dashboard" },
     { "source": "/api/user/activity", "destination": "/api/index?route=user-activity" },

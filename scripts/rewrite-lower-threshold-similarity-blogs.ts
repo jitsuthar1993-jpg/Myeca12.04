@@ -160,7 +160,7 @@ Retain raw exports, wallet evidence, transaction hashes, valuation notes, bank s
 
 A withdrawal from an exchange followed by a matching receipt in a self-custody wallet may be an internal transfer rather than a disposal. Match the asset, quantity, timestamp, transaction hash, sending address, receiving address, and network fee. Keep the evidence that both wallets belong to the taxpayer. If the received quantity or destination cannot be explained, do not label the movement internal merely to avoid investigating it.
 
-Review the [crypto and VDA tax guide](/blog/crypto-vda-tax-ay-2026-27) for transaction treatment questions and the [high-value AIS checklist](/blog/ay-2026-27-high-value-transaction-ais-checklist) when reported entries do not align with the inventory. Exchange shutdowns, inaccessible wallets, missing cost history, overseas accounts, and large peer-to-peer transactions are escalation points because the ordinary exchange export may not support the filed position.
+Use the [crypto and VDA records checklist](/blog/ay-2026-27-crypto-vda-tax-records-checklist) for transaction-treatment questions and the [high-value AIS checklist](/blog/ay-2026-27-high-value-transaction-ais-checklist) when reported entries do not align with the inventory. Exchange shutdowns, inaccessible wallets, missing cost history, overseas accounts, and large peer-to-peer transactions are escalation points because the ordinary exchange export may not support the filed position.
 `,
   "ay-2026-27-salary-rsu-esop-itr-guide.mdx": `
 # AY 2026-27 Salary, RSU, and ESOP ITR Guide
@@ -399,7 +399,7 @@ Do not assume a portal response alone closes the matter. Save the demand referen
 
 If the intimation removes old-regime deductions, first confirm which regime was selected and whether any required election or filing condition was met. Then compare each disallowed amount with the filed schedule and evidence. A fresh regime comparison can quantify the difference, but it cannot by itself prove that the filed election or deduction was valid.
 
-The [old-versus-new regime salary guide](/blog/new-vs-old-regime-salary-fy-2025-26) explains the underlying comparison, and the [refund and demand status tracker](/status-tracker) can organise follow-up after a response. Escalate before the portal deadline when the demand includes unexplained income, missing tax credits, a disputed election, or an amount too large to address from incomplete records.
+The [old-versus-new regime salary guide](/blog/new-vs-old-regime-salary-fy-2025-26) explains the underlying comparison, and the [refund and demand status tracker](/itr/status-tracker) can organise follow-up after a response. Escalate before the portal deadline when the demand includes unexplained income, missing tax credits, a disputed election, or an amount too large to address from incomplete records.
 
 Before choosing a response, make a one-page difference note showing the filed regime, processed regime, deductions changed, credits changed, interest charged, and resulting demand. That note keeps a payment decision, correction request, and disagreement response tied to the actual source of the amount.
 
