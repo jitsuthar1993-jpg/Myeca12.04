@@ -106,6 +106,12 @@ const PUBLIC_SOURCE_SLOP_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   { label: "unsupported generic professional-review promise", pattern: /\bdocuments are reviewed by professionals\b/i },
   { label: "unsupported CA-guide attribution", pattern: /\bca tax guides\b/i },
   { label: "unsupported easy self-certification claim", pattern: /\beasy self-certification\b/i },
+  { label: "unsupported verified-professional claim", pattern: /\bverified (?:professionals?|CAs?|profiles?)\b/i },
+  { label: "unsupported numeric social proof", pattern: /\b\d[\d,]*\+\s+(?:high-growth\s+)?(?:companies|startups|clients|users|filings)\b/i },
+  { label: "blanket encryption claim", pattern: /\bfully encrypted\b/i },
+  { label: "unsupported automatic-verification claim", pattern: /\ball details verified\b/i },
+  { label: "unsupported complete-and-accurate claim", pattern: /\b(?:is|are|now|remains?) complete and accurate\b/i },
+  { label: "unsupported local-office claim", pattern: /\blocal office visits\b/i },
 ];
 const PUBLIC_ROUTE_REGISTRY_FILES = [
   "public-routes.ts",

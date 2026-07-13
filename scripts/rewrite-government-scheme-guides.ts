@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { governmentSchemeEditorialDepth } from "./government-scheme-editorial-depth";
+import { buildSchemeTargetAudience } from "./lib/blog-audience-metadata";
 
 type SourceLink = {
   label?: string;
@@ -1442,7 +1443,7 @@ async function main() {
     meta.seoDescription = description;
     meta.modifiedAt = modifiedAt;
     meta.qualityStatus = "needs_revision";
-    meta.targetAudience = `${sentenceCase(audienceFor(meta))} preparing a ${scheme} application and verifying ${documents.slice(0, 3).join(", ")} before submission or follow-up.`;
+    meta.targetAudience = buildSchemeTargetAudience(audienceFor(meta), scheme, documents);
     meta.keyHighlights = [
       `${editorialLabel} evidence check: use ${first} with ${second} only for the facts those records establish.`,
       `${editorialLabel} correction path: send a material ${third} difference to ${escalationTargetFor(slug)} and file the response beside ${fourth}.`,
