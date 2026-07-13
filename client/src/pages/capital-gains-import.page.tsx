@@ -47,6 +47,7 @@ import {
 } from "@/lib/capital-gains-parser";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "@/components/charts/lightweight-recharts";
 import { getSEOConfig } from "@/config/seo.config";
+import ItrLeadCaptureCard from "@/components/conversion/ItrLeadCaptureCard";
 
 const COLORS = ['#22c55e', '#ef4444', '#3b82f6', '#f59e0b'];
 const seoConfig = getSEOConfig('/capital-gains-import');
@@ -283,6 +284,14 @@ export default function CapitalGainsImportPage() {
                 </Alert>
               </CardContent>
             </Card>
+
+            <ItrLeadCaptureCard
+              caseType="capital-gains"
+              source="capital_gains_import_lead_capture"
+              title="Get the capital gains ITR checklist"
+              description="Share contact details for a broker-statement checklist and scope-first filing follow-up."
+              checklistLabel="Capital gains broker statement checklist"
+            />
           </div>
         )}
 

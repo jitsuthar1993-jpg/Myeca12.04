@@ -142,6 +142,7 @@ describe("public growth roadmap implementation", () => {
     expect(itrStartSource).toContain("ITR selector");
     expect(itrStartSource).toContain("Check my ITR scope");
     expect(itrStartSource).toContain("File AY 2026-27 ITR with scope clarity before payment");
+    expect(itrStartSource).toContain("ItrLeadCaptureCard");
     expect(itrStartSource).toContain("Individual filing facts");
     expect(itrStartSource).toContain("recommendItrForm");
     expect(itrStartSource).toContain("ITR_START_STEPS");
@@ -165,6 +166,12 @@ describe("public growth roadmap implementation", () => {
     expect(readSource("client/src/features/calculators/pages/income-tax.page.tsx")).toContain(
       "Ask CA before paying"
     );
+    expect(readSource("client/src/features/calculators/pages/income-tax.page.tsx")).toContain(
+      "ItrLeadCaptureCard"
+    );
+    expect(readSource("client/src/pages/form16-parser.page.tsx")).toContain("ItrLeadCaptureCard");
+    expect(readSource("client/src/pages/capital-gains-import.page.tsx")).toContain("ItrLeadCaptureCard");
+    expect(readSource("client/src/pages/itr-season-campaign.page.tsx")).toContain("ItrLeadCaptureCard");
     expect(readSource("client/src/features/itr/pages/form-selector.page.tsx")).toContain(
       "Check my ITR plan in 60 sec"
     );

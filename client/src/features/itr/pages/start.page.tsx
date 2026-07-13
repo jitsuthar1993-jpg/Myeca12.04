@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import ItrLeadCaptureCard from "@/components/conversion/ItrLeadCaptureCard";
 import { captureCampaignAttribution } from "@/lib/campaign-attribution";
 import { captureTelemetryEvent } from "@/telemetry/browser";
 import {
@@ -369,6 +370,11 @@ export default function ITRStartPage() {
       partner_code: attribution?.partnerCode,
       utm_campaign: attribution?.utmCampaign,
     });
+    captureTelemetryEvent("selector_started", {
+      source: conversionSource,
+      partner_code: attribution?.partnerCode,
+      utm_campaign: attribution?.utmCampaign,
+    });
   }, [attribution?.partnerCode, attribution?.utmCampaign, conversionSource, isLegacyLoginFileSource]);
 
   useEffect(() => {
@@ -432,6 +438,12 @@ export default function ITRStartPage() {
     });
 
     captureTelemetryEvent("itr_selector_complete", {
+      source: conversionSource,
+      recommended_form: recommendation.form,
+      partner_code: attribution?.partnerCode,
+      utm_campaign: attribution?.utmCampaign,
+    });
+    captureTelemetryEvent("selector_completed", {
       source: conversionSource,
       recommended_form: recommendation.form,
       partner_code: attribution?.partnerCode,
@@ -654,6 +666,15 @@ export default function ITRStartPage() {
             </div>
           </m.section>
         </AnimatePresence>
+
+        <ItrLeadCaptureCard
+          caseType="itr-selector"
+          source="itr_selector_lead_capture"
+          title="Want the AY 2026-27 filing checklist?"
+          description="Share contact details if you want the checklist and a scoped filing follow-up before payment."
+          checklistLabel="AY 2026-27 ITR checklist"
+          className="mt-5"
+        />
       </main>
 
       <div

@@ -13,6 +13,7 @@ import {
 import MetaSEO from "@/components/seo/MetaSEO";
 import { ItrDeadlineNotice } from "@/components/campaign/ItrDeadlineNotice";
 import { getItrDeadlineMessage } from "@/components/campaign/itr-deadline";
+import ItrLeadCaptureCard, { type ItrLeadCaseType } from "@/components/conversion/ItrLeadCaptureCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getBlogCoverImageSrc } from "@/lib/blog-cover-assets";
@@ -58,6 +59,13 @@ const filingSteps: Array<{ title: string; detail: string; links: SeasonGuideLink
 ];
 
 const deadlineCategories = ["salaried", "business-profession"] as const;
+
+function getGuideLeadCaseType(guide: ItrSeasonGuide): ItrLeadCaseType {
+  if (guide.icon === "search") return "ais-mismatch";
+  if (guide.icon === "gains") return "capital-gains";
+  if (guide.icon === "calendar") return "refund-tracker";
+  return "form16";
+}
 
 export default function ItrSeasonPage() {
   const [location] = useLocation();
@@ -153,6 +161,16 @@ function SeasonHubPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pt-8 md:px-6 lg:px-8">
+        <ItrLeadCaptureCard
+          caseType="itr-selector"
+          source="itr_season_hub_lead_capture"
+          title="Get the AY 2026-27 ITR checklist"
+          description="Use it to prepare Form 16, AIS, Form 26AS, deductions, and filing scope before payment."
+          checklistLabel="AY 2026-27 ITR checklist"
+        />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
@@ -343,6 +361,14 @@ function SeasonGuidePage({ guide }: { guide: ItrSeasonGuide }) {
               ))}
             </div>
           </div>
+
+          <ItrLeadCaptureCard
+            caseType={getGuideLeadCaseType(guide)}
+            source={`itr_season_${guide.slug}_lead_capture`}
+            title={`Get the ${guide.shortTitle.toLowerCase()} checklist`}
+            description="Share contact details for the checklist and a scope-first AY 2026-27 filing follow-up."
+            checklistLabel={guide.shortTitle}
+          />
         </div>
       </section>
 

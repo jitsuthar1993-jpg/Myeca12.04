@@ -28,6 +28,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import ItrLeadCaptureCard from "@/components/conversion/ItrLeadCaptureCard";
 import {
   Form16Data,
   exportForm16ForITR,
@@ -484,6 +485,14 @@ export default function Form16ParserPage() {
                 </Button>
               </>
             )}
+
+            <ItrLeadCaptureCard
+              caseType="form16"
+              source="form16_parser_lead_capture"
+              title="Get the Form 16 filing checklist"
+              description="Use the checklist to compare Form 16, AIS, Form 26AS, and deductions before starting paid filing."
+              checklistLabel="Form 16 checklist"
+            />
           </div>
         </section>
       </main>
