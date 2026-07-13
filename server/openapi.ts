@@ -280,8 +280,15 @@ export function buildOpenApiSpec() {
         get: operation("Get an assigned CA service case with linked documents", { tags: ["ca"], auth: true, status: "production" }),
         patch: operation("Update an assigned CA service case", { tags: ["ca"], auth: true, requestBody: true, status: "production" }),
       }),
+      "/api/whatsapp/client/webhook": path({
+        get: operation("Verify Meta WhatsApp Cloud API client webhook", { tags: ["whatsapp", "webhooks"], status: "production" }),
+        post: operation("Receive Meta WhatsApp Cloud API client webhook", { tags: ["whatsapp", "webhooks"], status: "production" }),
+      }),
+      "/api/whatsapp/client/case-links": path({
+        post: operation("Create an authenticated WhatsApp case-link code", { tags: ["whatsapp", "user"], auth: true, requestBody: true, status: "production" }),
+      }),
       "/api/whatsapp/webhook": path({
-        post: operation("Receive WhatsApp webhook", { tags: ["webhooks"], status: "production" }),
+        post: operation("Receive legacy Twilio WhatsApp blog-assistant webhook", { tags: ["webhooks"], status: "production" }),
       }),
     },
     components: {

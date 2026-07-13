@@ -25,6 +25,10 @@ const CANONICAL_ROUTE_REDIRECTS = new Map([
   ["/login", "/auth/login"],
   ["/register", "/auth/register"],
   ["/salary", "/services/itr-for-salaried"],
+  ["/status-tracker", "/itr/status-tracker"],
+  ["/blog/crypto-vda-tax-ay-2026-27", "/blog/ay-2026-27-crypto-vda-tax-records-checklist"],
+  ["/blog/belated-revised-updated-return-ay-2026-27", "/blog/how-to-file-belated-revised-updated-return-ay-2026-27"],
+  ["/blog/startup-compliance-first-90-days", "/blog/startup-services-first-90-days-compliance-roadmap"],
 ]);
 
 app.use(requestIdMiddleware);
@@ -69,7 +73,14 @@ app.use((req, res, next) => {
   return res.redirect(301, `${destination}${query}`);
 });
 
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({
+  limit: "10mb",
+  verify: (req, _res, buffer) => {
+    if (String((req as any).originalUrl || "").startsWith("/api/whatsapp/client/webhook")) {
+      (req as express.Request & { rawBody?: Buffer }).rawBody = Buffer.from(buffer);
+    }
+  },
+}));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/api", generalRateLimit);
 

@@ -23,6 +23,10 @@ type ItrFilingEventMap = {
     totalMs: number;
     viewport: FilingViewport;
   };
+  itr_filing_whatsapp_case_link_created: {
+    returnId: string | null;
+    viewport: FilingViewport;
+  };
 };
 
 export function captureItrFilingEvent<EventName extends keyof ItrFilingEventMap>(
@@ -42,6 +46,11 @@ export function captureItrFilingEvent<EventName extends keyof ItrFilingEventMap>
   if (eventName === "itr_filing_validation_blocked") {
     const { step, pane, rule } = properties as ItrFilingEventMap["itr_filing_validation_blocked"];
     captureTelemetryEvent(eventName, { step, pane, rule });
+    return;
+  }
+  if (eventName === "itr_filing_whatsapp_case_link_created") {
+    const { returnId, viewport } = properties as ItrFilingEventMap["itr_filing_whatsapp_case_link_created"];
+    captureTelemetryEvent(eventName, { returnId, viewport });
     return;
   }
   const { stepsVisited, totalMs, viewport } = properties as ItrFilingEventMap["itr_filing_review_submitted"];

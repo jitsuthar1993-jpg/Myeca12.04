@@ -13,6 +13,10 @@ import { createReminder, listReminders } from "../utils/reminders.js";
 import { listWorkflowEvents, recordWorkflowEvent } from "../utils/workflow-events.js";
 import { notifyAdmins, notifyRole, notifyUser } from "../utils/workflow-notifications.js";
 import { campaignAttributionSchema, normalizeCampaignAttribution } from "../../shared/campaign-attribution.js";
+import {
+  enqueueWhatsAppTemplateForUser,
+  recordWhatsAppConsentFromConsultation,
+} from "../services/whatsapp-client-workflow.js";
 
 const router = Router();
 const updateProfileSchema = z.object({
@@ -69,6 +73,40 @@ const consultationRequestSchema = z.object({
   formId: z.string().trim().max(120).optional(),
   serviceIntent: z.string().trim().max(160).optional(),
   attribution: campaignAttributionSchema.optional(),
+  leadContext: z.object({
+    caseType: z.string().trim().min(1).max(80),
+    checklistLabel: z.string().trim().min(1).max(120),
+    sourceUrl: z.string().trim().min(1).max(500),
+    consentTimestamp: z.string().datetime({ offset: true }),
+    utmFields: z.object({
+      utmCampaign: z.string().trim().max(120).optional(),
+      utmSource: z.string().trim().max(120).optional(),
+      utmMedium: z.string().trim().max(120).optional(),
+      utmContent: z.string().trim().max(120).optional(),
+    }).strict().optional(),
+  }).strict().optional(),
+  leadPayload: z.object({
+    name: z.string().trim().min(1).max(120),
+    phone_or_email: z.string().trim().min(1).max(190),
+    service_interest: z.string().trim().min(1).max(160),
+    source_url: z.string().trim().min(1).max(500),
+    utm_fields: z.object({
+      utm_campaign: z.string().trim().max(120).optional(),
+      utm_source: z.string().trim().max(120).optional(),
+      utm_medium: z.string().trim().max(120).optional(),
+      utm_content: z.string().trim().max(120).optional(),
+    }).strict().optional(),
+    case_type: z.string().trim().min(1).max(80),
+    consent_timestamp: z.string().datetime({ offset: true }),
+  }).strict().optional(),
+  channelConsent: z.object({
+    whatsapp: z.object({
+      optedIn: z.boolean(),
+      phone: z.string().trim().max(30).optional(),
+      consentText: z.string().trim().max(300).optional(),
+      consentTimestamp: z.string().datetime({ offset: true }),
+    }).strict().optional(),
+  }).strict().optional(),
 });
 
 const paymentLinkRequestSchema = z.object({
@@ -621,6 +659,16 @@ router.post("/itr/submit-review", requireAnyAuth, validateRequest(submitItrRevie
         metadata: notificationMetadata,
       }),
     ]);
+    await runServiceSideEffect("queue WhatsApp ITR review submitted update", () => enqueueWhatsAppTemplateForUser({
+      userId: user.id,
+      templateName: "review_submitted",
+      sourceType: "tax_return",
+      sourceId: draft.id,
+      caseId: serviceRef.id,
+      variables: {
+        assessment_year: draftData.assessmentYear || "2026-27",
+      },
+    }));
 
     res.json({
       success: true,
@@ -871,6 +919,8 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
         formId: request.formId || null,
         serviceIntent: request.serviceIntent || request.service,
         attribution: newRequest.attribution || null,
+        leadContext: request.leadContext || null,
+        leadPayload: request.leadPayload || null,
       },
     });
     await createReminder({
@@ -885,6 +935,8 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
         formId: request.formId || null,
         serviceIntent: request.serviceIntent || request.service,
         attribution: newRequest.attribution || null,
+        leadContext: request.leadContext || null,
+        leadPayload: request.leadPayload || null,
       },
     });
     await notifyRole("team_member", {
@@ -893,6 +945,13 @@ router.post("/consultation-requests", optionalAuth, validateRequest(consultation
       type: "info",
       metadata: { consultationRequestId: docRef.id, source: newRequest.source },
     });
+    await runServiceSideEffect("queue WhatsApp lead acknowledgement", () => recordWhatsAppConsentFromConsultation({
+      requestId: docRef.id,
+      name: request.name,
+      phone: request.phone || null,
+      userId: req.user?.id || null,
+      channelConsent: request.channelConsent || null,
+    }));
     void notifyLeadAutomation({ id: docRef.id, ...newRequest }).catch((error) => {
       console.warn("[LEAD_AUTOMATION]", error);
     });

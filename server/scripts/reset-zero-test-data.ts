@@ -24,6 +24,11 @@ const documentTables = [
   "teams",
   "user_services",
   "users",
+  "whatsapp_contacts",
+  "whatsapp_case_links",
+  "whatsapp_messages",
+  "whatsapp_outbox",
+  "whatsapp_media_imports",
   "workflows",
 ];
 

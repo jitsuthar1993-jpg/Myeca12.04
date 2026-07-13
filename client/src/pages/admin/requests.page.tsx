@@ -43,8 +43,20 @@ type ConsultationRequest = {
   service?: string;
   preferredTime?: string;
   message?: string;
-  status?: "new" | "contacted" | "converted" | "closed";
+  status?: "new" | "contacted" | "needs_info" | "escalated_admin" | "escalated_ca" | "converted" | "closed";
   internalNote?: string;
+  channelConsent?: {
+    whatsapp?: {
+      optedIn?: boolean;
+      phone?: string;
+      consentTimestamp?: string;
+    };
+  } | null;
+  whatsappStatus?: {
+    consentStatus?: string;
+    leadAcknowledgementStatus?: string;
+    lastTemplateQueuedAt?: string | null;
+  } | null;
   createdAt?: string;
 };
 
@@ -76,7 +88,7 @@ type ServiceCase = {
   createdAt?: string;
 };
 
-const consultationStatuses = ["all", "new", "contacted", "converted", "closed"];
+const consultationStatuses = ["all", "new", "contacted", "needs_info", "escalated_admin", "escalated_ca", "converted", "closed"];
 const paymentStatuses = ["all", "requested", "link_sent", "paid", "cancelled"];
 const caseStatuses = ["all", "pending", "in_progress", "completed", "cancelled"];
 
@@ -116,6 +128,10 @@ function statusBadgeClass(status?: string) {
 
 function label(value?: string) {
   return (value || "new").replace(/_/g, " ");
+}
+
+function hasWhatsappOptIn(request?: ConsultationRequest | null) {
+  return request?.channelConsent?.whatsapp?.optedIn === true || request?.whatsappStatus?.consentStatus === "opted_in";
 }
 
 export default function AdminRequestsPage() {
@@ -439,7 +455,14 @@ export default function AdminRequestsPage() {
                         <TableCell>
                           <p className="font-black text-slate-900">{request.name || "Customer"}</p>
                           <p className="mt-1 text-xs text-slate-500">{request.service || "General consultation"}</p>
-                          <p className="mt-1 text-xs text-slate-400">{request.phone || request.email || "No contact captured"}</p>
+                          <div className="mt-1 flex flex-wrap items-center gap-2">
+                            <p className="text-xs text-slate-400">{request.phone || request.email || "No contact captured"}</p>
+                            {hasWhatsappOptIn(request) ? (
+                              <Badge className="border-none bg-emerald-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-700">
+                                WhatsApp opted in
+                              </Badge>
+                            ) : null}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className={cn("border px-2 py-1 text-[10px] font-black uppercase tracking-widest", statusBadgeClass(request.status))}>
@@ -618,6 +641,17 @@ export default function AdminRequestsPage() {
                   <p className="mt-1 font-black text-slate-900">{selectedConsultation.preferredTime || "Not specified"}</p>
                   <p className="text-sm text-slate-500">{dateLabel(selectedConsultation.createdAt)}</p>
                 </div>
+              </div>
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-700">WhatsApp</p>
+                <p className="mt-1 font-black text-emerald-950">
+                  {hasWhatsappOptIn(selectedConsultation) ? "Opted in for client updates" : "No WhatsApp opt-in recorded"}
+                </p>
+                <p className="text-sm text-emerald-800">
+                  {selectedConsultation.whatsappStatus?.leadAcknowledgementStatus
+                    ? `Lead acknowledgment: ${label(selectedConsultation.whatsappStatus.leadAcknowledgementStatus)}`
+                    : selectedConsultation.channelConsent?.whatsapp?.phone || selectedConsultation.phone || "No WhatsApp number linked"}
+                </p>
               </div>
               <div>
                 <p className="text-sm font-black text-slate-900">{selectedConsultation.service || "General consultation"}</p>

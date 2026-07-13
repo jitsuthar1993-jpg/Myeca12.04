@@ -29,6 +29,11 @@ const COLLECTION_TABLES: Record<string, string> = {
   document_drafts: "document_drafts",
   consultation_requests: "consultation_requests",
   payment_link_requests: "payment_link_requests",
+  whatsapp_contacts: "whatsapp_contacts",
+  whatsapp_case_links: "whatsapp_case_links",
+  whatsapp_messages: "whatsapp_messages",
+  whatsapp_outbox: "whatsapp_outbox",
+  whatsapp_media_imports: "whatsapp_media_imports",
   site_settings: "site_settings",
   email_templates: "email_templates",
   pages: "pages",
@@ -380,5 +385,31 @@ export const adminDb = {
     return new DataCollectionRef(name);
   },
 };
+
+export async function claimPendingWhatsAppCaseLink(code: string, contact: JsonRecord) {
+  if (!hasDatabaseUrl()) {
+    throw new Error("Atomic WhatsApp case-link activation requires DATABASE_URL.");
+  }
+
+  const linkedAt = new Date().toISOString();
+  const rows = await queryRows<{ id: string; data: JsonRecord }>(
+    `UPDATE whatsapp_case_links
+       SET data = data || $2::jsonb,
+           updated_at = now()
+     WHERE data ->> 'code' = $1
+       AND data ->> 'status' = 'pending'
+       AND (data ->> 'expiresAt')::timestamptz >= now()
+     RETURNING id, data`,
+    [code, JSON.stringify({
+      status: "active",
+      contactId: contact.id,
+      waId: contact.waId || null,
+      normalizedPhone: contact.normalizedPhone,
+      linkedAt,
+      updatedAt: linkedAt,
+    })],
+  );
+  return rows[0] ? fromRow(rows[0]) : null;
+}
 
 export type DataAdminDb = typeof adminDb;

@@ -25,6 +25,7 @@ import auditRouter from "./routes/audit.js";
 import publicRouter from "./routes/public.js";
 import blogWebhooksRouter from "./routes/blog-webhooks.js";
 import whatsappRouter from "./routes/whatsapp.js";
+import whatsappClientRouter from "./routes/whatsapp-client.js";
 import { buildOpenApiSpec } from "./openapi.js";
 import { listPublishedBlogPosts, sortPublishedPosts } from "./services/blog.js";
 import { SEO_CONFIG } from "../client/src/config/seo.config.js";
@@ -230,6 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes
   app.use("/api/admin", adminLimiter, adminRouter);
   app.use("/api/webhooks", blogWebhooksRouter);
+  app.use("/api/whatsapp/client", whatsappClientRouter);
   app.use("/api/whatsapp", whatsappRouter);
   
   // CA routes

@@ -8,10 +8,12 @@ import {
   Banknote,
   CheckCircle2,
   ClipboardCheck,
+  Copy,
   FileCheck2,
   FileText,
   IndianRupee,
   Loader2,
+  MessageCircle,
   Save,
   ShieldCheck,
   Sparkles,
@@ -162,6 +164,13 @@ type DocumentUploadState = {
   error?: string;
   file?: File;
   documentId?: string;
+};
+
+type WhatsAppCaseLink = {
+  id: string;
+  code: string;
+  waLink?: string | null;
+  expiresAt?: string;
 };
 
 const FILING_HISTORY_KEY = "myecaItrPane";
@@ -322,6 +331,7 @@ export default function ITRFilingPage() {
   const [liabilityOpen, setLiabilityOpen] = useState(false);
   const [documentUploadStates, setDocumentUploadStates] = useState<Record<string, DocumentUploadState>>({});
   const [displayedPaneIssues, setDisplayedPaneIssues] = useState<ItrVerificationIssue[]>([]);
+  const [whatsappCaseLink, setWhatsappCaseLink] = useState<WhatsAppCaseLink | null>(null);
   const autoCreateHandoffRef = useRef<string | null>(null);
   const restoringPaneBackRef = useRef<number | null>(null);
   const filingStartedAtRef = useRef(typeof performance === "undefined" ? Date.now() : performance.now());
@@ -428,6 +438,10 @@ export default function ITRFilingPage() {
     setDraft(normalized);
     resetAutosaveDraft(normalized);
   }, [activeReturn?.id, resetAutosaveDraft]);
+
+  useEffect(() => {
+    setWhatsappCaseLink(null);
+  }, [activeReturnId]);
 
   useEffect(() => {
     setCurrentPane((pane) => Math.min(pane, Math.max(currentPanes.length - 1, 0)));
@@ -655,6 +669,29 @@ export default function ITRFilingPage() {
         },
       }));
     }
+  };
+
+  const whatsappLinkMutation = useMutation({
+    mutationFn: async () => {
+      if (!activeReturnId) throw new Error("Save a draft before connecting WhatsApp.");
+      const response = await apiRequest("/api/whatsapp/client/case-links", {
+        method: "POST",
+        body: JSON.stringify({ taxReturnId: activeReturnId }),
+      });
+      return response.json() as Promise<{ success: boolean; link: WhatsAppCaseLink }>;
+    },
+    onSuccess: (response) => {
+      setWhatsappCaseLink(response.link);
+      captureItrFilingEvent("itr_filing_whatsapp_case_link_created", {
+        returnId: activeReturnId,
+        viewport: isMobile ? "mobile" : "desktop",
+      });
+    },
+  });
+
+  const copyWhatsAppCode = async () => {
+    if (!whatsappCaseLink?.code || typeof navigator === "undefined") return;
+    await navigator.clipboard?.writeText(whatsappCaseLink.code);
   };
 
   const updateDraft = (updater: (current: ItrFilingDraft) => ItrFilingDraft) => {
@@ -1235,6 +1272,47 @@ export default function ITRFilingPage() {
                     <Metric label="Provide later" value={String(documentChecklist.filter((document) => draft.documentDeferrals[document.id]).length)} />
                   </div>
                   <CaAssistStrip variant="inline" />
+                  <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <MessageCircle className="h-4 w-4 text-emerald-700" />
+                          <p className="text-sm font-black text-emerald-950">WhatsApp document intake</p>
+                        </div>
+                        <p className="mt-1 text-sm font-semibold leading-6 text-emerald-800">
+                          Connect this return before sending PDF or image files on WhatsApp.
+                        </p>
+                        {whatsappCaseLink ? (
+                          <p className="mt-2 text-lg font-black tracking-widest text-emerald-950">{whatsappCaseLink.code}</p>
+                        ) : null}
+                        {whatsappLinkMutation.isError ? (
+                          <p className="mt-2 text-sm font-semibold text-red-700">{apiErrorMessage(whatsappLinkMutation.error)}</p>
+                        ) : null}
+                      </div>
+                      <div className="grid gap-2 sm:min-w-48">
+                        <Button
+                          type="button"
+                          disabled={!activeReturnId || whatsappLinkMutation.isPending}
+                          onClick={() => whatsappLinkMutation.mutate()}
+                          className="h-10 rounded-lg bg-emerald-700 px-4 text-white hover:bg-emerald-800"
+                        >
+                          {whatsappLinkMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MessageCircle className="mr-2 h-4 w-4" />}
+                          Connect WhatsApp
+                        </Button>
+                        {whatsappCaseLink ? (
+                          <Button type="button" variant="outline" onClick={copyWhatsAppCode} className="h-10 rounded-lg border-emerald-200 bg-white text-emerald-800">
+                            <Copy className="mr-2 h-4 w-4" />
+                            Copy Code
+                          </Button>
+                        ) : null}
+                        {whatsappCaseLink?.waLink ? (
+                          <a href={whatsappCaseLink.waLink} target="_blank" rel="noreferrer" className="text-center text-xs font-black uppercase tracking-widest text-emerald-800 underline underline-offset-4">
+                            Open WhatsApp
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
                 </PaneSection>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {documentChecklist.map((document) => {

@@ -28,6 +28,16 @@ Optional search-engine variables:
 - `VITE_GOOGLE_SITE_VERIFICATION` - Google Search Console HTML verification token when DNS TXT verification is not used.
 - `INDEXNOW_KEY` - IndexNow key for Bing and participating search engines. Use 8-128 letters, numbers, or dashes; the server exposes it at `/<INDEXNOW_KEY>.txt`.
 
+Optional WhatsApp client workflow variables:
+
+- `META_WHATSAPP_ACCESS_TOKEN` - Meta WhatsApp Cloud API token for client workflow messages and inbound media.
+- `META_WHATSAPP_PHONE_NUMBER_ID` - WhatsApp phone-number ID used by the Graph API send and media endpoints.
+- `META_WHATSAPP_BUSINESS_ACCOUNT_ID` - WhatsApp Business Account ID for template and account operations.
+- `META_WHATSAPP_VERIFY_TOKEN` - webhook verification token for `/api/whatsapp/client/webhook`.
+- `META_APP_SECRET` - Meta app secret used to validate `X-Hub-Signature-256`.
+- `META_WHATSAPP_GRAPH_VERSION` - Graph API version, for example `v23.0`.
+- `VITE_WHATSAPP_PUBLIC_NUMBER` - public WhatsApp number used by website `wa.me` links.
+
 Run the local readiness check before deploying. It reports only variable names
 and validation errors; it never prints secret values.
 

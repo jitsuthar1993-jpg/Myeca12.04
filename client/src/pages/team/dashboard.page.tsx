@@ -35,6 +35,16 @@ type TriageItem = {
   source?: string;
   formId?: string | null;
   serviceIntent?: string | null;
+  channelConsent?: {
+    whatsapp?: {
+      optedIn?: boolean;
+      phone?: string;
+    };
+  } | null;
+  whatsappStatus?: {
+    consentStatus?: string;
+    leadAcknowledgementStatus?: string;
+  } | null;
   createdAt?: string;
 };
 
@@ -54,6 +64,10 @@ function triageTitle(item: TriageItem) {
 
 function triageContact(item: TriageItem) {
   return item.phone || item.email || "No contact captured";
+}
+
+function hasWhatsappOptIn(item: TriageItem) {
+  return item.channelConsent?.whatsapp?.optedIn === true || item.whatsappStatus?.consentStatus === "opted_in";
 }
 
 function triageTime(value?: string) {
@@ -215,7 +229,14 @@ export default function TeamDashboard() {
                          </td>
                          <td className="px-8 py-5">
                            <p className="text-xs font-bold text-slate-600">{triageContact(task)}</p>
-                           <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">{triageLabel(task.status)}</p>
+                           <div className="mt-1 flex flex-wrap items-center gap-2">
+                             <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">{triageLabel(task.status)}</p>
+                             {hasWhatsappOptIn(task) ? (
+                               <Badge className="rounded-full border-none bg-emerald-50 px-2 py-0.5 text-[8px] font-bold uppercase text-emerald-700">
+                                 WhatsApp
+                               </Badge>
+                             ) : null}
+                           </div>
                          </td>
                          <td className="px-8 py-5">
                            <Badge className={cn(
@@ -302,6 +323,11 @@ export default function TeamDashboard() {
                        <div className="min-w-0">
                          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">Coordinator</p>
                          <p className="truncate text-xs font-bold text-slate-700">{triageContact(task)}</p>
+                         {hasWhatsappOptIn(task) ? (
+                           <Badge className="mt-2 rounded-full border-none bg-emerald-50 px-2 py-0.5 text-[8px] font-bold uppercase text-emerald-700">
+                             WhatsApp opted in
+                           </Badge>
+                         ) : null}
                        </div>
                        <div className="flex shrink-0 items-center gap-2">
                          <Badge className={cn(

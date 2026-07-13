@@ -29,6 +29,11 @@ export const chatMessages = pgTable("chat_messages", documentColumns());
 export const documentDrafts = pgTable("document_drafts", documentColumns());
 export const consultationRequests = pgTable("consultation_requests", documentColumns());
 export const paymentLinkRequests = pgTable("payment_link_requests", documentColumns());
+export const whatsappContacts = pgTable("whatsapp_contacts", documentColumns());
+export const whatsappCaseLinks = pgTable("whatsapp_case_links", documentColumns());
+export const whatsappMessages = pgTable("whatsapp_messages", documentColumns());
+export const whatsappOutbox = pgTable("whatsapp_outbox", documentColumns());
+export const whatsappMediaImports = pgTable("whatsapp_media_imports", documentColumns());
 export const siteSettings = pgTable("site_settings", documentColumns());
 export const emailTemplates = pgTable("email_templates", documentColumns());
 export const pages = pgTable("pages", documentColumns());
@@ -69,6 +74,11 @@ export const schema = {
   documentDrafts,
   consultationRequests,
   paymentLinkRequests,
+  whatsappContacts,
+  whatsappCaseLinks,
+  whatsappMessages,
+  whatsappOutbox,
+  whatsappMediaImports,
   siteSettings,
   emailTemplates,
   pages,

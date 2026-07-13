@@ -661,6 +661,31 @@ describe("user service routes", () => {
         serviceIntent: "gst-returns",
         preferredTime: "Tomorrow morning",
         message: "Need support with GST return filing.",
+        leadContext: {
+          caseType: "ais-mismatch",
+          checklistLabel: "AIS mismatch checklist",
+          sourceUrl: "/itr-season-2026/ais-form-26as-mismatch-checklist?utm_campaign=itr-season-2026",
+          consentTimestamp: "2026-07-01T10:00:00.000Z",
+        },
+        leadPayload: {
+          name: "Asha",
+          phone_or_email: "9999999999",
+          service_interest: "AY 2026-27 ITR filing",
+          source_url: "/itr-season-2026/ais-form-26as-mismatch-checklist?utm_campaign=itr-season-2026",
+          utm_fields: {
+            utm_campaign: "itr-season-2026",
+          },
+          case_type: "ais-mismatch",
+          consent_timestamp: "2026-07-01T10:00:00.000Z",
+        },
+        channelConsent: {
+          whatsapp: {
+            optedIn: true,
+            phone: "9999999999",
+            consentText: "I agree to receive MyeCA updates for this consultation request on WhatsApp.",
+            consentTimestamp: "2026-07-01T10:00:00.000Z",
+          },
+        },
         attribution: {
           source: "partner",
           partnerCode: "CA-DELHI-01",
@@ -680,6 +705,33 @@ describe("user service routes", () => {
       formId: "expert-consultation-form",
       serviceIntent: "gst-returns",
       preferredTime: "Tomorrow morning",
+      leadContext: {
+        caseType: "ais-mismatch",
+        checklistLabel: "AIS mismatch checklist",
+        sourceUrl: "/itr-season-2026/ais-form-26as-mismatch-checklist?utm_campaign=itr-season-2026",
+        consentTimestamp: "2026-07-01T10:00:00.000Z",
+      },
+      leadPayload: {
+        name: "Asha",
+        phone_or_email: "9999999999",
+        service_interest: "AY 2026-27 ITR filing",
+        source_url: "/itr-season-2026/ais-form-26as-mismatch-checklist?utm_campaign=itr-season-2026",
+        utm_fields: {
+          utm_campaign: "itr-season-2026",
+        },
+        case_type: "ais-mismatch",
+        consent_timestamp: "2026-07-01T10:00:00.000Z",
+      },
+      channelConsent: {
+        whatsapp: {
+          optedIn: true,
+          phone: "9999999999",
+        },
+      },
+      whatsappStatus: {
+        consentStatus: "opted_in",
+        leadAcknowledgementStatus: "queued",
+      },
       attribution: {
         source: "partner",
         partnerCode: "CA-DELHI-01",
@@ -693,6 +745,11 @@ describe("user service routes", () => {
           sourceType: "consultation_request",
           sourceId: valid.json.id,
           targetRole: "team_member",
+          metadata: expect.objectContaining({
+            serviceIntent: "gst-returns",
+            leadContext: expect.objectContaining({ caseType: "ais-mismatch" }),
+            leadPayload: expect.objectContaining({ case_type: "ais-mismatch" }),
+          }),
         }),
       ]),
     );
@@ -712,6 +769,18 @@ describe("user service routes", () => {
         expect.objectContaining({ userId: "team_1", title: "New intake request" }),
       ]),
     );
+    expect(readCollection("whatsapp_contacts")[0]).toMatchObject({
+      normalizedPhone: "+919999999999",
+      consentStatus: "opted_in",
+      userIds: ["user_9"],
+    });
+    expect(readCollection("whatsapp_outbox")[0]).toMatchObject({
+      messageType: "template",
+      templateName: "lead_acknowledgement",
+      status: "queued",
+      sourceType: "consultation_request",
+      sourceId: valid.json.id,
+    });
   });
 
   it("creates workflow and reminder records for a service request when operational tables are available", async () => {

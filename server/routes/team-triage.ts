@@ -35,6 +35,8 @@ function normalizeConsultation(doc: any) {
     preferredTime: data.preferredTime,
     message: data.message,
     status: data.status || "new",
+    channelConsent: data.channelConsent ?? null,
+    whatsappStatus: data.whatsappStatus ?? null,
     internalNote: data.internalNote ?? null,
     triagedBy: data.triagedBy ?? null,
     triagedAt: data.triagedAt ?? null,

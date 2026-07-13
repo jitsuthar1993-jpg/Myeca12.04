@@ -168,6 +168,43 @@ export const ENV_REQUIREMENTS: EnvRequirement[] = [
     description: "Twilio auth token for WhatsApp publishing flows.",
   },
   {
+    key: "META_WHATSAPP_ACCESS_TOKEN",
+    level: "optional",
+    description: "Meta WhatsApp Cloud API access token for client workflow messages and media imports.",
+  },
+  {
+    key: "META_WHATSAPP_PHONE_NUMBER_ID",
+    level: "optional",
+    description: "Meta WhatsApp phone-number ID used to send messages and fetch inbound media.",
+  },
+  {
+    key: "META_WHATSAPP_BUSINESS_ACCOUNT_ID",
+    level: "optional",
+    description: "Meta WhatsApp Business Account ID for operational configuration and templates.",
+  },
+  {
+    key: "META_WHATSAPP_VERIFY_TOKEN",
+    level: "optional",
+    description: "Webhook verification token used by Meta when subscribing /api/whatsapp/client/webhook.",
+    validate: minLength(16),
+  },
+  {
+    key: "META_APP_SECRET",
+    level: "optional",
+    description: "Meta app secret used to validate X-Hub-Signature-256 webhook payloads.",
+    validate: strongSecret(24),
+  },
+  {
+    key: "META_WHATSAPP_GRAPH_VERSION",
+    level: "optional",
+    description: "Graph API version for WhatsApp Cloud API calls, for example v23.0.",
+  },
+  {
+    key: "VITE_WHATSAPP_PUBLIC_NUMBER",
+    level: "optional",
+    description: "Public WhatsApp number used for wa.me website links. Do not include private API credentials.",
+  },
+  {
     key: "VITE_GA_MEASUREMENT_ID",
     level: "optional",
     description: "Google Analytics measurement ID for production telemetry.",

@@ -27,6 +27,7 @@ import {
 } from "../utils/access-control.js";
 import { recordWorkflowEvent } from "../utils/workflow-events.js";
 import { campaignAttributionSchema, normalizeCampaignAttribution } from "../../shared/campaign-attribution.js";
+import { enqueueWhatsAppTemplateForUser } from "../services/whatsapp-client-workflow.js";
 
 const router = Router();
 
@@ -203,6 +204,28 @@ function routeError(res: Response, error: unknown, fallback: string) {
   }
 
   return safeError(res, error, fallback);
+}
+
+async function runWhatsAppSideEffect(label: string, task: () => Promise<unknown>) {
+  try {
+    await task();
+  } catch (error) {
+    console.warn(`[WHATSAPP] ${label} failed; primary tax-return flow was already saved.`, error);
+  }
+}
+
+function reviewStatusTemplate(status: string) {
+  switch (status) {
+    case "changes_requested":
+      return "changes_requested";
+    case "filed":
+      return "e_verification_reminder";
+    case "e_verified":
+    case "refund_or_demand_tracking":
+      return "filing_completed";
+    default:
+      return null;
+  }
 }
 
 async function resolveTargetUserId(req: AuthRequest) {
@@ -646,6 +669,16 @@ router.post("/:id/submit-review", authenticateToken, async (req: AuthRequest, re
 
     await doc.ref?.update(updateData);
     const updated = { ...existing, ...updateData };
+    await runWhatsAppSideEffect("queue review submitted template", () => enqueueWhatsAppTemplateForUser({
+      userId: existing.userId,
+      templateName: "review_submitted",
+      sourceType: "tax_return",
+      sourceId: doc.id,
+      caseId: userServiceId || null,
+      variables: {
+        assessment_year: existing.assessmentYear ?? draft.assessmentYear ?? "2026-27",
+      },
+    }));
 
     res.json({
       success: true,
@@ -692,6 +725,20 @@ router.patch("/:id/review-status", authenticateToken, async (req: AuthRequest, r
     };
 
     await doc.ref?.update(updateData);
+    const templateName = reviewStatusTemplate(data.status);
+    if (templateName) {
+      await runWhatsAppSideEffect("queue review status template", () => enqueueWhatsAppTemplateForUser({
+        userId: existing.userId,
+        templateName,
+        sourceType: "tax_return",
+        sourceId: doc.id,
+        caseId: existing.userServiceId || null,
+        variables: {
+          assessment_year: existing.assessmentYear ?? "2026-27",
+          review_status: data.status.replace(/_/g, " "),
+        },
+      }));
+    }
 
     res.json({
       success: true,

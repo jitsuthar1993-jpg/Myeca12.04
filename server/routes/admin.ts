@@ -15,6 +15,7 @@ import { buildServiceCaseQueue } from "../utils/case-queue.js";
 import { createReminder } from "../utils/reminders.js";
 import { recordWorkflowEvent } from "../utils/workflow-events.js";
 import { notifyUser } from "../utils/workflow-notifications.js";
+import { enqueueWhatsAppTemplateForUser } from "../services/whatsapp-client-workflow.js";
 
 const API_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
@@ -99,6 +100,14 @@ function normalizeRequestRecord(doc: any): Record<string, any> & { id: string; c
     createdAt: convertTimestamp(data.createdAt),
     updatedAt: convertTimestamp(data.updatedAt),
   };
+}
+
+async function runWhatsAppSideEffect(label: string, task: () => Promise<unknown>) {
+  try {
+    await task();
+  } catch (error) {
+    console.warn(`[WHATSAPP] ${label} failed; primary admin update was already saved.`, error);
+  }
 }
 
 async function listRequestRecords(
@@ -338,6 +347,16 @@ router.patch(
             metadata: { actionUrl: current.userServiceId ? `/dashboard/services/${current.userServiceId}` : "/payments" },
           }),
         ]);
+        await runWhatsAppSideEffect("queue payment link ready template", () => enqueueWhatsAppTemplateForUser({
+          userId: current.userId,
+          templateName: "payment_link_ready",
+          sourceType: "payment_link_request",
+          sourceId: req.params.id,
+          caseId: current.userServiceId ?? null,
+          variables: {
+            service_name: current.serviceTitle || "your MyeCA service",
+          },
+        }));
       }
 
       await appendAdminAudit(req, "payment_link_request_updated", {

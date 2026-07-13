@@ -30,6 +30,11 @@ import { CONTACT } from "@/config/contact";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { captureCampaignAttribution } from "@/lib/campaign-attribution";
+import {
+  buildConsultationPrefillMessage,
+  CONSULTATION_SERVICE_KEYS,
+  type ConsultationServiceKey,
+} from "@/lib/consultation-handoff";
 import { captureTelemetryEvent } from "@/telemetry/browser";
 
 type ServiceProfile = {
@@ -64,7 +69,7 @@ const SERVICE_LABELS: Record<string, string> = {
   general: "General Consultation",
 };
 
-const SERVICE_PROFILES: Record<string, ServiceProfile> = {
+const SERVICE_PROFILES: Record<ConsultationServiceKey, ServiceProfile> = {
   "gst-returns": {
     eyebrow: "GST return help today",
     title: "File GST returns without missed ITC, late fees, or portal confusion.",
@@ -98,9 +103,25 @@ const SERVICE_PROFILES: Record<string, ServiceProfile> = {
       { value: "Business", label: "documents" },
     ],
   },
+  "tax-consultation": {
+    eyebrow: "Tax question review",
+    title: "Clarify the tax question, records, and next step before paid work starts.",
+    subtitle:
+      "Share the tax topic and the records available. The callback confirms the review scope, document checklist, and indicative fee before you proceed.",
+    formTitle: "Request tax consultation",
+    cta: "Request Tax Review",
+    defaultMessage: "I need a review of a tax question and the supporting records required for the next step.",
+    painPoints: ["Tax position is unclear", "Supporting records need review", "Next filing step needs confirmation"],
+    outcomes: ["Question and scope confirmed", "Document checklist by case", "Next step and indicative fee"],
+    stats: [
+      { value: "Scope", label: "confirmed first" },
+      { value: "Records", label: "reviewed by need" },
+      { value: "Next step", label: "documented" },
+    ],
+  },
   general: {
     eyebrow: "Expert consultation",
-    title: "Talk to a verified tax and compliance expert before you decide.",
+    title: "Clarify your tax or compliance question before you decide.",
     subtitle:
       "Tell us what you need. We will connect you with the right CA or compliance specialist and give you a clear next step.",
     formTitle: "Request a callback",
@@ -123,14 +144,25 @@ const SERVICE_KEYS_BY_LABEL = Object.fromEntries(
 const timeSlots = ["Call now", "Today before 1 PM", "Today 2 PM - 4 PM", "Today 4 PM - 6 PM", "Tomorrow morning"];
 const turnoverBands = ["Under ₹20 lakh", "₹20 lakh - ₹1 crore", "₹1 crore - ₹5 crore", "Above ₹5 crore"];
 
+function isConsultationServiceKey(value: string): value is ConsultationServiceKey {
+  return CONSULTATION_SERVICE_KEYS.includes(value as ConsultationServiceKey);
+}
+
+function isGeneratedConsultationMessage(value: string) {
+  return Object.values(SERVICE_PROFILES).some(({ defaultMessage }) => (
+    value === defaultMessage || value.startsWith(`${defaultMessage}\n\nRequest context:`)
+  ));
+}
+
 export default function ExpertConsultationPage() {
   const [location] = useLocation();
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [whatsappConsent, setWhatsappConsent] = useState(false);
   const [isConsultationFormVisible, setIsConsultationFormVisible] = useState(false);
   const attribution = useMemo(() => captureCampaignAttribution(), [location]);
-  const [serviceKey, setServiceKey] = useState("general");
+  const [serviceKey, setServiceKey] = useState<ConsultationServiceKey>("general");
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -148,14 +180,16 @@ export default function ExpertConsultationPage() {
     "";
 
   useEffect(() => {
-    const service = new URLSearchParams(window.location.search).get("service") || "general";
-    const nextServiceKey = SERVICE_PROFILES[service] ? service : "general";
+    const search = window.location.search;
+    const service = new URLSearchParams(search).get("service") || "general";
+    const nextServiceKey = isConsultationServiceKey(service) ? service : "general";
     const nextProfile = SERVICE_PROFILES[nextServiceKey];
+    const nextMessage = buildConsultationPrefillMessage(nextProfile.defaultMessage, search);
     setServiceKey(nextServiceKey);
     setFormData((current) => ({
       ...current,
-      service: SERVICE_LABELS[service] || SERVICE_LABELS.general,
-      message: current.message === SERVICE_PROFILES.general.defaultMessage ? nextProfile.defaultMessage : current.message,
+      service: SERVICE_LABELS[nextServiceKey],
+      message: isGeneratedConsultationMessage(current.message) ? nextMessage : current.message,
     }));
   }, [location]);
 
@@ -215,8 +249,9 @@ export default function ExpertConsultationPage() {
   };
 
   const handleServiceChange = (service: string) => {
-    const nextServiceKey = SERVICE_KEYS_BY_LABEL[service] || "general";
-    const nextProfile = SERVICE_PROFILES[nextServiceKey] || SERVICE_PROFILES.general;
+    const requestedServiceKey = SERVICE_KEYS_BY_LABEL[service] || "general";
+    const nextServiceKey = isConsultationServiceKey(requestedServiceKey) ? requestedServiceKey : "general";
+    const nextProfile = SERVICE_PROFILES[nextServiceKey];
     setServiceKey(nextServiceKey);
     setFormData((current) => ({
       ...current,
@@ -230,17 +265,37 @@ export default function ExpertConsultationPage() {
     setIsSubmitting(true);
 
     try {
+      const consentTimestamp = new Date().toISOString();
+      const phone = formData.phone.trim();
+      const channelConsent = whatsappConsent && phone
+        ? {
+            whatsapp: {
+              optedIn: true,
+              phone,
+              consentText: "I agree to receive MyeCA updates for this consultation request on WhatsApp.",
+              consentTimestamp,
+            },
+          }
+        : undefined;
       await apiRequest("/api/consultation-requests", {
         method: "POST",
         body: JSON.stringify({
           ...formData,
+          phone,
           source: attribution?.partnerCode ? "partner" : `${isAuthenticated ? "workspace_support_request" : "expert_consultation"}:${serviceKey}`,
           formId: isAuthenticated ? "authenticated-support-form" : "expert-consultation-form",
           serviceIntent: serviceKey,
           attribution,
+          ...(channelConsent ? { channelConsent } : {}),
         }),
       });
       captureTelemetryEvent("consultation_request_created", {
+        source: attribution?.partnerCode ? "partner" : "expert_consultation",
+        service_intent: serviceKey,
+        partner_code: attribution?.partnerCode,
+        utm_campaign: attribution?.utmCampaign,
+      });
+      captureTelemetryEvent("expert_consultation_requested", {
         source: attribution?.partnerCode ? "partner" : "expert_consultation",
         service_intent: serviceKey,
         partner_code: attribution?.partnerCode,
@@ -259,6 +314,7 @@ export default function ExpertConsultationPage() {
         company: "",
         turnover: "",
       }));
+      setWhatsappConsent(false);
     } catch {
       toast({
         title: "Could not submit request",
@@ -420,6 +476,18 @@ export default function ExpertConsultationPage() {
                     className="rounded-lg"
                   />
                 </div>
+
+                <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-xs font-semibold leading-5 text-emerald-900">
+                  <input
+                    type="checkbox"
+                    checked={whatsappConsent}
+                    onChange={(event) => setWhatsappConsent(event.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-600"
+                    aria-label="I agree to receive consultation updates on WhatsApp"
+                    disabled={!formData.phone.trim()}
+                  />
+                  <span>Send callback status and document-checklist updates on WhatsApp. We will keep sensitive taxpayer details inside the secure MyeCA workspace.</span>
+                </label>
 
                 <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="mb-0 max-w-xl type-meta leading-5 text-slate-500">
@@ -585,6 +653,18 @@ export default function ExpertConsultationPage() {
                 <Label htmlFor="message">{messageLabel}</Label>
                 <Textarea id="message" value={formData.message} onChange={(event) => handleInputChange("message", event.target.value)} rows={3} className="rounded-lg" />
               </div>
+
+              <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-xs font-semibold leading-5 text-emerald-900">
+                <input
+                  type="checkbox"
+                  checked={whatsappConsent}
+                  onChange={(event) => setWhatsappConsent(event.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-600"
+                  aria-label="I agree to receive consultation updates on WhatsApp"
+                  disabled={!formData.phone.trim()}
+                />
+                <span>Send callback status and document-checklist updates on WhatsApp. Sensitive tax details stay in the secure MyeCA workspace.</span>
+              </label>
 
               <Button type="submit" size="lg" disabled={isSubmitting} className="h-12 w-full rounded-lg bg-blue-600 text-base font-normal text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700">
                 {isSubmitting ? (

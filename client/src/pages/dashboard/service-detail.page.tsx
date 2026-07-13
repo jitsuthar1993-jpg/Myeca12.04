@@ -7,6 +7,7 @@ import {
   Briefcase,
   CheckCircle2,
   Clock,
+  Copy,
   CreditCard,
   Download,
   FileText,
@@ -79,6 +80,13 @@ type ServiceCaseResponse = {
   reminders?: Reminder[];
 };
 
+type WhatsAppCaseLink = {
+  id: string;
+  code: string;
+  waLink?: string | null;
+  expiresAt?: string;
+};
+
 function statusLabel(value?: string | null) {
   return (value || 'pending').replace(/_/g, ' ');
 }
@@ -100,6 +108,7 @@ export default function ServiceDetailPage() {
   const [uploadName, setUploadName] = useState('');
   const [uploadCategory, setUploadCategory] = useState('other');
   const [note, setNote] = useState('');
+  const [whatsappCaseLink, setWhatsappCaseLink] = useState<WhatsAppCaseLink | null>(null);
 
   const { data, isLoading, isError } = useQuery<ServiceCaseResponse>({
     queryKey: ['/api/user-services', serviceId],
@@ -169,6 +178,29 @@ export default function ServiceDetailPage() {
       toast({ title: 'Upload failed', description: error?.message || 'Please try again.', variant: 'destructive' });
     },
   });
+
+  const whatsappLinkMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('/api/whatsapp/client/case-links', {
+        method: 'POST',
+        body: JSON.stringify({ userServiceId: serviceId }),
+      });
+      return response.json() as Promise<{ success: boolean; link: WhatsAppCaseLink }>;
+    },
+    onSuccess: (response) => {
+      setWhatsappCaseLink(response.link);
+      toast({ title: 'WhatsApp code created', description: 'Use the code to connect this service case.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Could not create WhatsApp code', description: error?.message || 'Please try again.', variant: 'destructive' });
+    },
+  });
+
+  const copyWhatsAppCode = async () => {
+    if (!whatsappCaseLink?.code || typeof navigator === 'undefined') return;
+    await navigator.clipboard?.writeText(whatsappCaseLink.code);
+    toast({ title: 'Code copied', description: 'The WhatsApp case code is ready to paste.' });
+  };
 
   const handleDownload = async (doc: LinkedDocument) => {
     const token = await getAuthToken();
@@ -289,6 +321,42 @@ export default function ServiceDetailPage() {
 
         <div className="grid gap-5 xl:grid-cols-[1fr_420px] xl:gap-8">
           <div className="space-y-5 md:space-y-6">
+            <Card className="rounded-lg border-emerald-200 bg-emerald-50 shadow-none">
+              <CardHeader className="border-b border-emerald-100 p-4 md:p-6">
+                <CardTitle className="type-card-title font-black text-emerald-950">WhatsApp Document Intake</CardTitle>
+                <CardDescription className="type-support text-emerald-800">Connect this case before sending PDF or image files.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 p-4 md:p-6">
+                {whatsappCaseLink ? (
+                  <div className="rounded-xl border border-emerald-200 bg-white p-4">
+                    <p className="type-meta font-black uppercase tracking-widest text-emerald-700">One-time code</p>
+                    <p className="mt-2 text-2xl font-black tracking-widest text-emerald-950">{whatsappCaseLink.code}</p>
+                  </div>
+                ) : null}
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+                  <Button
+                    disabled={whatsappLinkMutation.isPending}
+                    onClick={() => whatsappLinkMutation.mutate()}
+                    className="h-11 rounded-xl bg-emerald-700 text-white hover:bg-emerald-800"
+                  >
+                    {whatsappLinkMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MessageSquare className="mr-2 h-4 w-4" />}
+                    Connect WhatsApp
+                  </Button>
+                  {whatsappCaseLink ? (
+                    <Button variant="outline" className="h-11 rounded-xl border-emerald-200 bg-white text-emerald-800" onClick={copyWhatsAppCode}>
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy Code
+                    </Button>
+                  ) : null}
+                </div>
+                {whatsappCaseLink?.waLink ? (
+                  <a href={whatsappCaseLink.waLink} target="_blank" rel="noreferrer" className="inline-flex text-sm font-bold text-emerald-800 underline underline-offset-4">
+                    Open WhatsApp with code
+                  </a>
+                ) : null}
+              </CardContent>
+            </Card>
+
             <Card className="rounded-lg border-slate-200 shadow-none">
               <CardHeader className="border-b border-slate-50 p-4 md:p-6">
                 <CardTitle className="type-card-title font-black">Case Timeline</CardTitle>
