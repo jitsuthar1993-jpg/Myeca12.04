@@ -4,6 +4,8 @@ import { Link } from 'wouter';
 import {
   ArrowRight,
   BookOpen,
+  Bookmark,
+  BookmarkCheck,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -45,6 +47,14 @@ import {
   type PublicBlogSummaryCompat as BlogSummary,
 } from '@/lib/public-blog-data';
 import { getBlogCoverImageSrc, isGeneratedBlogCover } from '@/lib/blog-cover-assets';
+import {
+  BLOG_SAVED_GUIDES_STORAGE_KEY,
+  isBlogGuideSaved,
+  readSavedBlogGuides,
+  removeSavedBlogGuide,
+  toggleSavedBlogGuide,
+  type SavedBlogGuide,
+} from '@/lib/blog-saved-guides';
 import { queryClient } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
 import type { BlogCategory } from '@shared/blog';
@@ -92,6 +102,51 @@ const SEASON_SHORTCUTS = [
     href: '/blog/itr-form-selection-master-guide-ay-2026-27',
   },
 ];
+
+const MOBILE_ITR_JOURNEYS = [
+  { label: 'Form finder', href: '/itr/form-recommender', search: 'which itr form' },
+  { label: 'Form 16 + AIS', href: '/blog?search=form+16+ais', search: 'form 16 ais' },
+  { label: 'Capital gains', href: '/blog?category=capital-gains', category: 'capital-gains' },
+  { label: 'Refund status', href: '/blog?category=refunds-notices', category: 'refunds-notices' },
+  { label: 'NRI filing', href: '/blog?category=foreign-assets-nri-tax', category: 'foreign-assets-nri-tax' },
+];
+
+type BlogFilterState = {
+  search: string;
+  category: string;
+  audience: string;
+  page: number;
+};
+
+function readBlogFiltersFromUrl(): BlogFilterState {
+  if (typeof window === 'undefined') {
+    return { search: '', category: 'all', audience: 'all', page: 1 };
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const pageParam = Number(params.get('page'));
+  return {
+    search: params.get('search') ?? '',
+    category: params.get('category') ?? 'all',
+    audience: params.get('audience') ?? 'all',
+    page: Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1,
+  };
+}
+
+function syncBlogFiltersToUrl(filters: BlogFilterState) {
+  if (typeof window === 'undefined') return;
+
+  const params = new URLSearchParams();
+  if (filters.search.trim()) params.set('search', filters.search.trim());
+  if (filters.category !== 'all') params.set('category', filters.category);
+  if (filters.audience !== 'all') params.set('audience', filters.audience);
+  if (filters.page > 1) params.set('page', String(filters.page));
+
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+  const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (nextUrl !== currentUrl) window.history.replaceState(window.history.state, '', nextUrl);
+}
 
 function normalizeCategories(
   posts: BlogSummary[],
@@ -160,12 +215,59 @@ function getPaginationItems(current: number, total: number): Array<number | 'ell
   return items;
 }
 
+function SavedGuideButton({
+  post,
+  savedGuides,
+  onSave,
+  onRemove,
+  className,
+}: {
+  post: BlogSummary;
+  savedGuides: SavedBlogGuide[];
+  onSave: (post: BlogSummary) => void;
+  onRemove: (slug: string) => void;
+  className?: string;
+}) {
+  const isSaved = isBlogGuideSaved(post.slug, savedGuides);
+
+  return (
+    <button
+      type="button"
+      aria-label="Save guide"
+      aria-pressed={isSaved}
+      onClick={() => {
+        if (isSaved) {
+          onRemove(post.slug);
+          return;
+        }
+        onSave(post);
+      }}
+      className={cn(
+        'inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3 text-xs font-black shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+        isSaved
+          ? 'border-blue-600 bg-blue-600 text-white'
+          : 'border-blue-100 bg-white/95 text-blue-700 hover:border-blue-300 hover:bg-blue-50',
+        className
+      )}
+    >
+      {isSaved ? (
+        <BookmarkCheck className="h-3.5 w-3.5" aria-hidden="true" />
+      ) : (
+        <Bookmark className="h-3.5 w-3.5" aria-hidden="true" />
+      )}
+      {isSaved ? 'Saved' : 'Save'}
+    </button>
+  );
+}
+
 export default function BlogPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedAudience, setSelectedAudience] = useState('all');
-  const [page, setPage] = useState(1);
+  const [initialFilters] = useState(() => readBlogFiltersFromUrl());
+  const [searchQuery, setSearchQuery] = useState(initialFilters.search);
+  const [selectedCategory, setSelectedCategory] = useState(initialFilters.category);
+  const [selectedAudience, setSelectedAudience] = useState(initialFilters.audience);
+  const [page, setPage] = useState(initialFilters.page);
   const [lastRead, setLastRead] = useState<BlogLastRead | null>(() => readBlogLastRead());
+  const [savedGuides, setSavedGuides] = useState<SavedBlogGuide[]>(() => readSavedBlogGuides());
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
 
@@ -245,6 +347,13 @@ export default function BlogPage() {
     setPage(1);
   };
 
+  const applyJourney = (journey: (typeof MOBILE_ITR_JOURNEYS)[number]) => {
+    setSearchQuery(journey.search ?? '');
+    setSelectedCategory(journey.category ?? 'all');
+    setSelectedAudience('individuals');
+    setPage(1);
+  };
+
   const goToPage = (nextPage: number) => {
     if (nextPage === page || nextPage < 1) return;
     if (totalPages && nextPage > totalPages) return;
@@ -264,6 +373,24 @@ export default function BlogPage() {
     clearBlogLastRead();
     setLastRead(null);
   };
+
+  const saveGuide = (post: BlogSummary) => {
+    const next = toggleSavedBlogGuide(post).guides;
+    setSavedGuides(next);
+  };
+
+  const removeSavedGuide = (slug: string) => {
+    setSavedGuides(removeSavedBlogGuide(slug));
+  };
+
+  useEffect(() => {
+    syncBlogFiltersToUrl({
+      search: searchQuery,
+      category: selectedCategory,
+      audience: selectedAudience,
+      page,
+    });
+  }, [page, searchQuery, selectedAudience, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
@@ -293,13 +420,58 @@ export default function BlogPage() {
                   Guides
                 </span>
                 <h1 className="type-page-title relative font-black text-blue-700">
-                  ITR Filing & Tax Guides AY 2026-27
+                  <span className="md:hidden">Find your ITR answer</span>
+                  <span className="hidden md:inline">ITR Filing & Tax Guides AY 2026-27</span>
                 </h1>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
                 Fresh evidence-led explainers for ITR filing, tax planning, refunds, notices, GST,
                 capital gains, and business compliance, with filing paths when you need expert help.
               </p>
+              <div className="mt-5 space-y-3 md:hidden">
+                <div className="flex self-start items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-50">
+                  <Search className="h-5 w-5 shrink-0 text-blue-500" />
+                  <input
+                    id="mobile-blog-search"
+                    aria-label="Search ITR guides"
+                    className="type-body w-full bg-transparent font-bold text-slate-950 outline-none placeholder:text-slate-400"
+                    placeholder="Search Form 16, AIS, refund..."
+                    value={searchQuery}
+                    onChange={(event) => {
+                      setSearchQuery(event.target.value);
+                      setPage(1);
+                    }}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      aria-label="Clear mobile search"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setPage(1);
+                      }}
+                      className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <div
+                  aria-label="ITR season shortcuts"
+                  className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  {MOBILE_ITR_JOURNEYS.map((journey) => (
+                    <button
+                      key={journey.label}
+                      type="button"
+                      onClick={() => applyJourney(journey)}
+                      className="min-h-10 shrink-0 snap-start rounded-full border border-blue-100 bg-blue-50 px-4 text-sm font-black text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    >
+                      {journey.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="mt-5 flex items-center gap-2 text-sm font-black">
                 <Link href="/">
                   <span className="text-blue-600 transition hover:text-blue-700">Home</span>
@@ -364,7 +536,7 @@ export default function BlogPage() {
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         <div className="mb-5 rounded-lg border border-slate-200 bg-white p-3 shadow-sm md:mb-6">
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_430px]">
-            <div className="flex self-start items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-50">
+            <div className="hidden self-start items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-lg focus-within:shadow-blue-50 md:flex">
               <Search className="h-5 w-5 shrink-0 text-blue-500" />
               <input
                 id="blog-search"
@@ -596,13 +768,68 @@ export default function BlogPage() {
                   </div>
                 )}
 
+                {savedGuides.length > 0 && showDiscovery && (
+                  <section
+                    aria-label="Saved guides"
+                    data-storage-key={BLOG_SAVED_GUIDES_STORAGE_KEY}
+                    className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm md:hidden"
+                  >
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">
+                          Saved guides
+                        </p>
+                        <h2 className="mt-1 text-base font-black text-slate-950">
+                          Continue your ITR reading list
+                        </h2>
+                      </div>
+                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+                        {savedGuides.length}
+                      </span>
+                    </div>
+                    <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                      {savedGuides.slice(0, 6).map((guide) => (
+                        <div
+                          key={guide.slug}
+                          className="w-[240px] shrink-0 snap-start rounded-xl border border-slate-100 bg-slate-50 p-3"
+                        >
+                          <Link href={`/blog/${guide.slug}`}>
+                            <span className="block text-sm font-black leading-snug text-slate-950">
+                              {guide.title}
+                            </span>
+                          </Link>
+                          <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-600">
+                            {guide.excerpt || guide.category}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => removeSavedGuide(guide.slug)}
+                            className="mt-3 text-xs font-black text-emerald-700 transition hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 {featuredPost && (
-                  <BlogPostCard
-                    post={featuredPost}
-                    variant="hero"
-                    priority
-                    onPrefetch={preloadBlogArticle}
-                  />
+                  <div className="relative">
+                    <SavedGuideButton
+                      post={featuredPost}
+                      savedGuides={savedGuides}
+                      onSave={saveGuide}
+                      onRemove={removeSavedGuide}
+                      className="absolute right-3 top-3 z-20 md:right-4 md:top-4"
+                    />
+                    <BlogPostCard
+                      post={featuredPost}
+                      variant="hero"
+                      priority
+                      onPrefetch={preloadBlogArticle}
+                    />
+                  </div>
                 )}
 
                 <section className="mobile-first-content-cta rounded-lg border border-blue-100 bg-white p-4 shadow-sm md:hidden">
@@ -621,11 +848,20 @@ export default function BlogPage() {
                         Check my ITR form in 60 sec <ArrowRight className="h-4 w-4" />
                       </span>
                     </Link>
-                    <Link href="/expert-consultation?service=blog-reader">
+                    <Link href="/which-itr-form-to-file?source=mobile_blog_start_here">
                       <span className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-4 text-sm font-black text-blue-700 transition hover:bg-blue-100">
-                        Talk to Expert
+                        Read the form selection guide
                       </span>
                     </Link>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {MOBILE_ITR_JOURNEYS.slice(1).map((journey) => (
+                      <Link key={journey.href} href={journey.href}>
+                        <span className="inline-flex min-h-9 items-center rounded-full border border-slate-200 bg-slate-50 px-3 text-xs font-black text-slate-700">
+                          {journey.label}
+                        </span>
+                      </Link>
+                    ))}
                   </div>
                 </section>
 
@@ -653,7 +889,16 @@ export default function BlogPage() {
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   {gridPosts.map((post) => (
-                    <BlogPostCard key={post.id} post={post} onPrefetch={preloadBlogArticle} />
+                    <div key={post.id} className="relative">
+                      <SavedGuideButton
+                        post={post}
+                        savedGuides={savedGuides}
+                        onSave={saveGuide}
+                        onRemove={removeSavedGuide}
+                        className="absolute right-3 top-3 z-20"
+                      />
+                      <BlogPostCard post={post} onPrefetch={preloadBlogArticle} />
+                    </div>
                   ))}
                 </div>
 

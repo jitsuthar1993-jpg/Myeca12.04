@@ -5,6 +5,8 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
+  Bookmark,
+  BookmarkCheck,
   Calculator,
   CalendarDays,
   CheckCircle2,
@@ -48,6 +50,13 @@ import {
   type PublicBlogDetailCompat as BlogDetail,
 } from "@/lib/public-blog-data";
 import { getBlogConversionLinks } from "@/lib/blog-conversion-links";
+import {
+  isBlogGuideSaved,
+  readSavedBlogGuides,
+  removeSavedBlogGuide,
+  toggleSavedBlogGuide,
+  type SavedBlogGuide,
+} from "@/lib/blog-saved-guides";
 import { cn } from "@/lib/utils";
 import { sanitizeHTML } from "@/lib/sanitize";
 import {
@@ -310,6 +319,77 @@ function MobileTocDrawer({
   );
 }
 
+function MobileArticleActionRail({
+  post,
+  savedGuides,
+  hasToc,
+  nextHref,
+  onOpenToc,
+  onSave,
+  onRemove,
+}: {
+  post: BlogDetail;
+  savedGuides: SavedBlogGuide[];
+  hasToc: boolean;
+  nextHref: string;
+  onOpenToc: () => void;
+  onSave: (post: BlogDetail) => void;
+  onRemove: (slug: string) => void;
+}) {
+  const isSaved = isBlogGuideSaved(post.slug, savedGuides);
+
+  return (
+    <nav
+      aria-label="Mobile article actions"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 px-3 py-2 shadow-[0_-12px_32px_rgba(15,23,42,0.12)] backdrop-blur xl:hidden"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}
+    >
+      <div className="mx-auto grid max-w-md grid-cols-3 gap-2">
+        <button
+          type="button"
+          disabled={!hasToc}
+          onClick={onOpenToc}
+          className="inline-flex min-h-11 flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs font-black text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <BookOpen className="mb-0.5 h-4 w-4" aria-hidden="true" />
+          Contents
+        </button>
+        <button
+          type="button"
+          aria-label="Save guide"
+          aria-pressed={isSaved}
+          onClick={() => {
+            if (isSaved) {
+              onRemove(post.slug);
+              return;
+            }
+            onSave(post);
+          }}
+          className={cn(
+            "inline-flex min-h-11 flex-col items-center justify-center rounded-lg border px-2 text-xs font-black transition",
+            isSaved
+              ? "border-blue-600 bg-blue-600 text-white"
+              : "border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100"
+          )}
+        >
+          {isSaved ? (
+            <BookmarkCheck className="mb-0.5 h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Bookmark className="mb-0.5 h-4 w-4" aria-hidden="true" />
+          )}
+          {isSaved ? "Saved" : "Save guide"}
+        </button>
+        <Link href={nextHref}>
+          <span className="inline-flex min-h-11 flex-col items-center justify-center rounded-lg bg-blue-600 px-2 text-xs font-black text-white transition hover:bg-blue-700">
+            <ArrowRight className="mb-0.5 h-4 w-4" aria-hidden="true" />
+            Next guide
+          </span>
+        </Link>
+      </div>
+    </nav>
+  );
+}
+
 function ArticleSkeleton() {
   return (
     <div className="min-h-screen bg-white">
@@ -344,8 +424,8 @@ export default function BlogPostPage() {
   const { slug } = useParams() as { slug?: string };
   const [activeTocId, setActiveTocId] = useState("");
   const [isTocDrawerOpen, setIsTocDrawerOpen] = useState(false);
-  const [showTocChip, setShowTocChip] = useState(false);
   const inlineTocRef = useRef<HTMLDivElement | null>(null);
+  const [savedGuides, setSavedGuides] = useState<SavedBlogGuide[]>(() => readSavedBlogGuides());
   const [isCtaVisible, setIsCtaVisible] = useState(() => {
     try {
       return sessionStorage.getItem(CTA_DISMISS_STORAGE_KEY) !== "1";
@@ -423,21 +503,6 @@ export default function BlogPostPage() {
     return () => observer.disconnect();
   }, [toc]);
 
-  // Show the floating "Contents" chip once the reader scrolls past the inline TOC.
-  useEffect(() => {
-    const el = inlineTocRef.current;
-    if (!el || toc.length === 0) {
-      setShowTocChip(false);
-      return;
-    }
-
-    const observer = new IntersectionObserver(([entry]) => {
-      setShowTocChip(!entry.isIntersecting && entry.boundingClientRect.bottom < 0);
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [toc]);
-
   useEffect(() => {
     if (!post?.slug || !post.title) return;
     writeBlogLastRead({ slug: post.slug, title: post.title, at: new Date().toISOString() });
@@ -473,6 +538,7 @@ export default function BlogPostPage() {
   const ctaHref = post.ctaHref || "/expert-consultation";
   const conversionLinks = getBlogConversionLinks(post);
   const verifiedReviewer = getVerifiedReviewer(post);
+  const nextGuideHref = relatedPosts[0]?.slug ? `/blog/${relatedPosts[0].slug}` : "/blog";
 
   const dismissCta = () => {
     setIsCtaVisible(false);
@@ -489,8 +555,16 @@ export default function BlogPostPage() {
     window.setTimeout(() => scrollToHeading(id), 350);
   };
 
+  const saveGuide = (guide: BlogDetail) => {
+    setSavedGuides(toggleSavedBlogGuide(guide).guides);
+  };
+
+  const removeSavedGuide = (guideSlug: string) => {
+    setSavedGuides(removeSavedBlogGuide(guideSlug));
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-[calc(env(safe-area-inset-bottom)+104px)] xl:pb-0">
       <MetaSEO
         title={post.seoTitle || `${post.title} | MyeCA.in Knowledge Hub`}
         description={post.seoDescription || post.excerpt || `Read ${post.title} on MyeCA.in.`}
@@ -926,17 +1000,15 @@ export default function BlogPostPage() {
         </aside>
       </main>
 
-      {/* Floating mobile TOC chip + drawer */}
-      {toc.length > 0 && showTocChip && (
-        <button
-          type="button"
-          onClick={() => setIsTocDrawerOpen(true)}
-          className="fixed bottom-[calc(env(safe-area-inset-bottom)+84px)] left-4 z-40 inline-flex min-h-11 items-center gap-2 rounded-full bg-blue-600 px-4 text-sm font-bold text-white shadow-lg shadow-blue-300/50 transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 xl:hidden"
-        >
-          <BookOpen className="h-4 w-4" aria-hidden="true" />
-          Contents
-        </button>
-      )}
+      <MobileArticleActionRail
+        post={post}
+        savedGuides={savedGuides}
+        hasToc={toc.length > 0}
+        nextHref={nextGuideHref}
+        onOpenToc={() => setIsTocDrawerOpen(true)}
+        onSave={saveGuide}
+        onRemove={removeSavedGuide}
+      />
       <MobileTocDrawer
         toc={toc}
         activeId={activeTocId}
@@ -947,7 +1019,7 @@ export default function BlogPostPage() {
 
       <ScrollToTop
         threshold={600}
-        className="bottom-[calc(env(safe-area-inset-bottom)+84px)] right-4 z-40 lg:bottom-8 lg:right-8"
+        className="bottom-[calc(env(safe-area-inset-bottom)+148px)] right-4 z-40 lg:bottom-8 lg:right-8"
       />
     </div>
   );
