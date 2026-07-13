@@ -1302,8 +1302,8 @@ export default function ITRStepByStepGuide() {
                               <div className="flex items-start space-x-3">
                                 <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                                 <div>
-                                  <p className="font-medium">All details verified</p>
-                                  <p className="text-sm text-slate-600">Your tax computation is complete and accurate</p>
+                                  <p className="font-medium">Review before submission</p>
+                                  <p className="text-sm text-slate-600">Check the computation against your source documents</p>
                                 </div>
                               </div>
 

@@ -90,7 +90,7 @@ export default function LearnPage() {
               {[
                 { label: "Lesson Outlines", value: `${VIDEO_TUTORIALS.length}`, icon: Play, color: "bg-red-500" },
                 { label: "Tax Guides", value: `${TAX_GUIDES.length}`, icon: BookOpen, color: "bg-emerald-500" },
-                { label: "Expert Profiles", value: `${EXPERTS.length}`, icon: Users, color: "bg-purple-500" },
+                { label: "Consultation Areas", value: `${EXPERTS.length}`, icon: Users, color: "bg-purple-500" },
                 { label: "Topic Areas", value: `${VIDEO_CATEGORIES.length}`, icon: TrendingUp, color: "bg-blue-500" }
               ].map((stat, i) => (
                 <div key={i} className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-white/15 transition-colors">
@@ -185,11 +185,11 @@ export default function LearnPage() {
                       Expert Consultation
                     </h3>
                     <p className="text-slate-600 mb-6 leading-relaxed">
-                      Book 1-on-1 video calls with credential-checked tax professionals where available.
+                      Book a video call for a defined tax question and document set.
                     </p>
                     <div className="flex items-center text-sm font-medium text-purple-600 bg-purple-50 w-fit px-3 py-1 rounded-full">
                       <Users className="h-3 w-3 mr-1.5" />
-                      {EXPERTS.length} experts
+                      {EXPERTS.length} service areas
                     </div>
                   </CardContent>
                 </Card>
@@ -323,7 +323,7 @@ export default function LearnPage() {
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <Award className="h-5 w-5 text-purple-600" />
                 </div>
-                Our Tax Experts
+                Tax Consultation Services
               </h2>
               <p className="text-slate-500 mt-1 ml-11">Discuss a defined question and document set</p>
             </div>
@@ -343,7 +343,7 @@ export default function LearnPage() {
                     <p className="text-sm text-purple-600 font-medium">{expert.title}</p>
                     <div className="flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded-full shadow-sm">
                       <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      <span className="text-sm font-bold text-slate-700">Verified profile</span>
+                      <span className="text-sm font-bold text-slate-700">Scope agreed before payment</span>
                     </div>
                   </div>
                   <div className="p-6">
@@ -353,7 +353,7 @@ export default function LearnPage() {
                       ))}
                     </div>
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                      <span className="text-sm font-medium text-slate-500">{expert.experience} years exp</span>
+                      <span className="text-sm font-medium text-slate-500">Document-led review</span>
                       <Button size="sm" className="bg-purple-600 hover:bg-purple-700" asChild>
                         <Link href="/learn/consultations">Book Call</Link>
                       </Button>
@@ -369,7 +369,6 @@ export default function LearnPage() {
         <section>
           <div className="relative rounded-3xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
 
             <div className="relative z-10 p-12 md:p-20 text-center text-white">

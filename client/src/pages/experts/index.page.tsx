@@ -3,49 +3,35 @@ import { m } from "framer-motion";
 import { Link } from "wouter";
 import {
   Award,
-  CheckCircle2,
-  Linkedin,
   MessageSquare,
-  ShieldCheck,
   Briefcase,
-  GraduationCap,
   ArrowRight
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LazyImage } from "@/components/ui/lazy-image";
 
 const specialists = [
   {
-    id: "ca-rahul-sharma",
+    id: "tax-gst-review",
     name: "Tax Review Team",
-    role: "Senior tax consultants",
-    specialty: "International Taxation & GST",
-    exp: "12+ Years",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
-    bio: "Credential-checked professionals support complex GST and cross-border tax compliance cases.",
+    role: "International tax and GST review",
+    bio: "Discuss GST and cross-border tax compliance questions against a defined document set.",
     tags: ["GST Expert", "NRI Taxation", "Corporate Advisory"]
   },
   {
-    id: "ca-priya-nair",
+    id: "startup-compliance-review",
     name: "Startup Compliance Team",
-    role: "Company law advisors",
-    specialty: "Company Law & Startup Funding",
-    exp: "8 Years",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
-    bio: "Advisors help founders understand incorporation, funding compliance, and ESOP documentation.",
+    role: "Company law and startup review",
+    bio: "Discuss incorporation, funding compliance, and ESOP documentation for a specific business case.",
     tags: ["Startup Registration", "Funding", "Compliance"]
   },
   {
-    id: "ca-amit-verma",
+    id: "direct-tax-review",
     name: "Direct Tax Team",
-    role: "ITR and notice specialists",
-    specialty: "ITR Filing & Notice Handling",
-    exp: "15+ Years",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-    bio: "Specialists help taxpayers respond accurately to notices and claim eligible refunds with documentation.",
+    role: "ITR and notice review",
+    bio: "Discuss ITR positions, notice deadlines, and supporting records before deciding the next step.",
     tags: ["ITR Expert", "Tax Scrutiny", "Tax Advisory"]
   }
 ];
@@ -56,8 +42,8 @@ export default function ExpertsIndexPage() {
       <div className="min-h-screen bg-slate-50">
       <MetaSEO
         title="Expert Review And Tax Advisory | MyeCA.in"
-        description="Understand the review scope available from credential-checked tax, GST, and compliance professionals through MyeCA.in."
-        keywords={["tax experts India", "startup consultants", "credential checked tax professionals"]}
+        description="Compare available tax, GST, and compliance review areas and request support for a defined question."
+        keywords={["tax review India", "startup compliance consultation", "income tax consultation"]}
         breadcrumbs={[
           { name: "Home", url: "/" },
           { name: "Experts", url: "/experts" }
@@ -72,14 +58,14 @@ export default function ExpertsIndexPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <Badge className="bg-blue-100 text-blue-600 mb-6 px-4 py-1 text-sm font-bold border-blue-200">
-              Credential-Checked Professionals
+              Scope-Based Consultation
             </Badge>
             <h1 className="type-page-title text-slate-900 mb-6">
-              Guidance from <br />
-              <span className="text-blue-600">Tax And Compliance Reviewers</span>
+              Service Teams by <br />
+              <span className="text-blue-600">Tax And Compliance Review Area</span>
             </h1>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Review scope, credentials, and document requirements are shared for eligible engagements before paid work begins.
+              The question, document list, deliverable, and fee are confirmed before paid work begins.
             </p>
           </m.div>
         </div>
@@ -98,19 +84,12 @@ export default function ExpertsIndexPage() {
                 transition={{ delay: i * 0.1 }}
               >
                 <Card className="group border-slate-200 hover:border-blue-300 hover:shadow-2xl transition-all duration-500 overflow-hidden bg-white">
-                  <div className="relative h-64 overflow-hidden">
-                    <LazyImage
-                      src={expert.image}
-                      alt={expert.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                      <div>
-                        <h3 className="text-xl font-bold text-white mb-0">{expert.name}</h3>
-                        <p className="text-blue-300 text-xs font-bold uppercase tracking-widest">{expert.role}</p>
-                      </div>
+                  <div className="border-b border-slate-800 bg-slate-900 p-8">
+                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/15">
+                      <Briefcase className="h-6 w-6 text-blue-300" />
                     </div>
+                    <h3 className="mb-1 text-xl font-bold text-white">{expert.name}</h3>
+                    <p className="text-xs font-bold uppercase tracking-widest text-blue-300">{expert.role}</p>
                   </div>
 
                   <CardContent className="pt-6 pb-8">
@@ -122,8 +101,8 @@ export default function ExpertsIndexPage() {
                       ))}
                     </div>
 
-                    <p className="text-slate-600 text-sm mb-6 line-clamp-2 leading-relaxed italic">
-                      "{expert.bio}"
+                    <p className="text-slate-600 text-sm mb-6 line-clamp-2 leading-relaxed">
+                      {expert.bio}
                     </p>
 
                     <div className="flex items-center justify-between pt-6 border-t border-slate-100">
@@ -131,7 +110,7 @@ export default function ExpertsIndexPage() {
                         <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
                           <Briefcase className="w-4 h-4 text-blue-600" />
                         </div>
-                        <span className="text-xs font-bold text-slate-700">{expert.exp}</span>
+                        <span className="text-xs font-bold text-slate-700">Scope discussed first</span>
                       </div>
 
                       <Link href={`/experts/${expert.id}`}>
@@ -157,9 +136,9 @@ export default function ExpertsIndexPage() {
             <h2 className="text-3xl font-black mb-6 text-slate-900">Choose Support for the Question You Need Reviewed</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: ShieldCheck, title: "Credential Checked", desc: "Qualification details reviewed" },
-                { icon: Award, title: "Scope-Led Review", desc: "Matched to the service need" },
-                { icon: MessageSquare, title: "Direct Contact", desc: "Consult directly with the pro" }
+                { icon: Briefcase, title: "Review Area", desc: "Choose the question you need reviewed" },
+                { icon: Award, title: "Scope Before Payment", desc: "Confirm the deliverable and document list" },
+                { icon: MessageSquare, title: "Consultation Route", desc: "Send case details through the support form" }
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center">
                   <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">

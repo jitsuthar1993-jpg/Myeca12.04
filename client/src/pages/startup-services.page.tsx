@@ -26,8 +26,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getGradientColorClass } from '@/utils/colorClasses';
+import { getColorClasses, getGradientColorClass } from '@/utils/colorClasses';
 import { SectionHeader } from '@/components/ui/section-header';
+import { buildConsultationHref } from '@/lib/consultation-handoff';
 
 const StartupServicesPage = () => {
 
@@ -296,7 +297,7 @@ const StartupServicesPage = () => {
                 <Card className="group h-full hover:shadow-xl transition-all duration-300 border-l-4 border-l-emerald-500">
                   <CardContent className="p-8">
                     <div className="flex items-start justify-between mb-6">
-                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 bg-${service.color}-100 group-hover:bg-${service.color}-600 text-${service.color}-600 group-hover:text-white`}>
+                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${getColorClasses(service.color).bg} ${getColorClasses(service.color).text}`}>
                         <service.icon className="w-8 h-8" />
                       </div>
                       <div className="text-right">
@@ -497,8 +498,8 @@ const StartupServicesPage = () => {
               >
                 <Card className="bg-white border-slate-200 h-full hover:shadow-lg transition-shadow">
                   <CardContent className="p-8">
-                    <div className={`w-12 h-12 bg-${advantage.color}-100 rounded-lg flex items-center justify-center mb-6`}>
-                      <advantage.icon className={`w-6 h-6 text-${advantage.color}-600`} />
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${getColorClasses(advantage.color).bg}`}>
+                      <advantage.icon className={`w-6 h-6 ${getColorClasses(advantage.color).text}`} />
                     </div>
 
                     <h3 className="text-xl font-bold mb-4 text-slate-900">{advantage.title}</h3>
@@ -574,7 +575,7 @@ const StartupServicesPage = () => {
               >
                 <Card className="text-center hover:shadow-lg transition-shadow h-full">
                   <CardContent className="p-6">
-                    <div className={`w-16 h-16 bg-gradient-to-r from-${factor.color}-500 to-${factor.color}-600 rounded-full flex items-center justify-center mx-auto mb-4`}>
+                    <div className={`w-16 h-16 bg-gradient-to-r ${getGradientColorClass(factor.color)} rounded-full flex items-center justify-center mx-auto mb-4`}>
                       <factor.icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-3">{factor.title}</h3>
@@ -607,14 +608,21 @@ const StartupServicesPage = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 px-8">
-                  <Rocket className="w-5 h-5 mr-2" />
-                  Start Your Package Today
-                </Button>
-                <Button size="lg" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 px-8">
-                  <Phone className="w-5 h-5 mr-2" />
-                  Request Startup Consultation
-                </Button>
+                <Link href="/pricing">
+                  <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 px-8">
+                    <Rocket className="w-5 h-5 mr-2" />
+                    Review Packages
+                  </Button>
+                </Link>
+                <Link href={buildConsultationHref("business-tax-review", {
+                  source: "startup-services",
+                  serviceArea: "startup-services",
+                })}>
+                  <Button size="lg" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 px-8">
+                    <Phone className="w-5 h-5 mr-2" />
+                    Request Startup Consultation
+                  </Button>
+                </Link>
               </div>
 
               <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-600">

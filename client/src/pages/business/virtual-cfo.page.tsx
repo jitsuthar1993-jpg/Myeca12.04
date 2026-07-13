@@ -40,6 +40,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { buildConsultationHref } from "@/lib/consultation-handoff";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { formatInr } from "@/components/platform/compliance-ui";
 
@@ -328,10 +329,10 @@ export default function VirtualCFOPage() {
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 className="absolute -bottom-6 -left-10 p-5 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 max-w-[200px]"
               >
-                <p className="text-xs font-bold text-slate-600 mb-2 italic">"The virtual CFO workflow helped us review monthly finance tasks in one place."</p>
+                <p className="text-xs font-bold text-slate-600 mb-2">Monthly close checklist and reporting questions</p>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-blue-100" />
-                  <span className="type-meta font-bold text-slate-900">Anonymized founder note</span>
+                  <span className="type-meta font-bold text-slate-900">Illustrative workflow item</span>
                 </div>
               </m.div>
             </m.div>
@@ -478,20 +479,26 @@ export default function VirtualCFOPage() {
 
             <div className="relative z-10">
               <h2 className="type-section-title mb-8">
-                Ready to Accelerate Your <span className="text-blue-200">Growth?</span>
+                Ready to Define Your <span className="text-blue-200">Finance Scope?</span>
               </h2>
               <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto leading-relaxed">
-                Join 500+ high-growth companies that trust MyeCA for their financial strategic leadership.
-                Get started with a free financial audit today.
+                Discuss the reports, reconciliations, compliance calendar, and review cadence your business needs before choosing a service scope.
               </p>
               <div className="flex flex-wrap justify-center gap-6">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-black h-16 px-10 rounded-2xl shadow-xl transition-all hover:-translate-y-1">
-                  Start Your Free Audit
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 font-bold h-16 px-10 rounded-2xl backdrop-blur-sm transition-all">
-                  Talk to a CFO
-                </Button>
+                <Link href={buildConsultationHref("business-tax-review", {
+                  source: "virtual-cfo",
+                  serviceArea: "virtual-cfo",
+                })}>
+                  <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 font-black h-16 px-10 rounded-2xl shadow-xl transition-all hover:-translate-y-1">
+                    Request a Scoped Review
+                    <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 font-bold h-16 px-10 rounded-2xl backdrop-blur-sm transition-all">
+                    Ask a Question
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

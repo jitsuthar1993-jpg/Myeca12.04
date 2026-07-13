@@ -5,35 +5,31 @@ import {
   Building2,
   MapPin,
   CheckCircle,
-  Shield,
-  Clock,
   Phone,
-  ArrowRight,
-  TrendingUp,
-  Award,
-  Users
+  TrendingUp
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { buildConsultationHref } from "@/lib/consultation-handoff";
 
-const cityData: Record<string, { name: string; landmark: string; population: string }> = {
-  bangalore: { name: "Bangalore", landmark: "Koramangala & HSR Layout", population: "Startup Hub of India" },
-  mumbai: { name: "Mumbai", landmark: "BKC & Nariman Point", population: "Financial Capital" },
-  delhi: { name: "Delhi", landmark: "Connaught Place & Nehru Place", population: "National Capital Region" },
-  hyderabad: { name: "Hyderabad", landmark: "HITEC City & Gachibowli", population: "Cyberabad Tech Hub" },
-  chennai: { name: "Chennai", landmark: "T. Nagar & OMR", population: "Automobile & SaaS Hub" }
+const cityData: Record<string, { name: string }> = {
+  bangalore: { name: "Bangalore" },
+  mumbai: { name: "Mumbai" },
+  delhi: { name: "Delhi" },
+  hyderabad: { name: "Hyderabad" },
+  chennai: { name: "Chennai" }
 };
 
 const serviceData: Record<string, { title: string; desc: string; icon: any }> = {
   "company-registration": {
     title: "Company Registration",
-    desc: "Private Limited and LLP incorporation support with city-specific stamp-duty and authority checks.",
+    desc: "Private Limited and LLP incorporation support with document, fee, and authority checks.",
     icon: Building2
   },
   "gst-registration": {
     title: "GST Registration",
-    desc: "Obtain your GSTIN with zero hassles and expert filing support.",
+    desc: "Prepare a GST registration application with document and filing-scope support.",
     icon: TrendingUp
   }
 };
@@ -45,6 +41,11 @@ export default function CityLandingPage() {
 
   const city = cityData[cityKey];
   const service = serviceData[serviceKey];
+  const consultationHref = buildConsultationHref("business-tax-review", {
+    source: "city-landing",
+    serviceArea: serviceKey,
+    city: cityKey,
+  });
 
   if (!city || !service) {
     return (
@@ -58,7 +59,7 @@ export default function CityLandingPage() {
   }
 
   const pageTitle = `${service.title} in ${city.name} | Filing and Compliance Support`;
-  const pageDesc = `Prepare ${service.title} in ${city.name} with document checks, local-authority requirements, filing scope, and follow-up steps for ${city.landmark} businesses.`;
+  const pageDesc = `Prepare ${service.title} for a ${city.name}-based business with document checks, filing scope, and submission follow-up.`;
 
   return (
     <div className="min-h-screen bg-white">
@@ -67,10 +68,8 @@ export default function CityLandingPage() {
         description={pageDesc}
         keywords={[
           `${service.title} in ${city.name}`,
-          `CA in ${city.name}`,
           `business registration ${city.name}`,
-          `company incorporation ${city.name}`,
-          `top ca firms in ${city.name}`
+          `company incorporation ${city.name}`
         ]}
         breadcrumbs={[
           { name: "Home", url: "/" },
@@ -91,51 +90,54 @@ export default function CityLandingPage() {
               className="inline-flex items-center gap-2 bg-white text-blue-700 px-4 py-2 rounded-full text-sm font-bold mb-6 border border-blue-100 shadow-sm"
             >
               <MapPin className="w-4 h-4" />
-              Serving {city.name}: {city.population}
+              Online filing support for {city.name}
             </m.div>
 
             <h1 className="type-page-title mb-6 text-slate-950">
-              Expert <span className="text-blue-600">{service.title}</span>
-              <br />Services in <span className="underline decoration-blue-300 underline-offset-8">{city.name}</span>
+              <span className="text-blue-600">{service.title}</span>
+              <br />Support for <span className="underline decoration-blue-300 underline-offset-8">{city.name}</span>
             </h1>
 
             <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl">
-              Launch your venture with confidence. Our {city.name}-based CAs provide
-              document preparation, filing-scope review, and authority follow-up for businesses in {city.landmark} and across the NCR.
+              Prepare the application, confirm the responsible authority, and agree the filing and follow-up scope for a business based in {city.name}.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-14 rounded-xl text-lg font-bold shadow-xl shadow-blue-500/20">
-                Talk to a {city.name} CA
-                <Phone className="ml-2 w-5 h-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 px-8 h-14 rounded-xl text-lg font-bold">
-                View Local Pricing
-              </Button>
+              <Link href={consultationHref}>
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-14 rounded-xl text-lg font-bold shadow-xl shadow-blue-500/20">
+                  Discuss Filing Scope
+                  <Phone className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/pricing">
+                <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 px-8 h-14 rounded-xl text-lg font-bold">
+                  Review Service Pricing
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Local Advantage Section */}
+      {/* Filing Scope Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl lg:text-4xl font-black text-slate-900 mb-6 tracking-tight">
-                Why Choose MyeCA for {service.title} in {city.name}?
+                What to confirm before filing
               </h2>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                Requirements in {city.name} can depend on the business activity, premises, entity type, and responsible local authority.
-                Confirm the applicable ROC or municipal route and the documents it currently accepts before filing.
+                The correct route can depend on the business activity, premises, entity type, and responsible authority.
+                Confirm the current portal, documents, fees, and follow-up responsibility before filing.
               </p>
 
               <div className="space-y-4">
                 {[
-                  `Local Office visits available in ${city.landmark}`,
-                  "Deep understanding of state-specific stamp duty",
-                  "Track processing and queries from local authorities",
-                  "Guidance tailored to local authority requirements"
+                  "Responsible authority and online filing portal",
+                  "Entity, promoter, and premises documents",
+                  "Current government fees and state stamp duty, where applicable",
+                  "Submission and query follow-up included in the agreed scope"
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
@@ -148,14 +150,14 @@ export default function CityLandingPage() {
             <div className="grid grid-cols-2 gap-6">
               <Card className="bg-blue-50 border-blue-100">
                 <CardContent className="pt-8">
-                  <div className="text-4xl font-black text-blue-600 mb-2">Local</div>
-                  <div className="text-sm font-bold text-slate-600">Authority Guidance in {city.name}</div>
+                  <div className="text-4xl font-black text-blue-600 mb-2">Online</div>
+                  <div className="text-sm font-bold text-slate-600">Support Channel</div>
                 </CardContent>
               </Card>
               <Card className="bg-purple-50 border-purple-100">
                 <CardContent className="pt-8">
-                  <div className="text-4xl font-black text-purple-600 mb-2">9-7</div>
-                  <div className="text-sm font-bold text-slate-600">Business-Hours Callback</div>
+                  <div className="text-4xl font-black text-purple-600 mb-2">Scope</div>
+                  <div className="text-sm font-bold text-slate-600">Agreed Before Payment</div>
                 </CardContent>
               </Card>
               <Card className="bg-orange-50 border-orange-100">
@@ -166,8 +168,8 @@ export default function CityLandingPage() {
               </Card>
               <Card className="bg-emerald-50 border-emerald-100">
                 <CardContent className="pt-8">
-                  <div className="text-4xl font-black text-emerald-600 mb-2">0</div>
-                  <div className="text-sm font-bold text-slate-600">Hidden Local Charges</div>
+                  <div className="text-4xl font-black text-emerald-600 mb-2">Status</div>
+                  <div className="text-sm font-bold text-slate-600">Follow-up Records</div>
                 </CardContent>
               </Card>
             </div>
@@ -175,23 +177,23 @@ export default function CityLandingPage() {
         </div>
       </section>
 
-      {/* Neighborhood Support */}
+      {/* Case Details */}
       <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">
-              Serving All Major Neighborhoods in {city.name}
+              Details that shape the filing route
             </h2>
-            <p className="text-lg text-slate-600 italic">
-              "Professionally assisted compliance services for businesses across {city.name}."
+            <p className="text-lg text-slate-600">
+              City alone does not determine the correct application or supporting records.
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {["Business Hubs", "IT Parks", "Industrial Zones", "Retail Districts", "Startup Clusters"].map((area) => (
+            {["Business activity", "Entity and promoters", "Registered premises", "Responsible authority"].map((area) => (
               <div key={area} className="bg-white p-6 rounded-2xl border border-slate-200 text-center hover:shadow-md transition-shadow">
                 <div className="font-bold text-slate-900 mb-1">{area}</div>
-                <div className="text-xs text-blue-500 font-bold uppercase tracking-widest">Available</div>
+                <div className="text-xs text-blue-500 font-bold uppercase tracking-widest">Confirm for your case</div>
               </div>
             ))}
           </div>
@@ -208,15 +210,19 @@ export default function CityLandingPage() {
                 Ready to Start your Business in {city.name}?
               </h2>
               <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-                Start the {service.title} workflow for {city.name} with a city-specific document and authority-requirement check.
+                Start the {service.title} workflow for a {city.name}-based business with a document and authority-requirement check.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 font-black h-14 px-10 rounded-xl transition-all hover:scale-105">
-                  Request Consultation
-                </Button>
-                <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 font-black h-14 px-10 rounded-xl">
-                  Contact Support
-                </Button>
+                <Link href={consultationHref}>
+                  <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 font-black h-14 px-10 rounded-xl transition-all hover:scale-105">
+                    Request Consultation
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button size="lg" variant="outline" className="border-blue-200 bg-white text-blue-700 hover:bg-blue-50 font-black h-14 px-10 rounded-xl">
+                    Contact Support
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

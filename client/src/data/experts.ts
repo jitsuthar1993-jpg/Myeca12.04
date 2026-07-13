@@ -1,15 +1,11 @@
-// Expert Profiles for Consultation Booking
+// Consultation service areas used by the booking flow
 
 export interface Expert {
   id: string;
   name: string;
   title: string;
   specializations: string[];
-  experience: number; // years
-  languages: string[];
-  image: string;
   bio: string;
-  qualifications: string[];
   consultationFee: number;
   availability: {
     days: string[];
@@ -74,13 +70,9 @@ export const EXPERTS: Expert[] = [
   {
     id: 'tax-review-team',
     name: 'Tax Review Team',
-    title: 'Credential-checked tax professionals',
+    title: 'Income tax consultation service',
     specializations: ['Income Tax', 'Tax Planning', 'ITR Filing', 'Capital Gains'],
-    experience: 15,
-    languages: ['English', 'Hindi'],
-    image: '/images/experts/rajesh.jpg',
-    bio: 'Credential-checked professionals review income tax planning and compliance cases using the documents shared for the consultation.',
-    qualifications: ['Credentials checked during scoped engagement'],
+    bio: 'Use this service to discuss income-tax planning and filing questions against the documents shared for the consultation.',
     consultationFee: 999,
     availability: {
       days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -91,13 +83,9 @@ export const EXPERTS: Expert[] = [
   {
     id: 'gst-startup-team',
     name: 'GST And Startup Team',
-    title: 'Business compliance professionals',
+    title: 'GST and startup consultation service',
     specializations: ['GST', 'Business Tax', 'Startup Advisory', 'Compliance'],
-    experience: 12,
-    languages: ['English', 'Hindi', 'Gujarati'],
-    image: '/images/experts/priya.jpg',
-    bio: 'Business compliance professionals help with GST, startup taxation, and compliance questions based on your business profile.',
-    qualifications: ['Credentials checked during scoped engagement'],
+    bio: 'Use this service for GST, startup taxation, and compliance questions based on the business profile and records provided.',
     consultationFee: 1199,
     availability: {
       days: ['Monday', 'Wednesday', 'Friday', 'Saturday'],
@@ -108,13 +96,9 @@ export const EXPERTS: Expert[] = [
   {
     id: 'nri-tax-team',
     name: 'NRI Tax Team',
-    title: 'NRI and international tax professionals',
+    title: 'NRI tax consultation service',
     specializations: ['NRI Taxation', 'International Tax', 'FEMA', 'Transfer Pricing'],
-    experience: 18,
-    languages: ['English', 'Hindi'],
-    image: '/images/experts/amit.jpg',
-    bio: 'NRI tax professionals support India tax compliance and FEMA-related questions where specialist review is requested.',
-    qualifications: ['Credentials checked during scoped engagement'],
+    bio: 'Use this service for India tax compliance and FEMA-related questions that need case-specific review.',
     consultationFee: 1499,
     availability: {
       days: ['Tuesday', 'Thursday', 'Saturday'],
@@ -125,13 +109,9 @@ export const EXPERTS: Expert[] = [
   {
     id: 'salary-tax-team',
     name: 'Salary Tax Team',
-    title: 'Salary tax review professionals',
+    title: 'Salary tax consultation service',
     specializations: ['Salary Tax', 'HRA Claims', 'Investment Planning', '80C Deductions'],
-    experience: 8,
-    languages: ['English', 'Hindi', 'Marathi'],
-    image: '/images/experts/sneha.jpg',
-    bio: 'Salary tax professionals help review HRA, deductions, Form 16, and investment proofs for eligible claims.',
-    qualifications: ['Credentials checked during scoped engagement'],
+    bio: 'Use this service to review HRA, deductions, Form 16, and investment proofs for eligible claims.',
     consultationFee: 799,
     availability: {
       days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -142,13 +122,9 @@ export const EXPERTS: Expert[] = [
   {
     id: 'notice-response-team',
     name: 'Notice Response Team',
-    title: 'Tax notice review professionals',
+    title: 'Tax notice consultation service',
     specializations: ['Tax Notices', 'Assessments', 'Appeals', 'Scrutiny'],
-    experience: 20,
-    languages: ['English', 'Hindi', 'Punjabi'],
-    image: '/images/experts/vikram.jpg',
-    bio: 'Tax notice professionals help review notice sections, deadlines, documents, and draft response positions.',
-    qualifications: ['Credentials checked during scoped engagement'],
+    bio: 'Use this service to review notice sections, deadlines, documents, and a proposed response position.',
     consultationFee: 1999,
     availability: {
       days: ['Monday', 'Wednesday', 'Friday'],

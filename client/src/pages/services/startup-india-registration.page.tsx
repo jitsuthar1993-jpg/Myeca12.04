@@ -38,6 +38,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import { getColorClasses } from "@/utils/colorClasses";
+import { buildConsultationHref } from "@/lib/consultation-handoff";
 
 export default function StartupIndiaRegistrationPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -245,11 +247,11 @@ export default function StartupIndiaRegistrationPage() {
                 </div>
                 <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  Expert Startup CA Support
+                  Application Document Checklist
                 </div>
                 <div className="flex items-center text-slate-700">
                   <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                  5,000+ Startups Registered
+                  Submission Status Follow-up
                 </div>
               </div>
             </div>
@@ -353,7 +355,7 @@ export default function StartupIndiaRegistrationPage() {
             {requiredDocuments.map((docCategory, index) => (
               <Card key={index} className={`border-l-4 border-l-${docCategory.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${docCategory.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(docCategory.color).textDark}`}>
                     <docCategory.icon className="w-6 h-6" />
                     {docCategory.category}
                   </CardTitle>
@@ -362,7 +364,7 @@ export default function StartupIndiaRegistrationPage() {
                   <ul className="space-y-3">
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(docCategory.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
@@ -435,7 +437,7 @@ export default function StartupIndiaRegistrationPage() {
             {benefits2025.map((benefit, index) => (
               <Card key={index} className={`border-l-4 border-l-${benefit.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${benefit.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(benefit.color).textDark}`}>
                     <benefit.icon className="w-6 h-6" />
                     {benefit.category}
                   </CardTitle>
@@ -444,7 +446,7 @@ export default function StartupIndiaRegistrationPage() {
                   <ul className="space-y-3">
                     {benefit.benefits.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${benefit.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(benefit.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
@@ -524,7 +526,10 @@ export default function StartupIndiaRegistrationPage() {
                   <Rocket className="w-5 h-5 mr-2" />
                   Start Registration {"₹"}2,999
                 </Button>
-                <Link href="/expert-consultation?service=startup-india-registration">
+                <Link href={buildConsultationHref("business-tax-review", {
+                  source: "startup-india-registration",
+                  serviceArea: "startup-india-registration",
+                })}>
                   <Button size="lg" variant="outline" className="border-purple-200 bg-white text-purple-700 hover:bg-purple-50 px-8 shadow-sm font-semibold">
                     <Phone className="w-5 h-5 mr-2" />
                     Get Expert Consultation
@@ -535,15 +540,15 @@ export default function StartupIndiaRegistrationPage() {
               <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-slate-600">
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>Expert-assisted Support</span>
+                  <span>Scope Confirmed Before Payment</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>CA-Guided Process</span>
+                  <span>Document-led Application Support</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  <span>2-3 Week Completion</span>
+                  <span>Government Processing Time Varies</span>
                 </div>
               </div>
             </CardContent>

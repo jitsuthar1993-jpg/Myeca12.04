@@ -3,36 +3,29 @@ import { useParams, Link } from "wouter";
 import { m } from "framer-motion";
 import {
   Building2,
-  MapPin,
   CheckCircle2,
-  ShieldCheck,
-  Clock,
-  Phone,
   ArrowLeft,
   ArrowRight,
   Briefcase,
-  GraduationCap,
-  Globe,
-  Mail,
-  Linkedin
+  ClipboardCheck
 } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LazyImage } from "@/components/ui/lazy-image";
+import { buildConsultationHref } from "@/lib/consultation-handoff";
 
 const specialists: Record<string, any> = {
   "ca-rahul-sharma": {
     name: "Tax Review Team",
-    role: "Senior tax consultants",
+    consultationTeam: "tax-gst-review",
+    consultationService: "tax-consultation",
+    role: "Tax consultation service",
     fullRole: "Taxation And GST Review",
-    exp: "12+ Years",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
-    bio: "Credential-checked professionals support taxation, audit, GST, and cross-border tax compliance matters where specialist review is requested.",
-    education: ["Credential details shared during scoped engagement where applicable"],
+    bio: "Use this service to discuss taxation, GST, and cross-border compliance questions against a defined document set.",
+    engagementNotes: ["The question, deliverable, document list, and fee are confirmed before paid work begins"],
     expertise: ["GST Litigation", "Corporate Tax Planning", "International Tax Treaties", "FEMA Compliance"],
-    statistics: [
+    details: [
       { label: "Review Type", value: "GST" },
       { label: "Support Mode", value: "Assisted" },
       { label: "Documents", value: "Required" }
@@ -40,14 +33,14 @@ const specialists: Record<string, any> = {
   },
   "ca-priya-nair": {
     name: "Startup Compliance Team",
-    role: "Company law advisors",
+    consultationTeam: "startup-compliance-review",
+    consultationService: "business-tax-review",
+    role: "Startup compliance service",
     fullRole: "Startup Compliance And Company Law",
-    exp: "8 Years",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
-    bio: "Advisors help founders understand incorporation, funding compliance, ROC filings, shareholder documentation, and ESOP workflows.",
-    education: ["Credential details shared during scoped engagement where applicable"],
+    bio: "Use this service to discuss incorporation, funding compliance, ROC filings, shareholder documents, and ESOP workflows.",
+    engagementNotes: ["The question, deliverable, document list, and fee are confirmed before paid work begins"],
     expertise: ["Startup Funding", "ROC Filings", "Shareholder Agreements", "Intellectual Property"],
-    statistics: [
+    details: [
       { label: "Review Type", value: "ROC" },
       { label: "Support Mode", value: "Advisory" },
       { label: "Documents", value: "Required" }
@@ -55,14 +48,14 @@ const specialists: Record<string, any> = {
   },
   "ca-amit-verma": {
     name: "Direct Tax Team",
-    role: "ITR and notice specialists",
+    consultationTeam: "direct-tax-review",
+    consultationService: "tax-consultation",
+    role: "Direct tax consultation service",
     fullRole: "Direct Tax And Notice Review",
-    exp: "15+ Years",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-    bio: "Specialists help taxpayers respond accurately to notices, prepare filing positions, and claim eligible refunds with supporting documentation.",
-    education: ["Credential details shared during scoped engagement where applicable"],
+    bio: "Use this service to discuss an ITR position, notice deadline, supporting records, and the next filing step.",
+    engagementNotes: ["The question, deliverable, document list, and fee are confirmed before paid work begins"],
     expertise: ["ITR Filing", "Tax Scrutiny", "Notice Handling", "Tax Advisory"],
-    statistics: [
+    details: [
       { label: "Review Type", value: "ITR" },
       { label: "Support Mode", value: "Review" },
       { label: "Documents", value: "Required" }
@@ -70,16 +63,23 @@ const specialists: Record<string, any> = {
   }
 };
 
+const specialistRoutes: Record<string, any> = {
+  "tax-gst-review": specialists["ca-rahul-sharma"],
+  "startup-compliance-review": specialists["ca-priya-nair"],
+  "direct-tax-review": specialists["ca-amit-verma"],
+  ...specialists
+};
+
 export default function ExpertProfilePage() {
   const params = useParams<{ id: string }>();
-  const expert = specialists[params.id?.toLowerCase() || ""];
+  const expert = specialistRoutes[params.id?.toLowerCase() || ""];
 
   if (!expert) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Expert Profile Not Found</h1>
-          <Link href="/experts"><Button>Back to All Experts</Button></Link>
+          <h1 className="text-2xl font-bold mb-4">Review Service Not Found</h1>
+          <Link href="/experts"><Button>Back to Review Services</Button></Link>
         </div>
       </div>
     );
@@ -91,7 +91,6 @@ export default function ExpertProfilePage() {
       <MetaSEO
         title={`${expert.name} - ${expert.role} | MyeCA.in`}
         description={expert.bio.substring(0, 160)}
-        type="article"
         breadcrumbs={[
           { name: "Home", url: "/" },
           { name: "Experts", url: "/experts" },
@@ -99,33 +98,31 @@ export default function ExpertProfilePage() {
         ]}
       />
 
-      {/* Profile Header */}
+      {/* Service Header */}
       <section className="bg-slate-50 border-b pt-12 pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
         <div className="container mx-auto px-4">
           <Link href="/experts">
             <Button variant="ghost" className="mb-8 hover:bg-slate-200">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to experts
+              Back to review services
             </Button>
           </Link>
 
           <div className="flex flex-col lg:flex-row gap-12 items-start">
             <div className="w-full lg:w-96 flex-shrink-0">
-              <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-                <LazyImage
-                  src={expert.image}
-                  alt={expert.name}
-                  className="w-full h-full object-cover"
-                />
+              <div className="flex aspect-square items-center justify-center rounded-3xl border-8 border-white bg-slate-900 shadow-2xl">
+                <div className="flex h-28 w-28 items-center justify-center rounded-3xl bg-blue-500/15">
+                  <Building2 className="h-14 w-14 text-blue-300" />
+                </div>
               </div>
             </div>
 
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-4">
                 <Badge className="bg-emerald-100 text-emerald-700 px-3 py-1 font-bold border-emerald-200">
-                  <ShieldCheck className="w-4 h-4 mr-2" />
-                  Verified Professional
+                  <ClipboardCheck className="w-4 h-4 mr-2" />
+                  Scope-Based Service
                 </Badge>
               </div>
 
@@ -138,17 +135,14 @@ export default function ExpertProfilePage() {
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-14 px-8 rounded-xl shadow-lg">
-                  Request a Consultation
-                </Button>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon" className="h-14 w-14 rounded-xl">
-                    <Linkedin className="w-5 h-5 text-blue-600" />
+                <Link href={buildConsultationHref(expert.consultationService, {
+                  source: "expert-profile",
+                  team: expert.consultationTeam,
+                })}>
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-14 px-8 rounded-xl shadow-lg">
+                    Request a Consultation
                   </Button>
-                  <Button variant="outline" size="icon" className="h-14 w-14 rounded-xl">
-                    <Mail className="w-5 h-5 text-slate-600" />
-                  </Button>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
@@ -166,11 +160,11 @@ export default function ExpertProfilePage() {
                 <CardHeader>
                   <CardTitle className="text-lg font-black flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-blue-600" />
-                    Professional Impact
+                    Engagement Details
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {expert.statistics.map((stat: any) => (
+                  {expert.details.map((stat: any) => (
                     <div key={stat.label}>
                       <div className="text-2xl font-black text-slate-900">{stat.value}</div>
                       <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
@@ -182,15 +176,15 @@ export default function ExpertProfilePage() {
               <Card className="border-slate-200">
                 <CardHeader>
                   <CardTitle className="text-lg font-black flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-blue-600" />
-                    Education & Credentials
+                    <ClipboardCheck className="w-5 h-5 text-blue-600" />
+                    Before You Book
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {expert.education.map((edu: string) => (
-                    <div key={edu} className="flex gap-3">
+                  {expert.engagementNotes.map((note: string) => (
+                    <div key={note} className="flex gap-3">
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-slate-700 text-sm font-medium">{edu}</span>
+                      <span className="text-slate-700 text-sm font-medium">{note}</span>
                     </div>
                   ))}
                 </CardContent>
@@ -202,7 +196,7 @@ export default function ExpertProfilePage() {
               <div>
                 <h2 className="text-2xl font-black mb-6 flex items-center gap-2">
                   <Briefcase className="w-6 h-6 text-blue-600" />
-                  Core Areas of Expertise
+                  Review Areas
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {expert.expertise.map((exp: string) => (
@@ -217,7 +211,7 @@ export default function ExpertProfilePage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black mb-6">Latest Articles by {expert.name.split(' ')[1]}</h2>
+                <h2 className="text-2xl font-black mb-6">Related Tax Guides</h2>
                 <div className="space-y-4">
                   {[
                     "New GST Compliance Changes for April 2025",
