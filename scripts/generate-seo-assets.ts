@@ -74,6 +74,7 @@ const distDir = distPublicDir;
 const clientPublicDir = path.join(rootDir, "client", "public");
 const distIndexPath = path.join(distDir, "index.html");
 const now = new Date().toISOString().split("T")[0];
+export const DEFAULT_OFFICIAL_SOURCE_CHECKED_AT = "2026-06-30";
 
 type SeoFaqItem = { question: string; answer: string };
 
@@ -734,8 +735,11 @@ function pageTypeForRoute(route: string, type: RouteMeta["type"]): PublicPageTyp
 }
 
 function defaultOfficialSources(route: string, type: RouteMeta["type"]) {
-  const checkedAt = now;
-  const source = (label: string, url: string) => ({ label, url, checkedAt });
+  const source = (
+    label: string,
+    url: string,
+    checkedAt = DEFAULT_OFFICIAL_SOURCE_CHECKED_AT,
+  ) => ({ label, url, checkedAt });
   const firstPartySources: Record<string, Array<{ label: string; url: string; checkedAt: string }>> = {
     "/": [
       source("MyeCA service catalog", "https://myeca.in/services"),
@@ -1701,7 +1705,8 @@ const DOCUMENT_GENERATOR_AUDIENCES: Record<string, string> = {
 const documentGeneratorSource = (
   label: string,
   url: string,
-): PublicContentContext["officialSources"][number] => ({ label, url, checkedAt: now });
+  checkedAt = DEFAULT_OFFICIAL_SOURCE_CHECKED_AT,
+): PublicContentContext["officialSources"][number] => ({ label, url, checkedAt });
 
 const MYECA_DOCUMENT_GENERATOR_SOURCE = documentGeneratorSource(
   "MyeCA document-generator scope",

@@ -136,6 +136,18 @@ describe("SEO asset static root fallback", () => {
     expect(head).not.toContain('name="expert-verification"');
   });
 
+  it("keeps source review dates stable unless the source provides its own date", () => {
+    const homepageDates = routeMeta("/").contentContext!.officialSources.map((source) => source.checkedAt);
+    const generatorDates = routeMeta("/documents/generator/invoice").contentContext!.officialSources
+      .map((source) => source.checkedAt);
+    const post = defaultBlogPosts.find((candidate) => candidate.slug === "when-will-itr-filing-start-ay-2026-27")!;
+    const blogDates = blogMeta(post).contentContext!.officialSources.map((source) => source.checkedAt);
+
+    expect(new Set(homepageDates)).toEqual(new Set(["2026-06-30"]));
+    expect(new Set(generatorDates)).toEqual(new Set(["2026-06-30"]));
+    expect(blogDates).toEqual(post.sourceLinks!.map((source) => source.checkedAt));
+  });
+
   it("adds answer-led crawlable modules for the ITR filing commercial pillar", () => {
     const meta = routeMeta("/itr-filing");
     const body = meta.body!;
