@@ -76,8 +76,8 @@ export default function WithdrawalPlannerPage() {
       <CalcLayout
         variant="indigo"
         complianceFacts={[
-          { title: "Sustainability", content: "A common rule is the 4% withdrawal rate, which typically helps a retirement corpus last for 30 years." },
-          { title: "Interest Impact", content: "Compounding interest on the remaining principal significantly extends the life of your corpus." },
+          { title: "Scenario only", content: "This projection uses a constant nominal return and is not a guarantee of corpus longevity." },
+          { title: "Calculation timing", content: "Nominal periodic interest is applied before each scheduled withdrawal." },
           { title: "Frequency", content: "More frequent withdrawals (e.g., monthly vs yearly) slightly reduce the total interest earned due to lower average principal." }
         ]}
         sidebar={
@@ -100,7 +100,7 @@ export default function WithdrawalPlannerPage() {
               {result.depleted && (
                 <div className="type-meta mt-2 inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-2 py-0.5 font-normal uppercase tracking-widest text-red-600">
                   <AlertCircle className="w-3 h-3" />
-                  Corpus Depleted in Year {Math.floor(result.depletionPeriod / (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1))}
+                  Corpus Depleted in Year {Math.ceil(result.depletionPeriod / (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1))}
                 </div>
               )}
             </div>
@@ -138,9 +138,11 @@ export default function WithdrawalPlannerPage() {
              <CalcInputGroup label="Starting Principal" badgeValue={formatCurrency(principal)}>
                 <div className="relative">
                   <Input
+                    aria-label="Starting Principal"
                     type="number"
                     value={principal}
-                    onChange={(e) => setPrincipal(Number(e.target.value))}
+                    min="0"
+                    onChange={(e) => setPrincipal(Math.max(0, Number(e.target.value) || 0))}
                     className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -164,10 +166,12 @@ export default function WithdrawalPlannerPage() {
              <CalcInputGroup label="Annual Return (%)" badgeValue={`${annualRate}%`}>
                 <div className="relative">
                   <Input
+                    aria-label="Annual Return"
                     type="number"
                     step="0.1"
                     value={annualRate}
-                    onChange={(e) => setAnnualRate(Number(e.target.value))}
+                    min="0"
+                    onChange={(e) => setAnnualRate(Math.max(0, Number(e.target.value) || 0))}
                     className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <TrendingUp className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -180,7 +184,7 @@ export default function WithdrawalPlannerPage() {
                 <div className="space-y-2">
                   <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Frequency</label>
                   <Select value={frequency} onValueChange={(v) => setFrequency(v as WithdrawalFrequency)}>
-                    <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm">
+                    <SelectTrigger aria-label="Frequency" className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -193,9 +197,12 @@ export default function WithdrawalPlannerPage() {
                 <div className="space-y-2">
                   <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Duration (Years)</label>
                   <Input
+                    aria-label="Duration in Years"
                     type="number"
                     value={years}
-                    onChange={(e) => setYears(Number(e.target.value))}
+                    min="1"
+                    step="1"
+                    onChange={(e) => setYears(Math.max(1, Math.floor(Number(e.target.value) || 1)))}
                     className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm focus:ring-2 focus:ring-indigo-100"
                   />
                 </div>
@@ -204,9 +211,11 @@ export default function WithdrawalPlannerPage() {
              <CalcInputGroup label="Withdrawal per Period" badgeValue={formatCurrency(withdrawalAmount)}>
                 <div className="relative">
                   <Input
+                    aria-label="Withdrawal per Period"
                     type="number"
                     value={withdrawalAmount}
-                    onChange={(e) => setWithdrawalAmount(Number(e.target.value))}
+                    min="0"
+                    onChange={(e) => setWithdrawalAmount(Math.max(0, Number(e.target.value) || 0))}
                     className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -221,7 +230,7 @@ export default function WithdrawalPlannerPage() {
                 <p className="type-support font-normal text-amber-800">
                   {withdrawalAmount * (frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : 1) > principal * (annualRate/100)
                     ? "Your withdrawal rate exceeds the interest earned. Your principal will deplete over time."
-                    : "Your withdrawal rate is lower than the interest earned. Your corpus is growing or stable!"}
+                    : "This scenario funds the selected withdrawals under the constant-return assumptions; actual results can differ."}
                 </p>
              </div>
           </CalcInputCard>
@@ -239,13 +248,13 @@ export default function WithdrawalPlannerPage() {
               icon: <Zap className="w-5 h-5" />,
               iconBg: "bg-amber-50 text-amber-600",
               title: "Tax Efficiency",
-              desc: "SWPs from mutual funds are often more tax-efficient than dividends or interest income due to capital gains treatment."
+              desc: "Tax treatment depends on the investment, holding period, and applicable law. This projection excludes tax and exit loads."
             },
             {
               icon: <TrendingUp className="w-5 h-5" />,
               iconBg: "bg-emerald-50 text-emerald-600",
               title: "Corpus Longevity",
-              desc: "By keeping your withdrawal rate below your annual return, you can potentially maintain your corpus indefinitely."
+              desc: "Actual returns vary over time. Sequence-of-returns risk and inflation can shorten corpus longevity."
             }
           ]}
           howItWorks={{
@@ -258,9 +267,9 @@ export default function WithdrawalPlannerPage() {
             ]
           }}
           faqs={[
-            { q: "Is SWP better than FD interest?", a: "SWPs from hybrid or debt funds can offer better post-tax returns than FDs due to indexation (on old investments) or LTCG rates." },
+            { q: "Is SWP better than FD interest?", a: "They have different return, liquidity, market, and tax characteristics. Compare the current rules and product costs for your situation." },
             { q: "Can I stop my withdrawal plan?", a: "Yes, SWPs are completely flexible. You can stop, increase, or decrease the withdrawal amount at any time." },
-            { q: "What is the 'Safe Withdrawal Rate'?", a: "Globally, the 4% rule is popular, suggesting that withdrawing 4% of your initial corpus annually is sustainable for 30 years." }
+            { q: "Is there a guaranteed safe withdrawal rate?", a: "No. Longevity depends on actual return sequence, inflation, fees, taxes, and changing withdrawals." }
           ]}
         />
       </CalcLayout>

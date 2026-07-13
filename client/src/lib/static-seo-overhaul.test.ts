@@ -45,13 +45,13 @@ describe("static SEO overhaul", () => {
       url: "https://myeca.in/itr-filing",
     });
     expect(metadata.openGraph?.images?.[0]).toMatchObject({
-      url: "https://myeca.in/og-image.jpg",
+      url: "https://myeca.in/og-default.png",
       width: 1200,
       height: 630,
     });
     expect(metadata.twitter).toMatchObject({
       card: "summary_large_image",
-      images: ["https://myeca.in/og-image.jpg"],
+      images: ["https://myeca.in/og-default.png"],
     });
     expect(metadata.robots).toEqual({ index: true, follow: true });
   });
@@ -173,7 +173,7 @@ describe("static SEO overhaul", () => {
       description: "Example guide description.",
       publishedAt: "2026-05-05T00:00:00.000Z",
       modifiedAt: "2026-05-06T00:00:00.000Z",
-      image: "https://myeca.in/og-image.jpg",
+      image: "https://myeca.in/og-default.png",
     });
     const howTo = buildHowToSchema({
       url: "https://myeca.in/blog/example",

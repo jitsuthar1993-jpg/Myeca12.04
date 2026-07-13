@@ -4,7 +4,7 @@ import {
   Zap, Sparkles, CreditCard, ShieldCheck, ArrowRight,
   Wallet, Info, CheckCircle, Lock, Headphones,
   Award, BarChart3, PieChart, Percent, ArrowUpRight,
-  Briefcase, Activity
+  Briefcase, Activity, RotateCcw
 } from "lucide-react";
 import { calculateEMI } from "@/lib/tax-calculations";
 import { getSEOConfig } from "@/config/seo.config";
@@ -13,12 +13,34 @@ import { cn } from "@/lib/utils";
 import { Link } from "wouter";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-export default function EMICalculator() {
-  const [principal, setPrincipal] = useState<number>(1000000);
-  const [rate, setRate] = useState<number>(8.5);
-  const [tenure, setTenure] = useState<number>(20);
+type RawNumber = number | "";
 
-  const result = useMemo(() => calculateEMI(principal, rate, tenure), [principal, rate, tenure]);
+const DEFAULT_EMI_INPUTS = { principal: 1000000, rate: 8.5, tenure: 20 } as const;
+
+function validateEmiInputs(principal: RawNumber, rate: RawNumber, tenure: RawNumber) {
+  const errors: Record<string, string> = {};
+  if (principal === "") errors.principal = "Loan Amount is required.";
+  else if (principal < 100000) errors.principal = "Loan Amount must be ₹1,00,000 or more.";
+  else if (principal > 100000000) errors.principal = "Loan Amount must be ₹10,00,00,000 or less.";
+  if (rate === "") errors.rate = "Interest Rate is required.";
+  else if (rate < 0) errors.rate = "Interest Rate cannot be negative.";
+  else if (rate > 20) errors.rate = "Interest Rate must be 20 or less.";
+  if (tenure === "") errors.tenure = "Tenure in Years is required.";
+  else if (tenure < 1 || tenure > 30) errors.tenure = "Tenure in Years must be between 1 and 30.";
+  else if (!Number.isInteger(tenure * 12)) errors.tenure = "Tenure must resolve to whole months.";
+  return errors;
+}
+
+export default function EMICalculator() {
+  const [principal, setPrincipal] = useState<RawNumber>(DEFAULT_EMI_INPUTS.principal);
+  const [rate, setRate] = useState<RawNumber>(DEFAULT_EMI_INPUTS.rate);
+  const [tenure, setTenure] = useState<RawNumber>(DEFAULT_EMI_INPUTS.tenure);
+
+  const errors = useMemo(() => validateEmiInputs(principal, rate, tenure), [principal, rate, tenure]);
+  const result = useMemo(
+    () => Object.keys(errors).length === 0 ? calculateEMI(Number(principal), Number(rate), Number(tenure)) : null,
+    [errors, principal, rate, tenure],
+  );
   const seo = getSEOConfig('/calculators/emi');
 
   const fmt = (n: number) =>
@@ -27,9 +49,14 @@ export default function EMICalculator() {
       currency: "INR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(n).replace("₹", "₹ ");
+    }).format(n);
 
-  const interestPct = result.totalPayment > 0 ? Math.round((result.totalInterest / result.totalPayment) * 100) : 0;
+  const interestPct = result && result.totalPayment > 0 ? Math.round((result.totalInterest / result.totalPayment) * 100) : 0;
+  const resetCalculator = () => {
+    setPrincipal(DEFAULT_EMI_INPUTS.principal);
+    setRate(DEFAULT_EMI_INPUTS.rate);
+    setTenure(DEFAULT_EMI_INPUTS.tenure);
+  };
 
   return (
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
@@ -96,6 +123,14 @@ export default function EMICalculator() {
                   <h2 className="text-lg font-normal text-[#101828]">Loan Configuration</h2>
                   <p className="text-xs text-[#667085]">Adjust parameters to review EMI impact</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={resetCalculator}
+                  className="ml-auto inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#EAECF0] bg-white px-3 text-sm text-[#344054] hover:bg-[#F9FAFB]"
+                  aria-label="Reset calculator"
+                >
+                  <RotateCcw className="h-4 w-4" /> Reset
+                </button>
               </div>
 
               <div className="space-y-6">
@@ -108,11 +143,13 @@ export default function EMICalculator() {
                   ].map((preset) => (
                     <button
                       key={preset.label}
+                      type="button"
                       onClick={() => {
                         setPrincipal(preset.p);
                         setRate(preset.r);
                         setTenure(preset.t);
                       }}
+                      aria-pressed={principal === preset.p && rate === preset.r && tenure === preset.t}
                       className={cn(
                         "py-2 px-1 rounded-xl border transition-all text-sm font-normal uppercase tracking-tight",
                         principal === preset.p ? "border-[#175CD3] bg-[#EFF8FF] text-[#175CD3]" : "border-[#EAECF0] bg-white text-[#667085] hover:border-[#B2DDFF]"
@@ -127,13 +164,19 @@ export default function EMICalculator() {
                   {/* Principal */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-normal text-[#344054]">Loan Amount</span>
+                      <label htmlFor="emi-principal" className="text-sm font-normal text-[#344054]">Loan Amount</label>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[120px] flex items-center gap-1.5 shadow-sm">
                         <span className="text-xs font-normal text-[#667085]">₹</span>
                         <input
+                          id="emi-principal"
                           type="number"
                           value={principal}
-                          onChange={(e) => setPrincipal(Number(e.target.value))}
+                          min="100000"
+                          max="100000000"
+                          step="50000"
+                          onChange={(e) => setPrincipal(e.target.value === "" ? "" : Number(e.target.value))}
+                          aria-invalid={Boolean(errors.principal)}
+                          aria-describedby={errors.principal ? "emi-principal-error" : undefined}
                           className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
                       </div>
@@ -145,19 +188,27 @@ export default function EMICalculator() {
                       step="50000"
                       value={principal}
                       onChange={(e) => setPrincipal(Number(e.target.value))}
+                      aria-label="Loan Amount slider"
                       className="w-full h-1.5 bg-[#F2F4F7] rounded-lg appearance-none cursor-pointer accent-[#175CD3]"
                     />
+                    {errors.principal && <p id="emi-principal-error" role="alert" className="text-xs font-medium text-red-700">{errors.principal}</p>}
                   </div>
 
                   {/* Rate */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-normal text-[#344054]">Interest Rate</span>
+                      <label htmlFor="emi-rate" className="text-sm font-normal text-[#344054]">Interest Rate</label>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
                         <input
+                          id="emi-rate"
                           type="number"
                           value={rate}
-                          onChange={(e) => setRate(Number(e.target.value))}
+                          min="0"
+                          max="20"
+                          step="0.1"
+                          onChange={(e) => setRate(e.target.value === "" ? "" : Number(e.target.value))}
+                          aria-invalid={Boolean(errors.rate)}
+                          aria-describedby={errors.rate ? "emi-rate-error" : undefined}
                           className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
                         <span className="text-xs font-normal text-[#667085]">%</span>
@@ -165,24 +216,32 @@ export default function EMICalculator() {
                     </div>
                     <input
                       type="range"
-                      min="5"
+                      min="0"
                       max="20"
                       step="0.1"
                       value={rate}
                       onChange={(e) => setRate(Number(e.target.value))}
+                      aria-label="Interest Rate slider"
                       className="w-full h-1.5 bg-[#F2F4F7] rounded-lg appearance-none cursor-pointer accent-[#175CD3]"
                     />
+                    {errors.rate && <p id="emi-rate-error" role="alert" className="text-xs font-medium text-red-700">{errors.rate}</p>}
                   </div>
 
                   {/* Tenure */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-sm font-normal text-[#344054]">Tenure (Years)</span>
+                      <label htmlFor="emi-tenure" className="text-sm font-normal text-[#344054]">Tenure in Years</label>
                       <div className="bg-white border border-[#EAECF0] px-2.5 py-1 rounded-lg min-w-[80px] flex items-center gap-1 shadow-sm">
                         <input
+                          id="emi-tenure"
                           type="number"
                           value={tenure}
-                          onChange={(e) => setTenure(Number(e.target.value))}
+                          min="1"
+                          max="30"
+                          step="0.0833333333"
+                          onChange={(e) => setTenure(e.target.value === "" ? "" : Number(e.target.value))}
+                          aria-invalid={Boolean(errors.tenure)}
+                          aria-describedby={errors.tenure ? "emi-tenure-error" : undefined}
                           className="bg-transparent border-none outline-none text-right w-full text-sm font-normal text-[#101828]"
                         />
                         <span className="text-xs font-normal text-[#667085]">Yrs</span>
@@ -192,11 +251,13 @@ export default function EMICalculator() {
                       type="range"
                       min="1"
                       max="30"
-                      step="1"
+                      step="0.5"
                       value={tenure}
                       onChange={(e) => setTenure(Number(e.target.value))}
+                      aria-label="Tenure in Years slider"
                       className="w-full h-1.5 bg-[#F2F4F7] rounded-lg appearance-none cursor-pointer accent-[#175CD3]"
                     />
+                    {errors.tenure && <p id="emi-tenure-error" role="alert" className="text-xs font-medium text-red-700">{errors.tenure}</p>}
                   </div>
 
                    <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#F9FAFB] border border-[#EAECF0]">
@@ -205,7 +266,7 @@ export default function EMICalculator() {
                     </div>
                     <div>
                       <p className="type-meta font-normal text-[#667085] uppercase tracking-wider">Total Repayments</p>
-                      <p className="text-sm font-normal text-[#101828]">{tenure * 12} Installments</p>
+                      <p className="text-sm font-normal text-[#101828]">{tenure === "" ? "—" : tenure * 12} Installments</p>
                     </div>
                   </div>
                 </div>
@@ -213,7 +274,7 @@ export default function EMICalculator() {
             </div>
 
             {/* Interest-to-Principal Card */}
-            <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm flex items-center gap-6 relative overflow-hidden">
+            {result && <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm flex items-center gap-6 relative overflow-hidden">
                <div className="absolute -right-4 -bottom-4 opacity-5 text-[#175CD3]">
                 <Activity className="w-24 h-24" />
               </div>
@@ -226,12 +287,17 @@ export default function EMICalculator() {
                   You are paying <span className="font-normal text-[#B42318]">{interestPct}% interest</span> on your principal. Total cost of loan: <span className="font-normal text-[#101828]">{fmt(result.totalPayment)}</span>.
                 </p>
               </div>
-            </div>
+            </div>}
           </div>
 
           {/* Right Column - Summary */}
           <div className="lg:col-span-5">
             <div className="bg-white rounded-[32px] border border-[#EAECF0] p-6 shadow-sm h-full flex flex-col sticky top-4">
+              {result ? (
+                <>
+              <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                Monthly EMI {fmt(result.emi)}. Total interest {fmt(result.totalInterest)}. Total payment {fmt(result.totalPayment)}.
+              </div>
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xl font-normal text-[#101828]">EMI Summary</h2>
                 <div className="type-meta font-normal px-3 py-1 rounded-full bg-[#ECFDF3] text-[#027A48] flex items-center gap-1.5 uppercase tracking-wider">
@@ -253,7 +319,7 @@ export default function EMICalculator() {
                   </span>
                   <div className="mt-4 flex items-center gap-2 text-xs font-normal bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
                     <Calendar className="w-3 h-3 text-white/60" />
-                    Due on {new Date().getDate()}th of every month
+                    Estimated payment per month
                   </div>
                 </div>
 
@@ -272,14 +338,14 @@ export default function EMICalculator() {
               <div className="space-y-4 flex-grow px-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-normal text-[#667085]">Monthly Rate</span>
-                  <span className="text-xs font-normal text-[#101828]">{(rate / 12).toFixed(2)}%</span>
+                  <span className="text-xs font-normal text-[#101828]">{(Number(rate) / 12).toFixed(2)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-normal text-[#667085]">Tenure in Months</span>
-                  <span className="text-xs font-normal text-[#101828]">{tenure * 12} Mo</span>
+                  <span className="text-xs font-normal text-[#101828]">{Number(tenure) * 12} Mo</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-normal text-[#667085]">Annualized Cost</span>
+                  <span className="text-xs font-normal text-[#667085]">Annual Repayment</span>
                   <span className="text-xs font-normal text-[#101828]">{fmt(result.emi * 12)}</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
@@ -297,13 +363,18 @@ export default function EMICalculator() {
                   <h4 className="text-sm font-normal text-[#101828] mb-0.5">Save on Interest?</h4>
               <p className="type-support text-[#667085] mb-2 leading-tight">Compare the revised rate, transfer fees, remaining tenure, and total interest before switching lenders.</p>
                   <Link href="/services/tax-planning">
-                    <button className="text-sm font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
-                      Consult CA Expert
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                    <span className="text-sm font-normal text-[#027A48] flex items-center gap-2 hover:gap-3 transition-all">
+                      Consult CA Expert <ArrowRight className="w-4 h-4" />
+                    </span>
                   </Link>
                 </div>
               </div>
+                </>
+              ) : (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                  Correct the highlighted inputs to see the EMI estimate.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -313,7 +384,7 @@ export default function EMICalculator() {
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Loan Estimate Review", desc: "Check lender terms and any tax assumptions" },
             { icon: <Award className="w-5 h-5" />, label: "Formula Estimate", desc: "Standard amortization math" },
-            { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Zero data collection" },
+            { icon: <Lock className="w-5 h-5" />, label: "Browser-Based", desc: "Calculates from the values entered here" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Tax Analysis", desc: "Analyze 24b implications" }
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4 p-2 bg-white/50 rounded-2xl border border-transparent hover:border-[#EAECF0] transition-all">
@@ -336,19 +407,19 @@ export default function EMICalculator() {
                 icon: <CheckCircle className="w-5 h-5" />,
                 iconBg: "bg-blue-50 text-blue-600",
                 title: "Prepayment Benefit",
-                desc: "Paying just one extra EMI per year can reduce your 20-year loan tenure by nearly 3 years."
+                desc: "Ask your lender how partial prepayments change the remaining tenure, interest, and any applicable charges."
               },
               {
                 icon: <Zap className="w-5 h-5" />,
                 iconBg: "bg-amber-50 text-amber-600",
                 title: "Balance Transfer",
-                desc: "Moving your loan to a lender with a lower interest rate can save you lakhs in total interest."
+                desc: "Compare the revised rate, transfer fees, remaining tenure, and total interest before switching lenders."
               },
               {
                 icon: <Calculator className="w-5 h-5" />,
                 iconBg: "bg-emerald-50 text-emerald-600",
                 title: "Credit Score Role",
-                desc: "A credit score above 750 usually qualifies you for the lowest interest rates offered by banks."
+                desc: "Lenders may consider credit history, income, existing obligations, collateral, and product policy when pricing a loan."
               }
             ]}
             howItWorks={{

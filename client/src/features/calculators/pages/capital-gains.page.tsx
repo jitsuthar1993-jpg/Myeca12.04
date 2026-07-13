@@ -367,8 +367,8 @@ export default function CapitalGainsCalculatorPage() {
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Capital Gains Review", desc: "Check transaction records and tax treatment" },
             { icon: <Award className="w-5 h-5" />, label: "Estimate Tool", desc: "Review complex cases" },
-            { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
-            { icon: <BarChart3 className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
+            { icon: <Lock className="w-5 h-5" />, label: "Browser-Based", desc: "Calculates in your browser" },
+            { icon: <BarChart3 className="w-5 h-5" />, label: "Live Estimate", desc: "Updates with your inputs" }
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4 p-2">
               <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#101828] shrink-0">

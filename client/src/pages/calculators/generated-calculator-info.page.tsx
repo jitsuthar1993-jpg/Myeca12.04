@@ -31,6 +31,12 @@ export default function GeneratedCalculatorInfoPage() {
   if (!page) {
     return (
       <main className="min-h-screen bg-slate-50 px-4 py-20 text-center">
+        <MetaSEO
+          title="Calculator guide not found | MyeCA.in"
+          description="The requested calculator guide could not be found."
+          type="website"
+          noindex
+        />
         <h1 className="type-page-title font-black text-slate-950">Calculator guide not found</h1>
         <Link href="/calculators">
           <Button className="mt-6">Back to calculators</Button>
@@ -48,13 +54,7 @@ export default function GeneratedCalculatorInfoPage() {
         description={page.description}
         canonicalUrl={`/calculators/${page.slug}`}
         keywords={[page.title, "tax calculator guide", "MyeCA calculators"]}
-        type="calculator"
-        calculatorData={{
-          type: page.title,
-          features: page.highlights,
-          accuracy: "Planning guide",
-          updates: "Maintained by the MyeCA Editorial Team",
-        }}
+        type="article"
         breadcrumbs={[
           { name: "Home", url: "/" },
           { name: "Calculators", url: "/calculators" },

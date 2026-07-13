@@ -330,8 +330,8 @@ export default function TDSCalculatorPage() {
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "TDS Review Option", desc: "Review the section, rate, and credit assumptions" },
             { icon: <Award className="w-5 h-5" />, label: "Rule-Based Estimate", desc: "Review section and deductee type" },
-            { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
-            { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
+            { icon: <Lock className="w-5 h-5" />, label: "Browser-Based", desc: "Calculates in your browser" },
+            { icon: <PieChart className="w-5 h-5" />, label: "Live Estimate", desc: "Updates with your inputs" }
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4 p-2">
               <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#101828] shrink-0">

@@ -18,7 +18,8 @@ import {
   Info,
   TrendingDown,
   LineChart,
-  ArrowRight
+  ArrowRight,
+  RotateCcw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,16 +30,18 @@ import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components
 import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
+const DEFAULT_SIP_INPUTS = { monthlyAmount: 5000, years: 10, expectedReturn: 12 } as const;
+
 export default function SIPCalculator() {
   const [location] = useLocation();
   const isEnhancedRoute = location.split("?")[0] === "/calculators/sip-enhanced";
   const seoPath = isEnhancedRoute ? "/calculators/sip-enhanced" : "/calculators/sip";
   const seo = getSEOConfig(seoPath);
-  const [monthlyAmount, setMonthlyAmount] = useState<number>(5000);
-  const [years, setYears] = useState<number>(10);
-  const [expectedReturn, setExpectedReturn] = useState<number>(12);
+  const [monthlyAmount, setMonthlyAmount] = useState<number>(DEFAULT_SIP_INPUTS.monthlyAmount);
+  const [years, setYears] = useState<number>(DEFAULT_SIP_INPUTS.years);
+  const [expectedReturn, setExpectedReturn] = useState<number>(DEFAULT_SIP_INPUTS.expectedReturn);
 
-  const result = useMemo(() => calculateEnhancedSIP(monthlyAmount || 0, years || 0, expectedReturn || 0), [monthlyAmount, years, expectedReturn]);
+  const result = useMemo(() => calculateEnhancedSIP(monthlyAmount, years, expectedReturn), [monthlyAmount, years, expectedReturn]);
 
   const chartData = result.yearlyBreakdown.map((d) => ({
     year: d.year,
@@ -48,6 +51,13 @@ export default function SIPCalculator() {
   }));
 
   const fmt = (n: number) => formatCurrency(n);
+  const wealthMultiple = result.totalInvestment > 0 ? result.maturityValue / result.totalInvestment : 0;
+  const returnsPercent = result.maturityValue > 0 ? Math.round((result.wealthGain / result.maturityValue) * 100) : 0;
+  const resetCalculator = () => {
+    setMonthlyAmount(DEFAULT_SIP_INPUTS.monthlyAmount);
+    setYears(DEFAULT_SIP_INPUTS.years);
+    setExpectedReturn(DEFAULT_SIP_INPUTS.expectedReturn);
+  };
 
   return (
     <>
@@ -77,13 +87,16 @@ export default function SIPCalculator() {
       <CalcLayout
         variant="blue"
         complianceFacts={[
-          { title: "Power of Compounding", content: "Starting your SIP just 5 years earlier can nearly double your final wealth due to the exponential nature of compounding." },
-          { title: "LTCG Taxation", content: "Gains above ₹1.25 Lakhs per year from equity mutual funds are taxed at 12.5% (as per Union Budget 2024)." },
-          { title: "Rupee Cost Averaging", content: "SIPs automatically reduce your average acquisition cost by buying more units when prices are low and fewer when prices are high." }
+          { title: "Compounding Assumption", content: "Starting earlier gives contributions more time to compound, but actual returns will vary with market performance." },
+          { title: "Tax Treatment", content: "Tax depends on the fund type, holding period, realized gains, and rules applicable when units are redeemed." },
+          { title: "Regular Investing", content: "A fixed monthly contribution buys different numbers of units as market prices change; it does not remove investment risk." }
         ]}
         sidebar={
           <CalcGlassSidebar title="Projection Summary">
             <div className="space-y-4">
+              <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                Total invested {fmt(result.totalInvestment)}. Estimated gains {fmt(result.wealthGain)}. Projected value {fmt(result.maturityValue)}.
+              </div>
               <CalcResultRow label="Total Invested" value={fmt(result.totalInvestment)} />
               <CalcResultRow label="Estimated Gains" value={fmt(result.wealthGain)} variant="success" />
               <CalcResultRow label="Maturity Value" value={fmt(result.maturityValue)} variant="highlight" className="pt-4 border-t border-white/20" />
@@ -93,35 +106,47 @@ export default function SIPCalculator() {
                 <div className="space-y-2">
                    <div className="flex justify-between items-center">
                     <span className="type-meta font-normal text-slate-400">Wealth Multiple</span>
-                    <span className="text-xs font-normal text-blue-600">{(result.maturityValue / result.totalInvestment).toFixed(2)}x</span>
+                    <span className="text-xs font-normal text-blue-600">{wealthMultiple.toFixed(2)}x</span>
                   </div>
                   <div className="w-full bg-slate-200/50 h-1.5 rounded-full overflow-hidden">
                     <div
                       className="bg-blue-600 h-full rounded-full"
-                      style={{ width: `${Math.min(100, (result.wealthGain / result.maturityValue) * 100)}%` }}
+                      style={{ width: `${Math.min(100, Math.max(0, returnsPercent))}%` }}
+                      role="progressbar"
+                      aria-label="Returns share of projected value"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={returnsPercent}
                     />
                   </div>
-                  <p className="type-meta text-center italic text-slate-400">Returns make up {Math.round((result.wealthGain / result.maturityValue) * 100)}% of your final wealth</p>
+                  <p className="type-meta text-center italic text-slate-400">Estimated gains make up {returnsPercent}% of the projected value</p>
                 </div>
               </div>
 
-              <Link href="/services/wealth-management">
-                <button className="w-full py-4 rounded-2xl bg-blue-700 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
+              <Link href="/services/wealth-management" className="w-full py-4 rounded-2xl bg-blue-700 text-white font-normal text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
                   <Zap className="w-4 h-4 text-yellow-400" />
-                  Optimize Portfolio Now
-                </button>
+                  Review Investment Assumptions
               </Link>
+              <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-4 text-xs leading-relaxed text-slate-600">
+                This projection assumes a constant annual return and contributions at the beginning of each month. Returns are estimates, not guaranteed; taxes, fees, exit loads, inflation, and market volatility are not modeled.
+              </div>
             </div>
           </CalcGlassSidebar>
         }
       >
         <div className="space-y-8">
           <CalcInputCard title="SIP Parameters" icon={<PieChartIcon className="w-5 h-5" />}>
+            <div className="flex justify-end">
+              <button type="button" onClick={resetCalculator} aria-label="Reset calculator" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 hover:bg-slate-50">
+                <RotateCcw className="h-4 w-4" /> Reset
+              </button>
+            </div>
             <CalcInputGroup
               label="Monthly Investment"
               badgeValue={fmt(monthlyAmount)}
             >
               <Slider
+                thumbAriaLabel="Monthly investment"
                 value={[monthlyAmount]}
                 onValueChange={(v) => setMonthlyAmount(v[0])}
                 max={100000}
@@ -136,6 +161,7 @@ export default function SIPCalculator() {
                 badgeValue={`${years} Years`}
               >
                 <Slider
+                  thumbAriaLabel="Investment period"
                   value={[years]}
                   onValueChange={(v) => setYears(v[0])}
                   max={40}
@@ -149,10 +175,11 @@ export default function SIPCalculator() {
                 badgeValue={`${expectedReturn}% p.a.`}
               >
                 <Slider
+                  thumbAriaLabel="Expected annual return"
                   value={[expectedReturn]}
                   onValueChange={(v) => setExpectedReturn(v[0])}
                   max={30}
-                  min={1}
+                  min={0}
                   step={0.5}
                 />
               </CalcInputGroup>

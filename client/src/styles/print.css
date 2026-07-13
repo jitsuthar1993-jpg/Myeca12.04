@@ -19,6 +19,10 @@
   .bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b {
     background: none !important;
   }
+  .text-transparent.bg-clip-text {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+  }
 
   /* Hide non-print elements globally */
   header, .UnifiedFAB, .ToastViewport, .chat-widget, .footer, footer {

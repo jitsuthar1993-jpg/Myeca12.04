@@ -87,6 +87,7 @@ const largestArtifacts = [...files].sort((a, b) => b.size - a.size).slice(0, 5);
 const itrFilingChunk = jsFiles.find((file) => /\/filing\.page-[^/]+\.js$/.test(file.path));
 const contentContext = files.find((file) => file.path.endsWith("/content-context.json"));
 const ogDefault = files.find((file) => file.path.endsWith("/og-default.png"));
+const legacyOgImage = files.find((file) => file.path.endsWith("/og-image.jpg"));
 const apiIndexFunctionBytes = findApiIndexFunctionSize();
 
 const failures: string[] = [];
@@ -120,6 +121,10 @@ if (!ogDefault) {
   failures.push("og-default.png was not found in dist/public.");
 } else if (ogDefault.size > budgets.ogDefaultBytes) {
   failures.push(`og-default.png is ${formatBytes(ogDefault.size)} over ${formatBytes(budgets.ogDefaultBytes)}.`);
+}
+
+if (legacyOgImage) {
+  failures.push("Legacy og-image.jpg must not be emitted; use og-default.png as the single default social image.");
 }
 
 if (!itrFilingChunk) {

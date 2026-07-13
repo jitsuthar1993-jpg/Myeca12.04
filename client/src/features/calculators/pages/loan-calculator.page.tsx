@@ -26,6 +26,17 @@ import { CalculatorMiniBlog } from "@/features/calculators/components/Calculator
 
 type LoanType = 'home' | 'personal' | 'car' | 'education';
 
+export function calculateLoanPayment({ principal, annualRate, months }: { principal: number; annualRate: number; months: number }) {
+  if (!Number.isFinite(principal) || principal <= 0) throw new Error("Principal must be a positive number");
+  if (!Number.isFinite(annualRate) || annualRate < 0 || annualRate > 100) throw new Error("Annual rate must be between 0 and 100");
+  if (!Number.isFinite(months) || months <= 0 || !Number.isInteger(months)) throw new Error("Tenure must be a positive whole number of months");
+  const monthlyRate = annualRate / 1200;
+  const emi = monthlyRate === 0 ? principal / months : principal * monthlyRate * (1 + monthlyRate) ** months / ((1 + monthlyRate) ** months - 1);
+  const roundedEmi = Math.round(emi);
+  const totalPayment = roundedEmi * months;
+  return { emi: roundedEmi, totalPayment, totalInterest: totalPayment - principal };
+}
+
 const CHART_COLORS = ["#3b82f6", "#ef4444"];
 
 function LoanBreakdownDonut({ principal, interest }: { principal: number; interest: number }) {
@@ -117,7 +128,7 @@ export default function UnifiedLoanCalculatorPage() {
     const monthlyRate = rate / 12 / 100;
     const months = tenureType === "years" ? tenure * 12 : tenure;
 
-    if (principal <= 0 || monthlyRate <= 0 || months <= 0) {
+    if (!Number.isFinite(principal) || principal <= 0 || !Number.isFinite(rate) || rate < 0 || rate > 100 || !Number.isInteger(months) || months <= 0) {
       return { emi: 0, totalPayment: 0, totalInterest: 0, moratoriumInterest: 0, emiToIncomeRatio: 0, schedule: [] };
     }
 
@@ -130,8 +141,10 @@ export default function UnifiedLoanCalculatorPage() {
       moratoriumInterest = principalForEMI - principal;
     }
 
-    const emi = (principalForEMI * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-                (Math.pow(1 + monthlyRate, months) - 1);
+    const emi = monthlyRate === 0
+      ? principalForEMI / months
+      : (principalForEMI * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+        (Math.pow(1 + monthlyRate, months) - 1);
 
     const totalPayment = emi * months;
     const totalInterest = (totalPayment - principalForEMI) + moratoriumInterest;

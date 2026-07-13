@@ -1,313 +1,61 @@
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation } from "wouter";
-import { getSEOConfig } from "@/config/seo.config";
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { PiggyBank } from "lucide-react";
 import MetaSEO from "@/components/seo/MetaSEO";
-import { Card, CardContent } from "@/components/ui/card";
+import { getSEOConfig } from "@/config/seo.config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PiggyBank, TrendingUp, Calculator, Percent, IndianRupee, Info, Zap, HelpCircle } from "lucide-react";
-import { calculateEnhancedFD, formatCurrency, CURRENT_RATES } from "@/lib/enhanced-calculator-utils";
-import { CalculatorChart } from "@/components/ui/calculator-chart";
-import { cn } from "@/lib/utils";
-
-// Atomic Components
+import { calculateEnhancedFD, formatCurrency } from "@/lib/enhanced-calculator-utils";
 import CalcLayout from "@/features/calculators/components/CalcLayout";
 import CalcHero from "@/features/calculators/components/CalcHero";
 import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components/CalcInputCard";
 import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
-import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
+
+const defaults = { principal: "100000", rate: "6.5", years: "5", frequency: 4, taxRate: 30 };
 
 export default function EnhancedFDCalculator() {
   const [location] = useLocation();
-  const isEnhancedRoute = location.split("?")[0] === "/calculators/fd-enhanced";
-  const seoPath = isEnhancedRoute ? "/calculators/fd-enhanced" : "/calculators/fd";
-  const seo = getSEOConfig(seoPath);
-  const [principal, setPrincipal] = useState(100000);
-  const [rate, setRate] = useState(6.5);
-  const [years, setYears] = useState(5);
-  const [compoundingFrequency, setCompoundingFrequency] = useState(4);
-  const [taxRate, setTaxRate] = useState(30);
-  const [bankSelected, setBankSelected] = useState('sbi');
-  const [activeTab, setActiveTab] = useState('calculator');
+  const enhanced = location.split("?")[0] === "/calculators/fd-enhanced";
+  const seo = getSEOConfig(enhanced ? "/calculators/fd-enhanced" : "/calculators/fd");
+  const [principalInput, setPrincipalInput] = useState(defaults.principal);
+  const [rateInput, setRateInput] = useState(defaults.rate);
+  const [yearsInput, setYearsInput] = useState(defaults.years);
+  const [frequency, setFrequency] = useState(defaults.frequency);
+  const [taxRate, setTaxRate] = useState(defaults.taxRate);
+  const principal = Number(principalInput), rate = Number(rateInput), years = Number(yearsInput);
+  const principalError = principalInput === "" ? "Enter a principal amount." : principal < 0 || principal > 100_000_000 ? "Enter an amount from ₹0 to ₹10 crore." : "";
+  const rateError = rateInput === "" ? "Enter an interest rate." : rate < 0 || rate > 100 ? "Enter a rate from 0% to 100%." : "";
+  const yearsError = yearsInput === "" ? "Enter a tenure." : !Number.isInteger(years) || years < 1 || years > 100 ? "Enter a whole number from 1 to 100 years." : "";
+  const valid = !principalError && !rateError && !yearsError;
+  const result = valid ? calculateEnhancedFD(principal, rate, years, frequency, taxRate) : null;
+  const reset = () => { setPrincipalInput(defaults.principal); setRateInput(defaults.rate); setYearsInput(defaults.years); setFrequency(defaults.frequency); setTaxRate(defaults.taxRate); };
 
-  const result = calculateEnhancedFD(principal, rate, years, compoundingFrequency, taxRate);
-
-  const banks = [
-    { value: 'sbi', label: 'State Bank of India', rate: CURRENT_RATES.FD_RATES.SBI },
-    { value: 'hdfc', label: 'HDFC Bank', rate: CURRENT_RATES.FD_RATES.HDFC },
-    { value: 'icici', label: 'ICICI Bank', rate: CURRENT_RATES.FD_RATES.ICICI },
-    { value: 'axis', label: 'Axis Bank', rate: CURRENT_RATES.FD_RATES.AXIS },
-    { value: 'kotak', label: 'Kotak Mahindra Bank', rate: CURRENT_RATES.FD_RATES.KOTAK },
-    { value: 'yes', label: 'Yes Bank', rate: CURRENT_RATES.FD_RATES.YES_BANK }
-  ];
-
-  const compoundingOptions = [
-    { value: 1, label: 'Annually' },
-    { value: 2, label: 'Half-yearly' },
-    { value: 4, label: 'Quarterly' },
-    { value: 12, label: 'Monthly' }
-  ];
-
-  const handleBankChange = (bankValue: string) => {
-    setBankSelected(bankValue);
-    const selectedBank = banks.find(bank => bank.value === bankValue);
-    if (selectedBank) {
-      setRate(selectedBank.rate);
-    }
-  };
-
-  const chartData = result.yearlyBreakdown.map(year => ({
-    year: year.year,
-    investment: principal,
-    interestEarned: Math.max(0, year.interest)
-  }));
-
-  return (
-    <>
-      <MetaSEO
-        title={seo?.title || "Enhanced FD Calculator 2026 | Bank Rates Comparison | MyeCA.in"}
-        description={seo?.description || "Compare FD interest rates across major Indian banks. Plan your fixed deposits with tax-adjusted maturity calculations."}
-        keywords={seo?.keywords}
-        type={seo?.type || "calculator"}
-        calculatorData={seo?.calculatorData}
-        breadcrumbs={seo?.breadcrumbs}
-      />
-
-      <CalcHero
-        title={isEnhancedRoute ? "Enhanced FD Planner" : "FD Calculator"}
-        description={
-          isEnhancedRoute
-            ? "Compare bank interest rates and calculate post-tax fixed deposit maturity returns with precision."
-            : "Calculate fixed deposit maturity, interest earned, effective yield and tax-adjusted returns."
-        }
-        category="Investment Tools"
-        icon={<PiggyBank className="w-6 h-6" />}
-        variant="indigo"
-        breadcrumbItems={[{ name: isEnhancedRoute ? "Enhanced FD" : "FD Calculator" }]}
-        compact
-      />
-
-      <CalcLayout
-        variant="indigo"
-        complianceFacts={[
-          { title: "TDS on FD", content: "Banks deduct 10% TDS if interest income exceeds ₹40,000 (₹50,000 for seniors). Form 15G/H can be submitted to avoid this if eligible." },
-          { title: "Section 80C", content: "5-Year Tax Saving FDs are eligible for deduction up to ₹1.5 Lakhs under Section 80C of the Income Tax Act." },
-          { title: "DICGC Cover", content: "Your deposits in banks are insured up to ₹5 Lakhs (including principal and interest) by the DICGC." }
-        ]}
-        sidebar={
-          <CalcGlassSidebar title="Investment Summary">
-            <div className="space-y-4">
-              <CalcResultRow label="Principal Invested" value={formatCurrency(principal)} />
-              <CalcResultRow label="Total Interest" value={formatCurrency(result.interest)} variant="warning" />
-              <CalcResultRow label="Maturity Value" value={formatCurrency(result.maturityValue)} variant="highlight" className="pt-4 border-t border-white/20" />
-              <CalcResultRow label="Post-Tax Returns" value={formatCurrency(result.postTaxReturns)} variant="success" />
-
-              <div className="bg-white/30 rounded-xl p-4 mt-6 border border-white/20">
-                <p className="type-meta font-normal text-slate-500 uppercase tracking-widest mb-2">Yield Analysis</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="type-meta font-normal text-slate-400">Effective rate</p>
-                    <p className="text-sm font-normal text-slate-800">{result.effectiveRate}%</p>
-                  </div>
-                  <div>
-                    <p className="type-meta font-normal text-slate-400">Total Tax</p>
-                    <p className="text-sm font-normal text-red-600">{formatCurrency(result.taxOnInterest)}</p>
-                  </div>
-                </div>
-              </div>
-
-              <Link href="/services/tax-consultation">
-                <button className="w-full py-4 rounded-2xl bg-blue-700 text-white font-normal text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200 mt-4 flex items-center justify-center gap-2">
-                  <Zap className="w-4 h-4 text-yellow-400" />
-                  Optimize FD Tax Now
-                </button>
-              </Link>
-            </div>
-          </CalcGlassSidebar>
-        }
-      >
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 p-1 bg-slate-100 rounded-2xl">
-            <TabsTrigger value="calculator" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm">Calculator</TabsTrigger>
-            <TabsTrigger value="comparison" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm">Bank Rates</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="calculator" className="space-y-8">
-            <CalcInputCard title="Deposit Parameters">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <Label className="type-meta font-normal text-slate-400 uppercase tracking-widest">Select Bank</Label>
-                    <Select value={bankSelected} onValueChange={handleBankChange}>
-                      <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {banks.map((bank) => (
-                          <SelectItem key={bank.value} value={bank.value}>
-                            {bank.label} ({bank.rate}% p.a.)
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <CalcInputGroup label="Principal Amount" badgeValue={formatCurrency(principal)}>
-                    <Input
-                      type="number"
-                      value={principal}
-                      onChange={(e) => setPrincipal(Math.max(0, Number(e.target.value)))}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-normal"
-                    />
-                  </CalcInputGroup>
-
-                  <CalcInputGroup label="Interest Rate (%)" badgeValue={`${rate}%`}>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      value={rate}
-                      onChange={(e) => setRate(Math.max(0, Number(e.target.value)))}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-normal"
-                    />
-                  </CalcInputGroup>
-                </div>
-
-                <div className="space-y-6">
-                  <CalcInputGroup label="Tenure (Years)" badgeValue={`${years} Yrs`}>
-                    <Input
-                      type="number"
-                      value={years}
-                      onChange={(e) => setYears(Math.max(1, Number(e.target.value)))}
-                      className="h-12 rounded-xl border-slate-100 bg-slate-50 text-lg font-normal"
-                    />
-                  </CalcInputGroup>
-
-                  <div className="space-y-2">
-                    <Label className="type-meta font-normal text-slate-400 uppercase tracking-widest">Compounding</Label>
-                    <Select value={compoundingFrequency.toString()} onValueChange={(value) => setCompoundingFrequency(Number(value))}>
-                      <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {compoundingOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value.toString()}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="type-meta font-normal text-slate-400 uppercase tracking-widest">Your Tax Slab</Label>
-                    <Select value={taxRate.toString()} onValueChange={(value) => setTaxRate(Number(value))}>
-                      <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0">0% (Tax Exempt)</SelectItem>
-                        <SelectItem value="5">5% (Slab 1)</SelectItem>
-                        <SelectItem value="20">20% (Slab 2)</SelectItem>
-                        <SelectItem value="30">30% (Slab 3)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </CalcInputCard>
-
-            <CalcInputCard title="Growth Visualization">
-              <div className="h-72 w-full mt-4">
-                <CalculatorChart
-                  data={chartData}
-                  type="bar"
-                  title="Year-wise FD Growth"
-                  height={280}
-                />
-              </div>
-            </CalcInputCard>
-          </TabsContent>
-
-          <TabsContent value="comparison" className="space-y-6">
-            <CalcInputCard title="Market Rates Comparison">
-              <p className="text-xs text-slate-500 font-normal mb-6">
-                Projected returns for ₹{principal.toLocaleString()} over {years} years.
-              </p>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-slate-100">
-                      <th className="text-left p-4 type-meta font-normal text-slate-400 uppercase tracking-widest">Bank</th>
-                      <th className="text-center p-4 type-meta font-normal text-slate-400 uppercase tracking-widest">Rate</th>
-                      <th className="text-right p-4 type-meta font-normal text-slate-400 uppercase tracking-widest">Maturity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {banks.map((bank) => {
-                      const bankResult = calculateEnhancedFD(principal, bank.rate, years, compoundingFrequency, taxRate);
-                      return (
-                        <tr key={bank.value} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 font-normal text-slate-800 text-sm">{bank.label}</td>
-                          <td className="text-center p-4">
-                            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-normal px-2.5 py-0.5 rounded-full type-meta">
-                              {bank.rate}%
-                            </Badge>
-                          </td>
-                          <td className="text-right p-4 font-normal text-slate-900 text-sm">
-                            {formatCurrency(bankResult.maturityValue)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </CalcInputCard>
-          </TabsContent>
-        </Tabs>
-
-        <CalculatorMiniBlog
-          features={[
-            {
-              icon: <Calculator className="w-5 h-5" />,
-              iconBg: "bg-indigo-50 text-indigo-600",
-              title: "Tax-Adjusted Yield",
-              desc: "See your actual 'take-home' interest by factoring in your specific income tax slab."
-            },
-            {
-              icon: <TrendingUp className="w-5 h-5" />,
-              iconBg: "bg-emerald-50 text-emerald-600",
-              title: "Market Comparison",
-              desc: "Quickly compare rates from PSU and private banks to review suitable options."
-            },
-            {
-              icon: <Zap className="w-5 h-5" />,
-              iconBg: "bg-amber-50 text-amber-600",
-              title: "Smart Compounding",
-              desc: "Choose between monthly, quarterly, or annual compounding to match your specific bank scheme."
-            }
-          ]}
-          howItWorks={{
-            title: "Enhanced FD Math",
-            description: "Our planner uses the official banking compounding formula with integrated tax slab processing.",
-            steps: [
-              { title: "Select Your Bank", desc: "Start with listed bank rates or enter your own custom rate for precision." },
-              { title: "Configure Compounding", desc: "Select the frequency at which your bank calculates interest (standard is quarterly)." },
-              { title: "Review Net Returns", desc: "Check the final post-tax maturity value to understand your real wealth growth." }
-            ]
-          }}
-          faqs={[
-            { q: "Is FD interest taxed at a flat rate?", a: "No, FD interest is added to your total income and taxed as per your individual tax slab." },
-            { q: "Can I avoid TDS on my FD?", a: "Yes, by submitting Form 15G or 15H if your total income is below the exemption limit." },
-            { q: "What is the penalty for premature withdrawal?", a: "Most banks charge a penalty of 0.5% to 1% on the interest rate for the period the FD was held." }
-          ]}
-        />
-      </CalcLayout>
-    </>
-  );
+  return <>
+    <MetaSEO title={seo?.title ?? "FD Calculator"} description={seo?.description ?? "Estimate FD maturity."} keywords={seo?.keywords} type={seo?.type} calculatorData={seo?.calculatorData} breadcrumbs={seo?.breadcrumbs} />
+    <CalcHero title={enhanced ? "Enhanced FD Planner" : "FD Calculator"} description="Estimate fixed-deposit maturity using your rate, tenure, compounding and tax assumptions." category="Investment Tools" icon={<PiggyBank className="h-6 w-6" />} variant="indigo" breadcrumbItems={[{ name: enhanced ? "Enhanced FD" : "FD Calculator" }]} compact />
+    <CalcLayout variant="indigo" complianceFacts={[
+      { title: "Rate assumption", content: "Verify the offered rate and product terms directly with the bank." },
+      { title: "Tax estimate", content: "The selected tax rate is applied to projected interest and is not a TDS calculation." },
+      { title: "Product terms", content: "Premature-withdrawal penalties and product-specific conditions are excluded." },
+    ]} sidebar={<CalcGlassSidebar title="Investment Summary"><div className="space-y-4">
+      <div role="status" aria-live="polite" className="text-sm text-slate-700">{result ? `Estimated maturity value ${formatCurrency(result.maturityValue)}. Estimated interest ${formatCurrency(result.interest)}.` : "Enter valid assumptions to see an estimate."}</div>
+      {result && <><CalcResultRow label="Principal invested" value={formatCurrency(result.principal)} />
+      <CalcResultRow label="Estimated interest" value={formatCurrency(result.interest)} variant="warning" />
+      <CalcResultRow label="Maturity value" value={formatCurrency(result.maturityValue)} variant="highlight" />
+      <CalcResultRow label="Maturity less estimated tax" value={formatCurrency(result.postTaxReturns)} variant="success" /></>}
+    </div></CalcGlassSidebar>}>
+      <div className="space-y-8">
+        <CalcInputCard title="Deposit assumptions"><div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <CalcInputGroup label="Principal amount" badgeValue={valid ? formatCurrency(principal) : "—"}><Input aria-label="Principal amount" aria-invalid={!!principalError} aria-describedby={principalError ? "fd-principal-error" : undefined} type="number" min="0" max="100000000" step="1000" value={principalInput} onChange={e => setPrincipalInput(e.target.value)} />{principalError && <p id="fd-principal-error" role="alert" className="text-sm text-red-600">{principalError}</p>}</CalcInputGroup>
+          <CalcInputGroup label="Interest rate" badgeValue={rateInput ? `${rateInput}%` : "—"}><Input aria-label="Interest rate" aria-invalid={!!rateError} aria-describedby={rateError ? "fd-rate-error" : undefined} type="number" min="0" max="100" step="0.1" value={rateInput} onChange={e => setRateInput(e.target.value)} />{rateError && <p id="fd-rate-error" role="alert" className="text-sm text-red-600">{rateError}</p>}</CalcInputGroup>
+          <CalcInputGroup label="Tenure in years" badgeValue={yearsInput ? `${yearsInput} years` : "—"}><Input aria-label="Tenure in years" aria-invalid={!!yearsError} aria-describedby={yearsError ? "fd-years-error" : undefined} type="number" min="1" max="100" step="1" value={yearsInput} onChange={e => setYearsInput(e.target.value)} />{yearsError && <p id="fd-years-error" role="alert" className="text-sm text-red-600">{yearsError}</p>}</CalcInputGroup>
+          <div className="space-y-2"><Label id="fd-frequency-label">Compounding frequency</Label><Select value={String(frequency)} onValueChange={value => setFrequency(Number(value))}><SelectTrigger aria-labelledby="fd-frequency-label"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="1">Annually</SelectItem><SelectItem value="2">Half-yearly</SelectItem><SelectItem value="4">Quarterly</SelectItem><SelectItem value="12">Monthly</SelectItem></SelectContent></Select></div>
+          <div className="space-y-2"><Label id="fd-tax-label">Marginal tax-rate assumption</Label><Select value={String(taxRate)} onValueChange={value => setTaxRate(Number(value))}><SelectTrigger aria-labelledby="fd-tax-label"><SelectValue /></SelectTrigger><SelectContent>{[0,5,20,30].map(value => <SelectItem key={value} value={String(value)}>{value}%</SelectItem>)}</SelectContent></Select></div>
+        </div><Button className="mt-6" type="button" variant="outline" onClick={reset} aria-label="Reset calculator">Reset calculator</Button></CalcInputCard>
+        <CalcInputCard title="Projection assumptions"><div className="space-y-3 text-sm text-slate-600"><p>The rate entered is an assumption, not a live bank rate. Verify it with the bank.</p><p>The tax adjustment subtracts the selected marginal rate from total projected interest at maturity. It is a simplified liability estimate, not a tax or bank quote and not a TDS calculation.</p><p>Compounding, premature-withdrawal rules and other product terms vary by deposit.</p></div></CalcInputCard>
+      </div>
+    </CalcLayout>
+  </>;
 }

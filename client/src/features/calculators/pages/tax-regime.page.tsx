@@ -402,10 +402,10 @@ export default function TaxRegimeCalculator() {
                     {/* Recommendation Banner */}
                     {recommendation && (
                       <div className={cn(
-                        "rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl",
-                        recommendation.regime === 'new' ? "bg-gradient-to-br from-emerald-500 to-teal-700 shadow-emerald-500/20" :
-                        recommendation.regime === 'old' ? "bg-gradient-to-br from-indigo-500 to-blue-700 shadow-blue-500/20" :
-                        "bg-gradient-to-br from-slate-600 to-slate-800 shadow-slate-500/20"
+                        "relative overflow-hidden rounded-[2.5rem] border p-8 text-white shadow-lg",
+                        recommendation.regime === 'new' ? "border-emerald-800 bg-emerald-950 shadow-emerald-950/20" :
+                        recommendation.regime === 'old' ? "border-indigo-800 bg-indigo-950 shadow-indigo-950/20" :
+                        "border-slate-700 bg-slate-900 shadow-slate-950/20"
                       )}>
                         <div className="absolute top-0 right-0 p-8 opacity-10 scale-150">
                           <TrendingUp className="w-32 h-32" />

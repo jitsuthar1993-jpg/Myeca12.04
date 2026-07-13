@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 
 type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> & {
   colorTheme?: "primary" | "blue" | "green" | "purple" | "orange" | "red" | "teal" | "slate";
+  thumbAriaLabel?: string;
 }
 
 const colorMap = {
@@ -21,7 +22,7 @@ const colorMap = {
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, colorTheme = "slate", ...props }, ref) => {
+>(({ className, colorTheme = "slate", thumbAriaLabel, ...props }, ref) => {
   const theme = colorMap[colorTheme] || colorMap.slate;
 
   return (
@@ -36,7 +37,7 @@ const Slider = React.forwardRef<
       <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-slate-100 shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)] border border-slate-200/50">
         <SliderPrimitive.Range className={cn("absolute h-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]", theme.range)} />
       </SliderPrimitive.Track>
-      <SliderPrimitive.Thumb className={cn("block h-5 w-5 rounded-full shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.2)] border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-1.5 after:w-1.5 after:rounded-full after:bg-white hover:scale-110 transition-transform", theme.thumb)} />
+      <SliderPrimitive.Thumb aria-label={thumbAriaLabel} className={cn("block h-5 w-5 rounded-full shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.2)] border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-1.5 after:w-1.5 after:rounded-full after:bg-white hover:scale-110 transition-transform", theme.thumb)} />
     </SliderPrimitive.Root>
   );
 })

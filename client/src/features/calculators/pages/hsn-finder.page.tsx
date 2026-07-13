@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import {
-  Search, Info, Tag, Box, Briefcase,
-  ChevronRight, Sparkles, AlertCircle, FileText,
-  Zap, IndianRupee, ShieldCheck, CheckCircle
+  Search, Info, Box, Briefcase,
+  AlertCircle, ExternalLink,
+  Zap, ShieldCheck, CheckCircle
 } from "lucide-react";
 import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
+import { HSN_REFERENCE_DATASET } from "@/data/calculator-rule-datasets";
+import { searchClassificationReferences } from "@/features/calculators/lib/classification-reference-search";
 
 // Atomic Components
 import CalcLayout from "@/features/calculators/components/CalcLayout";
@@ -19,29 +21,14 @@ import CalcInputCard from "@/features/calculators/components/CalcInputCard";
 import CalcGlassSidebar from "@/features/calculators/components/CalcGlassSidebar";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-const HSN_DATA = [
-  { code: "1001", name: "Wheat and meslin", rate: "0%", category: "Grains" },
-  { code: "6109", name: "T-shirts, singlets and other vests", rate: "5%", category: "Apparel" },
-  { code: "8471", name: "Laptops, PCs and data machines", rate: "18%", category: "Electronics" },
-  { code: "8517", name: "Smartphones and telephone sets", rate: "18%", category: "Electronics" },
-  { code: "3304", name: "Beauty and skin care preparations", rate: "28%", category: "Cosmetics" }
-];
-
-const SAC_DATA = [
-  { code: "9983", name: "Professional & Business Services (CA/Legal)", rate: "18%", category: "Professional" },
-  { code: "9984", name: "Telecom & Information Supply Services", rate: "18%", category: "IT" },
-  { code: "9963", name: "Accommodation & Food Services (Hotels)", rate: "18%", category: "Hospitality" },
-  { code: "9965", name: "Goods Transport Services (GTA)", rate: "12%", category: "Logistics" }
-];
-
 export default function HSNFinderPage() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"hsn" | "sac">("hsn");
 
-  const filteredItems = (activeTab === "hsn" ? HSN_DATA : SAC_DATA).filter(item =>
-    item.name.toLowerCase().includes(query.toLowerCase()) ||
-    item.code.includes(query)
-  );
+  const filteredItems = searchClassificationReferences(HSN_REFERENCE_DATASET.entries, {
+    type: activeTab,
+    query,
+  });
 
   const seo = getSEOConfig('/calculators/hsn-finder');
 
@@ -49,16 +36,17 @@ export default function HSNFinderPage() {
     <>
       <MetaSEO
         title={seo?.title || "GST HSN & SAC Code Finder | MyeCA.in"}
-        description={seo?.description || "Find HSN codes for goods and SAC codes for services with applicable GST rate guidance for FY 2025-26."}
+        description={seo?.description || "Search a limited HSN and SAC reference shortlist, then verify the complete classification and applicable GST notification before use."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
         breadcrumbs={seo?.breadcrumbs}
+        noindex
       />
 
       <CalcHero
-        title="HSN & SAC Finder"
-        description="Search for product and service codes to ensure correct GST billing and tax compliance."
+        title="HSN & SAC Reference Search"
+        description="Search a limited reference shortlist. Confirm the complete code, conditions, and rate from current official schedules before billing or filing."
         category="GST Compliance"
         icon={<Search className="w-6 h-6" />}
         variant="blue"
@@ -69,9 +57,9 @@ export default function HSNFinderPage() {
       <CalcLayout
         variant="blue"
         complianceFacts={[
-          { title: "Invoice Rule", content: "Businesses with turnover > ₹5 Cr must use 6-digit HSN codes on all B2B invoices." },
-          { title: "Service Class", content: "All service codes (SAC) start with '99' and represent professional, technical, or trade services." },
-          { title: "ITC Eligibility", content: "Incorrect HSN/SAC codes on purchase invoices can lead to rejection of Input Tax Credit (ITC) claims." }
+          { title: "Reference status", content: "This is a limited four-digit classification shortlist, not a complete tariff or rate schedule." },
+          { title: "Source check", content: `The supporting official sources were last checked on ${HSN_REFERENCE_DATASET.checkedOn}.` },
+          { title: "Classification", content: "An item description alone may not establish the correct code or rate; composition, use, value, recipient, and notification conditions can matter." }
         ]}
         sidebar={
           <CalcGlassSidebar title="Finder Summary">
@@ -107,7 +95,9 @@ export default function HSNFinderPage() {
           <CalcInputCard title="Search & Filter" icon={<Search className="w-5 h-5" />}>
              <div className="grid grid-cols-2 gap-3 mb-8">
                 <button
+                  type="button"
                   onClick={() => setActiveTab("hsn")}
+                  aria-pressed={activeTab === "hsn"}
                   className={cn(
                     "py-4 rounded-2xl border-2 transition-all font-normal text-sm flex items-center justify-center gap-2",
                     activeTab === "hsn" ? "border-blue-600 bg-blue-600 text-white shadow-lg" : "border-slate-50 bg-slate-50 text-slate-500"
@@ -116,7 +106,9 @@ export default function HSNFinderPage() {
                   <Box className="w-4 h-4" /> HSN (Goods)
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab("sac")}
+                  aria-pressed={activeTab === "sac"}
                   className={cn(
                     "py-4 rounded-2xl border-2 transition-all font-normal text-sm flex items-center justify-center gap-2",
                     activeTab === "sac" ? "border-blue-600 bg-blue-600 text-white shadow-lg" : "border-slate-50 bg-slate-50 text-slate-500"
@@ -129,7 +121,8 @@ export default function HSNFinderPage() {
              <div className="relative group">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-600" />
                 <Input
-                  placeholder={activeTab === 'hsn' ? "Search Product (e.g. Laptop)" : "Search Service (e.g. Audit)"}
+                  aria-label={`Search ${activeTab.toUpperCase()} reference codes`}
+                  placeholder={activeTab === "hsn" ? "Search goods by code or description" : "Search services by code or description"}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="h-16 pl-12 rounded-2xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-4 focus:ring-blue-100"
@@ -155,13 +148,13 @@ export default function HSNFinderPage() {
                         {item.code}
                       </div>
                       <div>
-                        <p className="font-normal text-slate-900 text-lg">{item.name}</p>
-                        <p className="type-meta font-normal uppercase tracking-widest text-slate-400">{item.category}</p>
+                        <p className="font-normal text-slate-900 text-lg">{item.description}</p>
+                        <p className="type-meta font-normal uppercase tracking-widest text-slate-400">Four-digit {item.kind.toUpperCase()} reference</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <Badge className="bg-blue-600 text-white font-normal px-4 py-1.5 text-base rounded-xl">
-                        {item.rate} GST
+                        Verify rate
                       </Badge>
                     </div>
                   </m.div>
@@ -170,17 +163,40 @@ export default function HSNFinderPage() {
                 <m.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
+                  role="status"
                   className="p-12 text-center bg-white rounded-3xl border border-slate-100 border-dashed"
                 >
                   <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <AlertCircle className="w-8 h-8 text-slate-300" />
                   </div>
                   <p className="text-slate-500 font-normal">No matching codes found for "{query}"</p>
-                  <p className="text-xs text-slate-400 mt-1">Try searching by code or category instead.</p>
+                  <p className="text-xs text-slate-400 mt-1">Try searching by code or description instead.</p>
                 </m.div>
               )}
             </AnimatePresence>
           </div>
+
+          <section className="rounded-3xl border border-slate-100 bg-white p-6" aria-labelledby="hsn-official-sources">
+            <h2 id="hsn-official-sources" className="text-lg font-normal text-slate-900">Official verification sources</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Confirm the complete classification, current notification conditions, and applicable rate before using a code.
+            </p>
+            <ul className="mt-4 space-y-3">
+              {HSN_REFERENCE_DATASET.officialSources.map((source) => (
+                <li key={source.url}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline"
+                  >
+                    {source.title}
+                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
 
         <CalculatorMiniBlog
@@ -188,7 +204,7 @@ export default function HSNFinderPage() {
             {
               icon: <CheckCircle className="w-5 h-5" />,
               iconBg: "bg-blue-50 text-blue-600",
-              title: "Updated Rates",
+              title: "Current-source check",
               desc: "Review GST Council updates and notifications before using a rate for billing or filing."
             },
             {
@@ -210,12 +226,12 @@ export default function HSNFinderPage() {
             steps: [
               { title: "HSN (Goods)", desc: "Harmonized System of Nomenclature is used for classifying physical goods." },
               { title: "SAC (Services)", desc: "Services Accounting Code is used for classifying services and intangibles." },
-              { title: "Digit Requirement", desc: "4 digits for turnover < ₹5 Cr, 6 digits for turnover > ₹5 Cr on B2B invoices." }
+              { title: "Required precision", desc: "Confirm the number of digits required for the invoice, return, import, or export context." }
             ]
           }}
           faqs={[
-            { q: "Is 8-digit HSN mandatory?", a: "8-digit HSN codes are mandatory only for export and import businesses." },
-            { q: "Can I find GST rates here?", a: "Yes, our finder provides the most common GST rates (0%, 5%, 12%, 18%, 28%) for each code." },
+            { q: "Is 8-digit HSN mandatory?", a: "The required precision depends on the transaction and applicable GST or Customs rules. Verify the rule for your invoice, return, import, or export context." },
+            { q: "Can I find GST rates here?", a: "No. This shortlist helps orient a classification search but does not determine a GST rate. Verify the current CBIC schedule and notifications." },
             { q: "What if my product isn't listed?", a: "If you can't find a specific code, consult a GST expert to avoid misclassification penalties." }
           ]}
         />

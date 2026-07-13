@@ -42,6 +42,7 @@ type CalculatorItem = {
   description: string;
   isNew?: boolean;
   isPopular?: boolean;
+  availability?: "calculator" | "limited-reference" | "verification-pending";
 };
 
 type CalculatorCategory = {
@@ -101,8 +102,8 @@ const calculatorCategories: CalculatorCategory[] = [
       { name: "Salary Calculator", href: "/calculators/salary", icon: Wallet, isNew: true, description: "CTC to in-hand salary" },
       { name: "TDS Calculator", href: "/calculators/tds", icon: Shield, description: "Tax deducted at source" },
       { name: "Capital Gains Calculator", href: "/calculators/capital-gains", icon: BarChart3, description: "LTCG and STCG computation" },
-      { name: "Advance Tax Calculator", href: "/calculators/advance-tax", icon: Clock, isNew: true, description: "Quarterly tax payment planner" },
-      { name: "HSN / SAC Code Finder", href: "/calculators/hsn-finder", icon: Tag, isNew: true, description: "GST rates for goods and services" },
+      { name: "Advance Tax Calculator", href: "/calculators/advance-tax", icon: Clock, isNew: true, availability: "verification-pending", description: "FY 2025-26 reconciliation only; Tax Year 2026-27 pending verification" },
+      { name: "HSN / SAC Reference", href: "/calculators/hsn-finder", icon: Tag, isNew: true, availability: "limited-reference", description: "Limited code shortlist; verify classification and rate" },
     ],
   },
   {
@@ -141,7 +142,7 @@ const calculatorCategories: CalculatorCategory[] = [
       { name: "Education Loan Calculator", href: "/calculators/education-loan", icon: Award, description: "Moratorium and repayment planning" },
       { name: "Loan Eligibility", href: "/calculators/loan-eligibility", icon: Calculator, isNew: true, description: "Borrowing power estimator" },
       { name: "Gratuity Calculator", href: "/calculators/gratuity", icon: Shield, isNew: true, description: "Employee exit benefit" },
-      { name: "Penalty Calculator", href: "/calculators/penalty", icon: ShieldAlert, description: "GST and tax penalty estimator" },
+      { name: "Late Charge Reference", href: "/calculators/penalty", icon: ShieldAlert, availability: "verification-pending", description: "Official-source directory; calculations unavailable pending verified rules" },
     ],
   },
   {
@@ -187,6 +188,11 @@ const mobileFeaturedTools = [
 function ToolCard({ calc, category }: { calc: CalculatorItem; category: CalculatorCategory }) {
   const Icon = calc.icon;
   const colors = colorClasses[category.color];
+  const statusLabel = calc.availability === "limited-reference"
+    ? "Limited reference"
+    : calc.availability === "verification-pending"
+      ? "Verification pending"
+      : "Available calculator";
 
   return (
     <Link href={calc.href} className="group block h-full">
@@ -215,7 +221,7 @@ function ToolCard({ calc, category }: { calc: CalculatorItem; category: Calculat
         <p className="mt-2 hidden flex-1 text-xs leading-5 text-slate-500 sm:block">{calc.description}</p>
 
         <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 md:mt-5">
-          <span className="type-meta font-medium uppercase tracking-widest text-slate-400">Free tool</span>
+          <span className="type-meta font-medium uppercase tracking-widest text-slate-400">{statusLabel}</span>
           <ArrowRight className={cn("h-4 w-4 transition-transform group-hover:translate-x-1", colors.text)} />
         </div>
       </article>

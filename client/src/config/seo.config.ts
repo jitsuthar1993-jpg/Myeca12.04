@@ -98,15 +98,15 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Capital Gains Import', url: '/capital-gains-import' }]
   },
   '/calculators/advance-tax': {
-    title: 'Advance Tax Calculator 2026 | Installment Due Dates | MyeCA.in',
-    description: 'Estimate advance tax liability and view installment due dates by selected financial year. Avoid Section 234B & 234C interest with timely planning.',
-    keywords: ['advance tax calculator', 'tax installments 2026', 'income tax due dates', 'section 234C calculator'],
+    title: 'FY 2025-26 Advance Tax Reconciliation | MyeCA.in',
+    description: 'Reconcile the historical FY 2025-26 advance-tax installment schedule for AY 2026-27. Tax Year 2026-27 calculations are not yet available.',
+    keywords: ['FY 2025-26 advance tax reconciliation', 'AY 2026-27 advance tax', 'historical advance tax schedule'],
     type: 'calculator',
     calculatorData: {
-      type: 'Advance Tax Calculator',
-      features: ['Quarterly breakdown', 'Due date alerts', 'Penalty estimation'],
-      accuracy: 'Estimate for common cases',
-      updates: 'FY selector and current due dates'
+      type: 'Historical Advance Tax Reconciliation',
+      features: ['FY 2025-26 quarterly breakdown', 'Recorded-payment reconciliation'],
+      accuracy: 'Historical estimate; excludes interest calculation',
+      updates: 'FY 2025-26 / AY 2026-27 only'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Advance Tax', url: '/calculators/advance-tax' }]
   },
@@ -150,28 +150,29 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Regime Comparator', url: '/calculators/regime-comparator' }]
   },
   '/calculators/hsn-finder': {
-    title: 'HSN Code Finder 2026 | GST Rate Finder Online | MyeCA.in',
-    description: 'Search for GST HSN/SAC codes and check applicable GST rates. Easy search by product description or chapter.',
-    keywords: ['hsn code finder', 'gst rate finder', 'hsn search online', 'sac codes list'],
+    noindex: true,
+    title: 'HSN and SAC Reference Search | MyeCA.in',
+    description: 'Search a limited HSN and SAC shortlist, then verify the complete classification and applicable GST notification.',
+    keywords: ['hsn code reference', 'hsn search', 'sac code reference'],
     type: 'calculator',
     calculatorData: {
       type: 'HSN Finder',
-      features: ['Real-time search', 'Updated GST rates', 'Category breakdown'],
-      accuracy: 'Lookup estimate',
-      updates: 'Current GST council updates'
+      features: ['Limited reference search', 'Goods and services tabs', 'Verification reminder'],
+      accuracy: 'Orientation only; not a classification or rate determination',
+      updates: 'Verify against current CBIC schedules and notifications'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'HSN Finder', url: '/calculators/hsn-finder' }]
   },
   '/calculators/gst': {
-    title: 'GST Calculator 2026 | Add or Remove GST | CGST SGST IGST | MyeCA.in',
+    title: 'GST Calculator | Add or Remove GST | CGST SGST IGST | MyeCA.in',
     description: 'Calculate GST on invoices. Add or remove GST and split tax into CGST, SGST or IGST with current and legacy rate chips.',
     keywords: ['GST calculator', 'add GST calculator', 'remove GST calculator', 'CGST SGST IGST calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'GST Calculator',
-      features: ['Add/remove GST', 'CGST/SGST/IGST split', '2026 rate chips'],
+      features: ['Add/remove GST', 'CGST/SGST/IGST split', 'User-selected notified or legacy rate chips'],
       accuracy: 'Rule-based estimate',
-      updates: 'GST 2025-26 rate rationalisation ready'
+      updates: 'User-selected notified rate and supply-type assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'GST Calculator', url: '/calculators/gst' }]
   },
@@ -189,8 +190,8 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Salary Calculator', url: '/calculators/salary' }]
   },
   '/calculators/gratuity': {
-    title: 'Gratuity Calculator India 2026 | 15/26 Formula | MyeCA.in',
-    description: 'Calculate gratuity payable using Basic plus DA, service years, statutory 15/26 formula, tax treatment notes, and exit document checks.',
+    title: 'Gratuity Formula Calculator India | 15/26 Estimate | MyeCA.in',
+    description: 'Estimate a gratuity formula amount using last-drawn Basic plus DA, service duration and the 15/26 calculation for covered employees.',
     keywords: ['gratuity calculator', 'gratuity formula India', '15/26 gratuity calculation', 'employee gratuity calculator'],
     type: 'calculator',
     calculatorData: {
@@ -202,7 +203,7 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Gratuity Calculator', url: '/calculators/gratuity' }]
   },
   '/calculators/epf': {
-    title: 'EPF Calculator 2026 | Provident Fund Maturity Calculator | MyeCA.in',
+    title: 'EPF Calculator | Provident Fund Projection | MyeCA.in',
     description: 'Project EPF maturity with employee contribution, employer contribution, EPS diversion and interest rate assumptions.',
     keywords: ['EPF calculator', 'PF calculator', 'provident fund calculator', 'EPF maturity calculator'],
     type: 'calculator',
@@ -210,64 +211,64 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'EPF Calculator',
       features: ['Employee and employer contribution', 'EPS split', 'Interest projection'],
       accuracy: 'Projection estimate',
-      updates: '8.25% default interest editable'
+      updates: 'User-entered interest and contribution assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'EPF Calculator', url: '/calculators/epf' }]
   },
   '/calculators/rd': {
-    title: 'RD Calculator 2026 | Recurring Deposit Maturity | MyeCA.in',
-    description: 'Calculate recurring deposit maturity amount, total investment and interest earned with quarterly compounding.',
+    title: 'RD Calculator | Recurring Deposit Maturity Estimate | MyeCA.in',
+    description: 'Estimate recurring deposit maturity, total contributions and interest using your monthly deposit, rate and tenure assumptions.',
     keywords: ['RD calculator', 'recurring deposit calculator', 'RD maturity calculator', 'monthly deposit calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'RD Calculator',
-      features: ['Monthly deposit planning', 'Quarterly compounding', 'Interest earned'],
+      features: ['Monthly deposit planning', 'Quarterly-credit approximation', 'Interest earned'],
       accuracy: 'Projection estimate',
-      updates: 'Bank-style compounding model'
+      updates: 'Quarterly-credit approximation using user-entered assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'RD Calculator', url: '/calculators/rd' }]
   },
   '/calculators/lumpsum': {
-    title: 'Lumpsum Calculator 2026 | Mutual Fund Return Calculator | MyeCA.in',
+    title: 'Lumpsum Calculator | Investment Growth Estimate | MyeCA.in',
     description: 'Project one-time mutual fund investment growth with expected return, wealth gain, investment horizon, and inflation-adjusted value for planning.',
     keywords: ['lumpsum calculator', 'mutual fund lumpsum calculator', 'investment return calculator', 'future value calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'Lumpsum Calculator',
-      features: ['Future value', 'Wealth gain', 'Inflation-adjusted value'],
+      features: ['Constant annual return projection', 'Nominal gain or loss', 'Inflation-adjusted value'],
       accuracy: 'Projection estimate',
-      updates: '2026 planning model'
+      updates: 'User-entered return and inflation assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Lumpsum Calculator', url: '/calculators/lumpsum' }]
   },
   '/calculators/swp': {
-    title: 'SWP Calculator 2026 | Systematic Withdrawal Planner | MyeCA.in',
+    title: 'SWP Calculator | Systematic Withdrawal Projection | MyeCA.in',
     description: 'Plan systematic withdrawals from mutual fund corpus and check whether your corpus lasts through the selected period.',
     keywords: ['SWP calculator', 'systematic withdrawal plan calculator', 'retirement withdrawal calculator', 'monthly withdrawal calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'SWP Calculator',
-      features: ['Monthly withdrawal plan', 'Corpus depletion check', 'Remaining balance'],
+      features: ['Constant monthly return projection', 'Corpus depletion check', 'Remaining balance'],
       accuracy: 'Projection estimate',
-      updates: '2026 retirement planning model'
+      updates: 'User-entered return and withdrawal assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'SWP Calculator', url: '/calculators/swp' }]
   },
   '/calculators/inflation': {
-    title: 'Inflation Calculator 2026 | Future Cost Calculator India | MyeCA.in',
-    description: 'Calculate future cost, present value and purchasing power loss using an inflation rate and planning period.',
-    keywords: ['inflation calculator', 'future cost calculator', 'purchasing power calculator', 'cost inflation calculator'],
+    title: 'Inflation Calculator | Future Cost and Purchasing Power | MyeCA.in',
+    description: 'Estimate future cost and the future purchasing power of an unchanged amount using your inflation-rate and period assumptions.',
+    keywords: ['inflation calculator', 'future cost calculator', 'purchasing power calculator', 'consumer inflation estimate'],
     type: 'calculator',
     calculatorData: {
       type: 'Inflation Calculator',
-      features: ['Future cost', 'Present value', 'Purchasing power loss'],
+      features: ['Future cost', 'Future purchasing power in today\'s rupees', 'Purchasing power loss'],
       accuracy: 'Projection estimate',
-      updates: '2026 planning model'
+      updates: 'User-entered constant inflation assumption'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Inflation Calculator', url: '/calculators/inflation' }]
   },
   '/calculators/loan-eligibility': {
-    title: 'Loan Eligibility Calculator 2026 | EMI Capacity Calculator | MyeCA.in',
+    title: 'Loan Eligibility Calculator | FOIR and EMI Capacity Estimate | MyeCA.in',
     description: 'Estimate your eligible loan amount from monthly income, existing EMIs, FOIR, interest rate and tenure.',
     keywords: ['loan eligibility calculator', 'home loan eligibility calculator', 'FOIR calculator', 'eligible loan amount calculator'],
     type: 'calculator',
@@ -275,9 +276,37 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
       type: 'Loan Eligibility Calculator',
       features: ['FOIR-based eligibility', 'Eligible EMI', 'Loan amount estimate'],
       accuracy: 'Eligibility estimate',
-      updates: '2026 lending assumptions'
+      updates: 'User-entered FOIR rate and tenure assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Loan Eligibility', url: '/calculators/loan-eligibility' }]
+  },
+  '/calculators/withdrawal-planner': {
+    title: 'Retirement Withdrawal Planner | Corpus Sustainability | MyeCA.in',
+    description: 'Estimate how long a retirement corpus may last using your withdrawal, inflation, return and planning assumptions.',
+    keywords: ['retirement withdrawal calculator', 'corpus sustainability calculator', 'retirement income planner', 'withdrawal planner India'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'Retirement Withdrawal Planner',
+      features: ['Corpus projection', 'Inflation-aware withdrawals', 'Sustainability estimate'],
+      accuracy: 'Projection estimate',
+      updates: 'Uses user-entered assumptions'
+    },
+    noindex: true,
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Withdrawal Planner', url: '/calculators/withdrawal-planner' }]
+  },
+  '/calculators/general': {
+    title: 'Online General Calculator | Free Arithmetic Tool | MyeCA.in',
+    description: 'Use a browser-based general calculator for everyday arithmetic, percentages and quick financial working notes.',
+    keywords: ['general calculator', 'online calculator India', 'percentage calculator', 'free arithmetic calculator'],
+    type: 'calculator',
+    calculatorData: {
+      type: 'General Calculator',
+      features: ['Basic arithmetic', 'Percentage calculations', 'Recent calculation history'],
+      accuracy: 'Browser arithmetic with display rounding',
+      updates: 'Current calculator interface'
+    },
+    noindex: true,
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'General Calculator', url: '/calculators/general' }]
   },
 
   // Investment Calculators
@@ -309,38 +338,38 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   },
   '/calculators/nps': {
     title: 'NPS Calculator 2026 | National Pension Scheme Returns | MyeCA.in',
-    description: 'Calculate your pension and lump sum maturity amount under National Pension Scheme (NPS). Plan your retirement with Section 80CCD tax benefits.',
+    description: 'Estimate a market-linked NPS corpus and illustrate lump-sum and annuity allocation using stated assumptions and current exit-rule caveats.',
     keywords: ['nps calculator', 'pension scheme returns', 'calculate nps online', 'retirement planning India'],
     type: 'calculator',
     calculatorData: {
       type: 'NPS Calculator',
-      features: ['Tier I & II projection', 'Annuity calculation', 'Tax benefit tracking'],
+      features: ['Contribution projection', 'Selectable annuity allocation', 'Illustrative annuity-income assumption'],
       accuracy: 'Projection estimate',
       updates: 'Projection uses user-entered assumptions'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'NPS Calculator', url: '/calculators/nps' }]
   },
   '/calculators/fd': {
-    title: 'Fixed Deposit (FD) Calculator 2026 | FD Interest Rates | MyeCA.in',
+    title: 'Fixed Deposit (FD) Maturity Calculator | MyeCA.in',
     description: 'Calculate your FD maturity amount and interest earned. Compare rate assumptions and review post-tax returns before planning.',
-    keywords: ['fd calculator', 'fixed deposit calculator', 'current fd interest rates', 'maturity amount calculator'],
+    keywords: ['fd calculator', 'fixed deposit calculator', 'fd maturity estimate', 'maturity amount calculator'],
     type: 'calculator',
     calculatorData: {
       type: 'FD Calculator',
-      features: ['Quarterly compounding', 'Senior citizen rates', 'TDS analysis'],
+      features: ['Editable interest rate', 'Compounding frequency options', 'Estimated tax adjustment'],
       accuracy: 'Projection estimate',
       updates: 'Projection uses the entered interest rate'
     },
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'FD Calculator', url: '/calculators/fd' }]
   },
   '/calculators/fd-enhanced': {
-    title: 'Enhanced FD Calculator 2026 | Post-Tax Bank FD Returns | MyeCA.in',
-    description: 'Compare bank FD rates and calculate post-tax fixed deposit maturity value, effective yield, TDS impact, and compounding returns.',
-    keywords: ['enhanced FD calculator', 'post tax FD calculator', 'bank FD rates comparison', 'fixed deposit tax calculator'],
+    title: 'Enhanced FD Maturity Planner | Compounding Estimate | MyeCA.in',
+    description: 'Estimate fixed deposit maturity using your interest rate, tenure, compounding frequency and marginal tax-rate assumptions.',
+    keywords: ['enhanced FD calculator', 'post tax FD estimate', 'FD compounding calculator', 'fixed deposit maturity planner'],
     type: 'calculator',
     calculatorData: {
       type: 'Enhanced FD Calculator',
-      features: ['Bank rate comparison', 'Post-tax returns', 'Compounding frequency options'],
+      features: ['User-entered rate', 'Estimated tax adjustment', 'Compounding frequency options'],
       accuracy: 'Projection estimate',
       updates: 'Comparison uses entered bank-rate assumptions'
     },
@@ -349,11 +378,11 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
   '/calculators/ppf': {
     title: 'PPF Calculator 2026 | Public Provident Fund Returns | MyeCA.in',
     description: 'Estimate PPF maturity from your contribution and selected interest-rate assumption. Review the 15-year projection before planning.',
-    keywords: ['ppf calculator', 'public provident fund', 'current ppf interest rate', 'tax free investment calculator'],
+    keywords: ['ppf calculator', 'public provident fund projection', 'ppf rate assumption'],
     type: 'calculator',
     calculatorData: {
       type: 'PPF Calculator',
-      features: ['15-year projection', 'Extension options', 'Section 80C tracking'],
+      features: ['15-year projection', 'Contribution scenario', 'Stated rate assumption'],
       accuracy: 'Rule-based estimate',
       updates: 'Projection uses the selected interest-rate assumption'
     },
@@ -602,17 +631,18 @@ export const SEO_CONFIG: Record<string, SEOConfigItem> = {
     breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'TDS Calculator', url: '/calculators/tds' }]
   },
   '/calculators/penalty': {
-    title: 'GST & Income Tax Penalty Calculator 2026 | MyeCA.in',
-    description: 'Calculate late filing fees and interest penalties for GST returns, Income Tax, and TDS. Stay compliant and avoid heavy costs.',
-    keywords: ['gst penalty calculator', 'income tax late fee', 'tds penalty', 'tax compliance cost'],
+    noindex: true,
+    title: 'Late Charge Official Source Directory | MyeCA.in',
+    description: 'Official authority links for checking statutory late charges. Calculation is unavailable until effective-dated rules are verified.',
+    keywords: ['late charge reference', 'gst late fee reference', 'tax filing delay'],
     type: 'calculator',
     calculatorData: {
-      type: 'Penalty Calculator',
-      features: ['GST late fee', 'Section 234A/B/C interest', 'TDS delay fees'],
-      accuracy: 'Estimate for common cases',
-      updates: 'FY 2025-26 compliant'
+      type: 'Late Charge Source Directory',
+      features: ['Official authority links', 'Prominent verification warning'],
+      accuracy: 'No monetary calculation provided',
+      updates: 'Noindexed pending source-verified rule datasets'
     },
-    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Penalty Calculator', url: '/calculators/penalty' }]
+    breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators' }, { name: 'Late Charge Reference', url: '/calculators/penalty' }]
   },
   '/compliance-calendar': {
     title: 'Compliance Calendar 2025-26 | GST & Tax Due Dates | MyeCA.in',

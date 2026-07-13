@@ -408,8 +408,8 @@ export default function HRACalculator() {
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "HRA Claim Review", desc: "Check rent, salary, and employer records" },
             { icon: <Award className="w-5 h-5" />, label: "Rule-based", desc: "Review documents before filing" },
-            { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
-            { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
+            { icon: <Lock className="w-5 h-5" />, label: "Browser-Based", desc: "Calculates in your browser" },
+            { icon: <PieChart className="w-5 h-5" />, label: "Live Estimate", desc: "Updates with your inputs" }
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4 p-2">
               <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#101828] shrink-0">

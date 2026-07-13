@@ -12,29 +12,29 @@ import { cn } from "@/lib/utils";
 import { Link } from "wouter";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-function calcNPS(monthly: number, years: number, rate: number, annuity: number, age: number) {
+export function calcNPS(monthly: number, years: number, rate: number, annuity: number) {
+  if (![monthly, years, rate, annuity].every(Number.isFinite)) throw new Error("NPS inputs must be finite numbers");
+  if (monthly < 0 || !Number.isInteger(years) || years < 0 || rate < 0 || rate > 100 || annuity < 20 || annuity > 100) throw new RangeError("NPS inputs are outside the supported range");
   const r = rate / 100 / 12;
   const n = years * 12;
-  const corpus = monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+  const corpus = r === 0 ? monthly * n : monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
   const lumpSum = corpus * (1 - annuity / 100);
   const annuityCorpus = corpus * (annuity / 100);
   const monthlyPension = (annuityCorpus * 0.06) / 12; // Conservative 6% annuity rate
-  const taxSaved80C = Math.min(monthly * 12, 150000) * 0.3;
-  const taxSaved80CCD = Math.min(monthly * 12, 50000) * 0.3;
-  return { corpus, lumpSum, annuityCorpus, monthlyPension, taxSaved80C, taxSaved80CCD };
+  return { corpus, lumpSum, annuityCorpus, monthlyPension };
 }
 
 export default function NPSCalculatorPage() {
   const [age, setAge] = useState(30);
   const [monthly, setMonthly] = useState(10000);
   const [rate, setRate] = useState(10);
-  const [annuity, setAnnuity] = useState(40);
+  const [annuity, setAnnuity] = useState(20);
 
   const retireAge = 60;
   const years = Math.max(0, retireAge - age);
   const result = useMemo(
-    () => calcNPS(monthly, years, rate, annuity, age),
-    [monthly, years, rate, annuity, age]
+    () => calcNPS(monthly, years, rate, annuity),
+    [monthly, years, rate, annuity]
   );
 
   const seo = getSEOConfig("/calculators/nps");
@@ -51,7 +51,7 @@ export default function NPSCalculatorPage() {
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "NPS Calculator 2026 | Pension Corpus & Tax Savings | MyeCA.in"}
-        description={seo?.description || "Calculate your NPS retirement corpus, monthly pension, and tax savings under Section 80CCD. Plan your retirement with India's National Pension System."}
+        description={seo?.description || "Estimate an NPS retirement corpus and illustrate an annuity scenario using editable contribution and return assumptions."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -206,7 +206,7 @@ export default function NPSCalculatorPage() {
                     </div>
                     <input
                       type="range"
-                      min="40"
+                      min="20"
                       max="100"
                       step="5"
                       value={annuity}
@@ -245,9 +245,9 @@ export default function NPSCalculatorPage() {
                 <Percent className="w-7 h-7" />
               </div>
               <div>
-                <h3 className="text-lg font-normal text-[#101828]">Tax Saving Advantage</h3>
+                <h3 className="text-lg font-normal text-[#101828]">Tax treatment varies</h3>
                 <p className="text-sm text-[#667085] leading-relaxed">
-                  Save up to <span className="font-normal text-[#444CE7]">{fmt(result.taxSaved80C + result.taxSaved80CCD)}</span> annually in taxes under Section 80CCD.
+                  Eligibility and tax impact depend on subscriber category, tax regime, contribution source, and current law. This projection does not estimate tax savings.
                 </p>
               </div>
             </div>
@@ -277,7 +277,7 @@ export default function NPSCalculatorPage() {
                   </span>
                   <div className="mt-4 flex items-center gap-2 text-xs font-normal bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
                     <TrendingUp className="w-3 h-3 text-emerald-300" />
-                    Target reached at age 60
+                    Projected corpus at age 60
                   </div>
                 </div>
 
@@ -285,7 +285,7 @@ export default function NPSCalculatorPage() {
                 <div className="bg-[#F9FAFB] rounded-[24px] border border-[#EAECF0] p-5">
                   <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#F2F4F7]">
                     <div>
-                      <p className="type-meta font-normal text-[#667085] uppercase tracking-wider">Monthly Pension</p>
+                      <p className="type-meta font-normal text-[#667085] uppercase tracking-wider">Illustrative pension at 6% annuity rate</p>
                       <p className="text-2xl font-normal text-[#101828] tabular-nums">{fmt(result.monthlyPension)}</p>
                     </div>
                     <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#444CE7]">
@@ -294,11 +294,11 @@ export default function NPSCalculatorPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="type-meta font-normal text-[#667085] uppercase mb-0.5">Lump Sum (60%)</p>
+                      <p className="type-meta font-normal text-[#667085] uppercase mb-0.5">Lump Sum ({100 - annuity}%)</p>
                       <p className="text-sm font-normal text-[#101828] tabular-nums">{fmt(result.lumpSum)}</p>
                     </div>
                     <div>
-                      <p className="type-meta font-normal text-[#667085] uppercase mb-0.5">Annuity (40%)</p>
+                      <p className="type-meta font-normal text-[#667085] uppercase mb-0.5">Annuity ({annuity}%)</p>
                       <p className="text-sm font-normal text-[#101828] tabular-nums">{fmt(result.annuityCorpus)}</p>
                     </div>
                   </div>
@@ -315,8 +315,8 @@ export default function NPSCalculatorPage() {
                   <span className="text-xs font-normal text-[#027A48]">{fmt(result.corpus - (monthly * 12 * years))}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-normal text-[#667085]">Lump Sum Tax Status</span>
-                  <span className="type-meta font-normal px-2 py-0.5 rounded-full bg-[#ECFDF3] text-[#027A48] uppercase">Tax Free</span>
+                  <span className="text-xs font-normal text-[#667085]">Lump-sum tax treatment</span>
+                  <span className="type-meta font-normal px-2 py-0.5 rounded-full bg-[#ECFDF3] text-[#027A48] uppercase">Verify current law</span>
                 </div>
                 <div className="pt-4 border-t border-[#F2F4F7] flex items-center justify-between">
                   <span className="text-sm font-normal text-[#101828]">Estimated Pension</span>
@@ -348,7 +348,7 @@ export default function NPSCalculatorPage() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "NPS Tax Review", desc: "Check Section 80CCD eligibility and evidence" },
-            { icon: <Award className="w-5 h-5" />, label: "PFRDA Regulated", desc: "Government backed tool" },
+            { icon: <Award className="w-5 h-5" />, label: "PFRDA Regulated", desc: "Market-linked retirement account" },
             { icon: <Lock className="w-5 h-5" />, label: "Privacy First", desc: "Data processed locally" },
             { icon: <BarChart3 className="w-5 h-5" />, label: "Wealth Analysis", desc: "Complete corpus projection" }
           ].map((item, i) => (
@@ -372,13 +372,13 @@ export default function NPSCalculatorPage() {
                 icon: <ShieldCheck className="w-5 h-5" />,
                 iconBg: "bg-indigo-50 text-indigo-600",
                 title: "Section 80CCD(1B)",
-                desc: "Exclusive additional deduction of ₹50,000 per year over and above the ₹1.5 Lakh limit of Section 80C."
+                desc: "A separate Section 80CCD(1B) deduction may be available subject to the applicable tax regime, contribution type, limits, and current law."
               },
               {
                 icon: <Zap className="w-5 h-5" />,
                 iconBg: "bg-amber-50 text-amber-600",
                 title: "Flexible Withdrawal",
-                desc: "At 60, withdraw 60% corpus tax-free. Use remaining 40% for annuity to get regular monthly pension."
+                desc: "For a normal non-government exit under the rules amended in December 2025, eligible subscribers may choose up to 80% lump sum and at least 20% annuity, subject to corpus and exit conditions."
               },
               {
                 icon: <Calculator className="w-5 h-5" />,
@@ -393,7 +393,7 @@ export default function NPSCalculatorPage() {
               steps: [
                 { title: "Active Investing", desc: "Make monthly or annual contributions to your Tier-1 NPS account until age 60." },
                 { title: "Market Growth", desc: "Choose between Active or Auto choice to allocate funds across Equity, Corporate & Govt bonds." },
-                { title: "Maturity Payout", desc: "Convert your accumulated wealth into a stable pension and tax-free lump sum at retirement." }
+                { title: "Exit Options", desc: "Choose eligible lump-sum and annuity options under the rules for your subscriber category, corpus, and exit reason; tax treatment can vary." }
               ]
             }}
             faqs={[

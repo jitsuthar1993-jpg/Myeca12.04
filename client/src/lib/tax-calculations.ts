@@ -128,14 +128,35 @@ export function calculateEMI(principal: number, rate: number, tenure: number): {
     remainingBalance: number;
   }>;
 } {
+  if (![principal, rate, tenure].every(Number.isFinite)) {
+    throw new RangeError("EMI inputs must be finite numbers");
+  }
+  if (principal < 0 || rate < 0) {
+    throw new RangeError("Principal and rate cannot be negative");
+  }
+  if (rate > 100) {
+    throw new RangeError("Rate must be 100 or less");
+  }
+  if (tenure <= 0) {
+    throw new RangeError("Tenure must be greater than zero");
+  }
+  if (!Number.isInteger(tenure * 12)) {
+    throw new RangeError("Tenure must resolve to whole months");
+  }
+
   const monthlyRate = rate / 12 / 100;
   const totalMonths = tenure * 12;
 
-  const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
-              (Math.pow(1 + monthlyRate, totalMonths) - 1);
+  const emi = monthlyRate === 0
+    ? principal / totalMonths
+    : (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
+      (Math.pow(1 + monthlyRate, totalMonths) - 1);
 
   const totalPayment = emi * totalMonths;
   const totalInterest = totalPayment - principal;
+  if (![emi, totalPayment, totalInterest].every(Number.isFinite)) {
+    throw new RangeError("EMI result is outside the supported range");
+  }
 
   // Monthly breakdown for amortization schedule
   const monthlyBreakdown = [];

@@ -1,6 +1,6 @@
 export const SITE_URL = "https://myeca.in";
 export const SITE_NAME = "myeca.in";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
 export const LOGO_URL = `${SITE_URL}/logo.png`;
 
 type Thing = Record<string, any>;

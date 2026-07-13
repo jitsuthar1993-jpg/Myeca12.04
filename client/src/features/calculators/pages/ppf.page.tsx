@@ -31,7 +31,7 @@ export default function PPFCalculatorPage() {
     <div className="min-h-screen bg-[#F8F9FC] font-normal">
       <MetaSEO
         title={seo?.title || "PPF Calculator 2026 | Maturity & Returns | MyeCA.in"}
-        description={seo?.description || "Calculate PPF returns with current 7.1% interest rate. Professional planning with 80C tax benefits and EEE status insights."}
+        description={seo?.description || "Estimate PPF maturity using a 7.1% annual rate assumption. Review the latest notified rate and tax eligibility before investing."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -51,7 +51,7 @@ export default function PPFCalculatorPage() {
                 PPF <span className="text-[#027A48]">Calculator</span>
               </h1>
               <p className="text-[#667085] text-base max-w-xl font-normal">
-                Public Provident Fund returns with EEE tax benefits.
+                Public Provident Fund maturity projection using a stated annual-rate assumption.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-2 rounded-[24px] border border-[#EAECF0] shadow-sm self-start">
@@ -182,7 +182,7 @@ export default function PPFCalculatorPage() {
               <div>
                 <h3 className="text-lg font-normal text-[#101828]">EEE Tax Status</h3>
                 <p className="text-sm text-[#667085] leading-relaxed">
-                  Your <span className="font-normal text-[#101828]">Investment</span>, <span className="font-normal text-[#101828]">Interest</span>, and <span className="font-normal text-[#101828]">Maturity</span> are generally tax-exempt under current PPF rules.
+                  PPF tax treatment and deduction eligibility depend on the applicable tax regime and current law. This calculator does not estimate tax savings.
                 </p>
               </div>
             </div>
@@ -273,7 +273,7 @@ export default function PPFCalculatorPage() {
             { icon: <Headphones className="w-5 h-5" />, label: "PPF Tax Review", desc: "Check contribution and deduction evidence" },
             { icon: <Award className="w-5 h-5" />, label: "Government Backed", desc: "PPF scheme returns" },
             { icon: <Lock className="w-5 h-5" />, label: "Private & Local", desc: "Zero data collection" },
-            { icon: <BarChart3 className="w-5 h-5" />, label: "Tax-Free Maturity", desc: "EEE status verified" }
+            { icon: <BarChart3 className="w-5 h-5" />, label: "Rate Assumption", desc: "Review quarterly notifications" }
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4 p-2 bg-white/50 rounded-2xl border border-transparent hover:border-[#EAECF0] transition-all">
               <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#101828] shrink-0 shadow-sm">
@@ -301,7 +301,7 @@ export default function PPFCalculatorPage() {
                 icon: <Zap className="w-5 h-5" />,
                 iconBg: "bg-amber-50 text-amber-600",
                 title: "Exempt-Exempt-Exempt",
-                desc: "No tax on investment (under 80C), no tax on interest, and no tax on maturity proceeds."
+                desc: "Potential deduction and exemption treatment must be checked against your tax regime, eligibility, and the law applicable for the relevant year."
               },
               {
                 icon: <Calculator className="w-5 h-5" />,
@@ -320,7 +320,7 @@ export default function PPFCalculatorPage() {
               ]
             }}
             faqs={[
-              { q: "What is the current PPF rate?", a: "The current interest rate is 7.1% per annum, compounded annually." },
+              { q: "What rate does this estimate use?", a: "The projection uses 7.1% per annum as a planning assumption. PPF rates are notified periodically, so verify the rate applicable to each period." },
               { q: "Can I have two PPF accounts?", a: "No, an individual can only have one PPF account in their name." },
               { q: "Is there a minimum deposit?", a: "Yes, a minimum of ₹500 must be deposited every financial year to keep the account active." }
             ]}

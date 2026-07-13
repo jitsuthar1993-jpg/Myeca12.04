@@ -26,9 +26,9 @@ export interface WithdrawalPlanResult {
   depletionPeriod?: number;
 }
 
-function clampNonNegative(n: number): number {
-  const x = Number.isFinite(n) ? n : 0;
-  return Math.max(0, x);
+function requireNonNegative(name: string, value: number): number {
+  if (!Number.isFinite(value) || value < 0) throw new RangeError(`${name} must be a finite non-negative number`);
+  return value;
 }
 
 function getPeriodsPerYear(freq: WithdrawalFrequency): number {
@@ -39,7 +39,7 @@ function getPeriodsPerYear(freq: WithdrawalFrequency): number {
       return 4;
     case "yearly":
     default:
-      return 1;
+      throw new RangeError("Frequency must be monthly, quarterly, or yearly");
   }
 }
 
@@ -55,10 +55,11 @@ export function calculateWithdrawalPlan(
   frequency: WithdrawalFrequency,
   yearsInput: number
 ): WithdrawalPlanResult {
-  const principal = clampNonNegative(principalInput);
-  const annualRate = clampNonNegative(annualRateInput);
-  const withdrawalAmount = clampNonNegative(withdrawalAmountInput);
-  const years = Math.max(1, Math.floor(clampNonNegative(yearsInput)) || 1);
+  const principal = requireNonNegative("Principal", principalInput);
+  const annualRate = requireNonNegative("Annual rate", annualRateInput);
+  const withdrawalAmount = requireNonNegative("Withdrawal", withdrawalAmountInput);
+  if (!Number.isInteger(yearsInput) || yearsInput <= 0) throw new RangeError("Years must be a positive whole number");
+  const years = yearsInput;
 
   const periodsPerYear = getPeriodsPerYear(frequency);
   const totalPeriods = periodsPerYear * years;
@@ -74,17 +75,17 @@ export function calculateWithdrawalPlan(
 
   for (let p = 1; p <= totalPeriods; p++) {
     const beginningBalance = balance;
-    const interestAccrued = clampNonNegative(beginningBalance * periodicRate);
+    const interestAccrued = beginningBalance * periodicRate;
     let available = beginningBalance + interestAccrued;
 
     // Apply withdrawal, capped to what's available
     const withdrawal = Math.min(withdrawalAmount, available);
-    const endingBalance = clampNonNegative(available - withdrawal);
+    const endingBalance = Math.max(0, available - withdrawal);
 
     schedule.push({
       period: p,
       year: Math.floor((p - 1) / periodsPerYear) + 1,
-      beginningBalance: clampNonNegative(beginningBalance),
+      beginningBalance,
       interestAccrued,
       withdrawal,
       endingBalance,
@@ -94,7 +95,7 @@ export function calculateWithdrawalPlan(
     totalWithdrawn += withdrawal;
     balance = endingBalance;
 
-    if (balance <= 0 && !depleted) {
+    if (balance <= 0 && withdrawalAmount > 0 && !depleted) {
       depleted = true;
       depletionPeriod = p;
       break;
@@ -111,9 +112,9 @@ export function calculateWithdrawalPlan(
     periodicRate,
     totalPeriods: depleted ? (depletionPeriod as number) : totalPeriods,
     schedule,
-    totalInterestAccrued: clampNonNegative(totalInterestAccrued),
-    totalWithdrawn: clampNonNegative(totalWithdrawn),
-    endingBalance: clampNonNegative(balance),
+    totalInterestAccrued,
+    totalWithdrawn,
+    endingBalance: balance,
     depleted,
     depletionPeriod,
   };

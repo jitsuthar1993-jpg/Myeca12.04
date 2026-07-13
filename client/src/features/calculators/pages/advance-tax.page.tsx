@@ -11,7 +11,8 @@ import { getSEOConfig } from "@/config/seo.config";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
-import { calculateIncomeTax } from "@/lib/tax-calculations";
+import { TAX_PERIOD_DATASETS } from "@/data/calculator-rule-datasets";
+import { projectAdvanceTax } from "@/lib/advance-tax-projection";
 
 // Atomic Components
 import CalcLayout from "@/features/calculators/components/CalcLayout";
@@ -20,20 +21,14 @@ import CalcInputCard, { CalcInputGroup } from "@/features/calculators/components
 import CalcGlassSidebar, { CalcResultRow } from "@/features/calculators/components/CalcGlassSidebar";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
 
-const DEFAULT_FINANCIAL_YEAR = "2026-27";
-const DEFAULT_ASSESSMENT_YEAR = "2026-27";
-
-const getAdvanceTaxSchedule = (financialYear: string) => {
-  const startYear = Number(financialYear.slice(0, 4));
-  const endYear = startYear + 1;
-
-  return [
-    { quarter: "Q1", dueDate: `June 15, ${startYear}`, cumulativePercent: 15, label: "First Installment" },
-    { quarter: "Q2", dueDate: `September 15, ${startYear}`, cumulativePercent: 45, label: "Second Installment" },
-    { quarter: "Q3", dueDate: `December 15, ${startYear}`, cumulativePercent: 75, label: "Third Installment" },
-    { quarter: "Q4", dueDate: `March 15, ${endYear}`, cumulativePercent: 100, label: "Fourth Installment" },
-  ];
-};
+const LEGACY_RULES = TAX_PERIOD_DATASETS.legacyAy2026_27;
+if (LEGACY_RULES.period.kind !== "financial-assessment-year") {
+  throw new Error("The legacy advance-tax dataset must use a financial/assessment-year period.");
+}
+const DEFAULT_FINANCIAL_YEAR = LEGACY_RULES.period.financialYear;
+const DEFAULT_ASSESSMENT_YEAR = LEGACY_RULES.period.assessmentYear;
+// This route remains on the verified AY 2026-27 / FY 2025-26 filing dataset.
+// Tax Year 2026-27 must not be enabled until its separate engine dataset exists.
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -43,8 +38,13 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+const parseNonNegativeAmount = (value: string) => {
+  const amount = Number(value);
+  return Number.isFinite(amount) && amount >= 0 ? amount : 0;
+};
+
 interface TaxInputs {
-  estimatedIncome: number;
+  estimatedTaxLiability: number;
   tdsDeducted: number;
   tcsCollected: number;
   selfAssessmentPaid: number;
@@ -53,75 +53,58 @@ interface TaxInputs {
 
 export default function AdvanceTaxCalculatorPage() {
   const [inputs, setInputs] = useState<TaxInputs>({
-    estimatedIncome: 2000000,
+    estimatedTaxLiability: 250000,
     tdsDeducted: 150000,
     tcsCollected: 0,
     selfAssessmentPaid: 0,
     advanceTaxPaid: { q1: 0, q2: 0, q3: 0, q4: 0 },
   });
 
-  const [regime, setRegime] = useState<"old" | "new">("new");
   const [financialYear, setFinancialYear] = useState(DEFAULT_FINANCIAL_YEAR);
 
   const calculations = useMemo(() => {
-    const schedule = getAdvanceTaxSchedule(financialYear);
-    const totalTax = calculateIncomeTax({
-      income: inputs.estimatedIncome,
-      salaryIncome: inputs.estimatedIncome,
-      deductions: 0,
-      regime,
-      assessmentYear: DEFAULT_ASSESSMENT_YEAR,
-    }).taxPayable;
-    const totalTdsAndTcs = inputs.tdsDeducted + inputs.tcsCollected;
-    const netTaxLiability = Math.max(0, totalTax - totalTdsAndTcs);
-    const advanceTaxRequired = netTaxLiability > 10000;
-
-    const quarterlyAnalysis = schedule.map((installment, index) => {
-      const cumulativeAmount = (netTaxLiability * installment.cumulativePercent) / 100;
-      const paidTillQuarter = [
+    return projectAdvanceTax({
+      dataset: LEGACY_RULES,
+      period: {
+        kind: "financial-assessment-year",
+        financialYear,
+        assessmentYear: DEFAULT_ASSESSMENT_YEAR,
+      },
+      totalTax: inputs.estimatedTaxLiability,
+      tdsAndTcs: inputs.tdsDeducted + inputs.tcsCollected,
+      paidInstallments: [
         inputs.advanceTaxPaid.q1,
-        inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2,
-        inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2 + inputs.advanceTaxPaid.q3,
-        inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2 + inputs.advanceTaxPaid.q3 + inputs.advanceTaxPaid.q4,
-      ][index];
-
-      const shortfall = Math.max(0, cumulativeAmount - paidTillQuarter);
-
-      return {
-        ...installment,
-        cumulativeAmount,
-        paidTillQuarter,
-        shortfall,
-      };
+        inputs.advanceTaxPaid.q2,
+        inputs.advanceTaxPaid.q3,
+        inputs.advanceTaxPaid.q4,
+      ],
+      selfAssessmentPaid: inputs.selfAssessmentPaid,
     });
-
-    const totalAdvanceTaxPaid = inputs.advanceTaxPaid.q1 + inputs.advanceTaxPaid.q2 + inputs.advanceTaxPaid.q3 + inputs.advanceTaxPaid.q4;
-    const balanceTax = Math.max(0, netTaxLiability - totalAdvanceTaxPaid - inputs.selfAssessmentPaid);
-
-    return {
-      totalTax,
-      netTaxLiability,
-      advanceTaxRequired,
-      quarterlyAnalysis,
-      totalAdvanceTaxPaid,
-      balanceTax,
-    };
-  }, [inputs, regime, financialYear]);
+  }, [inputs, financialYear]);
 
   const seo = getSEOConfig('/calculators/advance-tax');
-  const currentQuarter = (() => {
-    const month = new Date().getMonth();
-    if (month < 3) return 4;
-    if (month < 6) return 1;
-    if (month < 9) return 2;
-    return 3;
-  })();
+  if (calculations.status === "unavailable") {
+    return (
+      <>
+        <MetaSEO
+          title={seo?.title || "Advance Tax Calculator | MyeCA.in"}
+          description={seo?.description || "Advance-tax projection availability."}
+          noindex
+        />
+        <main className="mx-auto max-w-3xl px-4 py-16">
+          <h1 className="text-3xl font-semibold text-slate-900">Advance-tax projection unavailable</h1>
+          <p className="mt-4 text-slate-600">{calculations.reason}</p>
+        </main>
+      </>
+    );
+  }
 
+  const quarterlyAnalysis = calculations.installments;
   return (
     <>
       <MetaSEO
-        title={seo?.title || "Advance Tax Calculator 2026 | Quarterly Payments | MyeCA.in"}
-        description={seo?.description || "Estimate quarterly advance tax payments using official installment percentages and selected financial-year dates."}
+        title={seo?.title || "FY 2025-26 Advance Tax Reconciliation | MyeCA.in"}
+        description={seo?.description || "Reconcile the historical FY 2025-26 advance-tax schedule for AY 2026-27."}
         keywords={seo?.keywords}
         type={seo?.type || "calculator"}
         calculatorData={seo?.calculatorData}
@@ -129,8 +112,8 @@ export default function AdvanceTaxCalculatorPage() {
       />
 
       <CalcHero
-        title="Advance Tax Calculator"
-        description="Calculate quarterly tax installments and avoid interest penalties under Section 234B & 234C."
+        title="FY 2025-26 Advance Tax Reconciliation"
+        description="Compare recorded payments with the historical AY 2026-27 installment schedule. Tax Year 2026-27 is not enabled."
         category="Tax Compliance"
         icon={<Calculator className="w-6 h-6" />}
         variant="indigo"
@@ -141,9 +124,9 @@ export default function AdvanceTaxCalculatorPage() {
       <CalcLayout
         variant="indigo"
         complianceFacts={[
-          { title: "₹10,000 Threshold", content: "Advance tax is mandatory if your estimated tax liability for the year (after TDS) exceeds ₹10,000." },
-          { title: "Senior Citizens", content: "Senior citizens (60+) not having income from business or profession are exempt from paying advance tax." },
-          { title: "Presumptive Tax", content: "Taxpayers under Section 44AD/ADA can pay 100% of their advance tax in a single installment by March 15." }
+          { title: "Historical period only", content: "This reconciliation uses FY 2025-26 / AY 2026-27 rules under the Income-tax Act, 1961." },
+          { title: "Official rule sources", content: "The threshold is sourced to section 208 and the installment schedule to section 211, checked 13 July 2026." },
+          { title: "Excluded calculation", content: "Interest, late charges, exceptions and Tax Year 2026-27 are not calculated here." }
         ]}
         sidebar={
           <CalcGlassSidebar title="Compliance Overview">
@@ -166,21 +149,24 @@ export default function AdvanceTaxCalculatorPage() {
               <CalcResultRow label="Paid Till Date" value={formatCurrency(calculations.totalAdvanceTaxPaid)} variant="success" />
               <CalcResultRow label="Balance Payable" value={formatCurrency(calculations.balanceTax)} variant="highlight" />
 
-              {!calculations.advanceTaxRequired && (
+              {!calculations.meetsAdvanceTaxThreshold && (
                 <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-200 mt-4 flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <p className="type-meta font-normal uppercase leading-relaxed tracking-widest text-emerald-700">No Advance Tax Required (&lt;₹10k)</p>
+                  <div>
+                    <p className="type-meta font-normal uppercase leading-relaxed tracking-widest text-emerald-700">Below the ₹10,000 net-tax threshold</p>
+                    <p className="mt-1 text-xs leading-5 text-emerald-800">This does not determine legal eligibility; exemptions are not modeled.</p>
+                  </div>
                 </div>
               )}
 
-              {calculations.advanceTaxRequired && (
+              {calculations.meetsAdvanceTaxThreshold && (
                 <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 mt-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <Bell className="w-4 h-4 text-amber-600" />
-                    <p className="type-meta font-normal uppercase tracking-widest text-amber-700">Next Due Date</p>
+                    <p className="type-meta font-normal uppercase tracking-widest text-amber-700">Historical schedule</p>
                   </div>
-                  <p className="text-sm font-normal text-slate-900">{calculations.quarterlyAnalysis[currentQuarter - 1].dueDate}</p>
-                  <p className="type-meta font-normal italic text-slate-500">Installment Target: {calculations.quarterlyAnalysis[currentQuarter - 1].cumulativePercent}%</p>
+                  <p className="text-sm font-normal text-slate-900">FY 2025-26 installment dates have passed.</p>
+                  <p className="type-meta font-normal italic text-slate-500">The net-tax amount meets the schedule threshold. This does not determine legal eligibility; exemptions are not modeled. Verify interest and balance payable on the official portal.</p>
                 </div>
               )}
             </div>
@@ -197,9 +183,9 @@ export default function AdvanceTaxCalculatorPage() {
         <div className="space-y-8">
           <CalcInputCard title="Tax Configuration" icon={<ShieldCheck className="w-5 h-5" />}>
              <div className="space-y-4 mb-8">
-                <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Financial Year</label>
+                <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Tax period</label>
                 <div className="grid grid-cols-2 gap-3">
-                  {["2026-27", "2025-26"].map((fy) => (
+                  {([DEFAULT_FINANCIAL_YEAR] as const).map((fy) => (
                     <button
                       key={fy}
                       onClick={() => setFinancialYear(fy)}
@@ -208,33 +194,30 @@ export default function AdvanceTaxCalculatorPage() {
                         financialYear === fy ? "border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-600/10" : "border-slate-100 bg-slate-50 text-slate-500 hover:border-indigo-200"
                       )}
                     >
-                      FY {fy}
+                      FY {fy} / AY 2026-27 (Income-tax Act, 1961)
                     </button>
                   ))}
                 </div>
-                <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Tax Regime</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {['new', 'old'].map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => setRegime(r as any)}
-                      className={cn(
-                        "py-4 rounded-2xl border-2 transition-all font-normal text-sm",
-                        regime === r ? "border-indigo-600 bg-indigo-600 text-white shadow-lg shadow-indigo-600/10" : "border-slate-100 bg-slate-50 text-slate-500 hover:border-indigo-200"
-                      )}
-                    >
-                      {r === 'new' ? 'New Regime' : 'Old Regime'}
-                    </button>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-600">
+                  Rules checked {LEGACY_RULES.checkedOn}.{" "}
+                  {LEGACY_RULES.officialSources.map((source, index) => (
+                    <React.Fragment key={source.url}>
+                      {index > 0 ? " · " : ""}
+                      <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-blue-700 underline">
+                        {source.title}
+                      </a>
+                    </React.Fragment>
                   ))}
                 </div>
              </div>
 
-             <CalcInputGroup label="Estimated Annual Income" badgeValue={formatCurrency(inputs.estimatedIncome)}>
+             <CalcInputGroup label="Estimated Tax Liability Before TDS / TCS" badgeValue={formatCurrency(inputs.estimatedTaxLiability)}>
                 <div className="relative">
                   <Input
                     type="number"
-                    value={inputs.estimatedIncome}
-                    onChange={(e) => setInputs({...inputs, estimatedIncome: Number(e.target.value)})}
+                    min="0"
+                    value={inputs.estimatedTaxLiability}
+                    onChange={(e) => setInputs({...inputs, estimatedTaxLiability: parseNonNegativeAmount(e.target.value)})}
                     className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -245,8 +228,9 @@ export default function AdvanceTaxCalculatorPage() {
                 <div className="relative">
                   <Input
                     type="number"
+                    min="0"
                     value={inputs.tdsDeducted}
-                    onChange={(e) => setInputs({...inputs, tdsDeducted: Number(e.target.value)})}
+                    onChange={(e) => setInputs({...inputs, tdsDeducted: parseNonNegativeAmount(e.target.value)})}
                     className="h-14 pl-10 rounded-xl border-slate-100 bg-slate-50 font-normal text-lg focus:ring-2 focus:ring-indigo-100"
                   />
                   <Receipt className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -259,14 +243,15 @@ export default function AdvanceTaxCalculatorPage() {
                 {(['q1', 'q2', 'q3', 'q4'] as const).map((q, i) => (
                   <div key={q} className="space-y-2">
                     <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">
-                      {calculations.quarterlyAnalysis[i].quarter} Paid (INR)
+                      {quarterlyAnalysis[i].quarter} Paid (INR)
                     </label>
                     <Input
                       type="number"
+                      min="0"
                       value={inputs.advanceTaxPaid[q]}
                       onChange={(e) => setInputs({
                         ...inputs,
-                        advanceTaxPaid: { ...inputs.advanceTaxPaid, [q]: Number(e.target.value) }
+                        advanceTaxPaid: { ...inputs.advanceTaxPaid, [q]: parseNonNegativeAmount(e.target.value) }
                       })}
                       className="h-12 rounded-xl border-slate-100 bg-slate-50 font-normal text-sm focus:ring-2 focus:ring-indigo-100"
                       placeholder="0"
@@ -278,13 +263,13 @@ export default function AdvanceTaxCalculatorPage() {
              <div className="space-y-6 pt-6 border-t border-slate-50">
                 <label className="type-meta px-1 font-normal uppercase tracking-widest text-slate-400">Payment Progress</label>
                 <div className="space-y-4">
-                  {calculations.quarterlyAnalysis.map((q, i) => (
+                  {quarterlyAnalysis.map((q, i) => (
                     <div key={i} className="space-y-2">
                       <div className="flex justify-between text-xs font-normal">
                         <span className="text-slate-600">{q.quarter} Cumulative ({q.cumulativePercent}%)</span>
                         <span className="text-slate-900">{formatCurrency(q.cumulativeAmount)}</span>
                       </div>
-                      <Progress value={(q.paidTillQuarter / q.cumulativeAmount) * 100} className="h-2 bg-slate-100" />
+                      <Progress value={q.cumulativeAmount > 0 ? (q.paidTillQuarter / q.cumulativeAmount) * 100 : 0} className="h-2 bg-slate-100" />
                       {q.shortfall > 0 && (
                         <p className="type-meta font-normal uppercase tracking-widest text-red-500">Shortfall: {formatCurrency(q.shortfall)}</p>
                       )}
@@ -300,8 +285,8 @@ export default function AdvanceTaxCalculatorPage() {
             {
               icon: <ShieldCheck className="w-5 h-5" />,
               iconBg: "bg-indigo-50 text-indigo-600",
-              title: "Avoid Penalties",
-              desc: "Paying advance tax on time helps you avoid mandatory interest under Sections 234B and 234C of the Income Tax Act."
+              title: "Historical Schedule",
+              desc: "Use the FY 2025-26 schedule to reconcile recorded installments; this page does not calculate interest or late charges."
             },
             {
               icon: <TrendingUp className="w-5 h-5" />,
@@ -317,18 +302,18 @@ export default function AdvanceTaxCalculatorPage() {
             }
           ]}
           howItWorks={{
-            title: "Interest Sections 234B & 234C",
-            description: "If you fail to pay advance tax or pay less than required, the Income Tax department charges interest.",
+            title: "What this reconciliation covers",
+            description: "The page compares recorded payments with the section 211 cumulative schedule for FY 2025-26.",
             steps: [
-              { title: "Sec 234C", desc: "Charged @ 1% per month for shortfall in quarterly installments (Q1, Q2, Q3, Q4)." },
-              { title: "Sec 234B", desc: "Charged @ 1% per month if 90% of the total tax is not paid by the end of the financial year (March 31)." },
-              { title: "Self Assessment", desc: "Any balance tax paid after the end of the financial year is called 'Self-Assessment Tax'." }
+              { title: "Verified period", desc: "FY 2025-26 / AY 2026-27 under the Income-tax Act, 1961." },
+              { title: "Recorded payments", desc: "Enter installments already paid to see cumulative shortfalls against the historical schedule." },
+              { title: "Portal verification", desc: "Confirm challans, balance, exceptions and any interest on the official e-filing portal." }
             ]
           }}
           faqs={[
-            { q: "Is advance tax applicable to everyone?", a: "It is applicable to every taxpayer (salaried, freelancer, or business) whose estimated tax liability after TDS exceeds ₹10,000." },
-            { q: "Can I pay advance tax after the due date?", a: "Yes, but you will be liable to pay interest under Section 234C for the period of delay until the next installment or tax filing." },
-            { q: "How to pay advance tax online?", a: "You can pay it through the e-filing portal or via 'e-pay tax' on the NSDL website using Challan No./ITNS 280." }
+            { q: "Which period does this page cover?", a: "Only FY 2025-26 / AY 2026-27. It does not calculate Tax Year 2026-27." },
+            { q: "Does this calculate interest or penalties?", a: "No. Verify any interest, exception or final balance on the official e-filing portal or with a tax professional." },
+            { q: "Where do the schedule rules come from?", a: "The central dataset links the Income Tax Department pages for sections 208 and 211." }
           ]}
         />
       </CalcLayout>

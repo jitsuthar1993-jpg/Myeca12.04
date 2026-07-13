@@ -5,7 +5,7 @@ export const SEO_DEFAULTS = {
   titleTemplate: '%s | MyeCA.in',
   defaultDescription: 'File ITR online with MyeCA.in for AY 2026-27. Use guided workflows, private document access, and optional CA-assisted review. ITR filing packages start at ₹499.',
   siteUrl: 'https://myeca.in',
-  defaultImage: '/og-image.jpg',
+  defaultImage: '/og-default.png',
   twitterHandle: '@myecain',
   facebookAppId: '', // Add when available
 

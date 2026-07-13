@@ -20,6 +20,23 @@ const ops: Record<string, (a: number, b: number) => number> = {
   "/": (a, b) => (b === 0 ? NaN : a / b),
 };
 
+type CalculationResult = { ok: true; value: number } | { ok: false; error: string };
+
+export function evaluateBinaryOperation(a: number, operator: string, b: number): CalculationResult {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !ops[operator]) return { ok: false, error: "Enter valid numbers" };
+  if (operator === "/" && b === 0) return { ok: false, error: "Cannot divide by zero" };
+  const value = ops[operator](a, b);
+  return Number.isFinite(value) ? { ok: true, value } : { ok: false, error: "Result is outside the supported range" };
+}
+
+export function evaluateUnaryOperation(func: string, value: number): CalculationResult {
+  if (!Number.isFinite(value)) return { ok: false, error: "Enter a valid number" };
+  if (func === "sqrt" && value < 0) return { ok: false, error: "Square root requires a non-negative number" };
+  if (func === "inv" && value === 0) return { ok: false, error: "Cannot divide by zero" };
+  const result = func === "%" ? value / 100 : func === "sqrt" ? Math.sqrt(value) : func === "sqr" ? value * value : func === "inv" ? 1 / value : -value;
+  return Number.isFinite(result) ? { ok: true, value: result } : { ok: false, error: "Result is outside the supported range" };
+}
+
 export default function GeneralCalculatorPage() {
   const seo = getSEOConfig('/calculators/general');
 
@@ -50,7 +67,15 @@ export default function GeneralCalculatorPage() {
     if (prevValue === null) {
       setPrevValue(inputValue);
     } else if (operator) {
-      const result = ops[operator](prevValue, inputValue);
+      const calculation = evaluateBinaryOperation(prevValue, operator, inputValue);
+      if (!calculation.ok) {
+        setDisplay("NaN");
+        setPrevValue(null);
+        setOperator(null);
+        setWaitingForNewValue(true);
+        return;
+      }
+      const result = calculation.value;
       const item = { expression: `${prevValue} ${operator} ${inputValue}`, result: String(result) };
       setHistory(prev => [item, ...prev].slice(0, 10));
       setPrevValue(result);
@@ -71,6 +96,13 @@ export default function GeneralCalculatorPage() {
       case "inv": result = 1 / v; expr = `1/(${v})`; break;
       case "neg": setDisplay(String(v * -1)); setWaitingForNewValue(true); return;
     }
+    const calculation = evaluateUnaryOperation(func, v);
+    if (!calculation.ok) {
+      setDisplay("NaN");
+      setWaitingForNewValue(true);
+      return;
+    }
+    result = calculation.value;
     setDisplay(String(result));
     setWaitingForNewValue(true);
     setHistory(prev => [{ expression: expr, result: String(result) }, ...prev].slice(0, 10));
@@ -88,7 +120,16 @@ export default function GeneralCalculatorPage() {
   const handleEquals = useCallback(() => {
     if (!operator || prevValue === null) return;
     const inputValue = parseFloat(display);
-    const result = ops[operator](prevValue, inputValue);
+    const calculation = evaluateBinaryOperation(prevValue, operator, inputValue);
+    if (!calculation.ok) {
+      setDisplay("NaN");
+      setPrevValue(null);
+      setOperator(null);
+      setWaitingForNewValue(true);
+      setEquation("");
+      return;
+    }
+    const result = calculation.value;
     setHistory(prev => [{ expression: `${prevValue} ${operator} ${inputValue}`, result: String(result) }, ...prev].slice(0, 10));
     setDisplay(String(result));
     setPrevValue(null); setOperator(null); setWaitingForNewValue(true); setEquation("");
@@ -189,12 +230,13 @@ export default function GeneralCalculatorPage() {
                         showHistory ? "bg-blue-100 text-blue-600" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
                       )}
                       title="Toggle History"
+                      aria-label="Toggle calculation history"
                     >
                       <History className="w-3.5 h-3.5" />
                     </button>
                   </div>
                   <div className="h-6 text-slate-400 text-xs font-mono mb-1 mt-2 truncate">{equation || "\u00A0"}</div>
-                  <div className="text-4xl sm:text-5xl font-normal text-slate-900 font-mono tracking-tight overflow-x-auto whitespace-nowrap scrollbar-hide">
+                  <div role="status" aria-live="polite" aria-label="Calculator result" className="text-4xl sm:text-5xl font-normal text-slate-900 font-mono tracking-tight overflow-x-auto whitespace-nowrap scrollbar-hide">
                     {formattedDisplay}
                   </div>
                 </div>

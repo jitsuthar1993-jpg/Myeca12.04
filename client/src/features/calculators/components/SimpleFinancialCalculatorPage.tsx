@@ -8,6 +8,7 @@ import {
   Landmark,
   PiggyBank,
   Receipt,
+  RotateCcw,
   ShieldCheck,
   TrendingUp,
   Wallet,
@@ -16,6 +17,7 @@ import MetaSEO from "@/components/seo/MetaSEO";
 import { getSEOConfig } from "@/config/seo.config";
 import { cn } from "@/lib/utils";
 import { MobileCard, MobilePageHeader } from "@/components/mobile";
+import { getCalculatorByPath } from "@/data/calculator-manifest";
 import {
   calculateEPF,
   calculateGST,
@@ -74,6 +76,7 @@ interface CalculatorConfig {
     rows: ResultRow[];
   };
   notes: string[];
+  validate?: (inputs: Record<string, FieldValue>) => Record<string, string>;
 }
 
 const formatCurrency = (value: number | string | null) => {
@@ -87,6 +90,32 @@ const formatCurrency = (value: number | string | null) => {
 };
 
 const toNumber = (value: FieldValue) => Number(value) || 0;
+
+function validateInputs(fields: Field[], inputs: Record<string, FieldValue>) {
+  return Object.fromEntries(
+    fields.flatMap((field) => {
+      if (field.type === "select") return [];
+      const value = inputs[field.name];
+      if (value === "" || !Number.isFinite(Number(value))) {
+        return [[field.name, `${field.label} is required.`]];
+      }
+      if (typeof field.min === "number" && Number(value) < field.min) {
+        return [[field.name, `${field.label} must be ${field.min.toLocaleString("en-IN")} or more.`]];
+      }
+      if (typeof field.max === "number" && Number(value) > field.max) {
+        return [[field.name, `${field.label} must be ${field.max.toLocaleString("en-IN")} or less.`]];
+      }
+      if (typeof field.step === "number") {
+        const stepBase = field.min ?? 0;
+        const steps = (Number(value) - stepBase) / field.step;
+        if (Math.abs(steps - Math.round(steps)) > 1e-8) {
+          return [[field.name, `${field.label} must use increments of ${field.step.toLocaleString("en-IN")}.`]];
+        }
+      }
+      return [];
+    }),
+  ) as Record<string, string>;
+}
 
 const accentClasses = {
   blue: {
@@ -136,7 +165,7 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     accent: "blue",
     inputs: { amount: 10000, rate: 18, mode: "exclusive", supplyType: "intra" },
     fields: [
-      { name: "amount", label: "Amount", min: 0, max: 10000000, step: 100, helper: "Use taxable value or GST-inclusive invoice value." },
+      { name: "amount", label: "Amount", min: 0, max: 10000000, step: 0.01, helper: "Use taxable value or GST-inclusive invoice value." },
       { name: "rate", label: "GST Rate", suffix: "%", min: 0, max: 40, step: 0.1, chips: [{ label: "0%", value: 0 }, { label: "5%", value: 5 }, { label: "18%", value: 18 }, { label: "40%", value: 40 }, { label: "12%", value: 12 }, { label: "28%", value: 28 }] },
       { name: "mode", label: "Mode", type: "select", options: [{ label: "Add GST", value: "exclusive" }, { label: "Remove GST", value: "inclusive" }] },
       { name: "supplyType", label: "Supply Type", type: "select", options: [{ label: "Intra-state", value: "intra" }, { label: "Inter-state", value: "inter" }] },
@@ -161,7 +190,7 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
         ],
       };
     },
-    notes: ["Use the exact HSN/SAC rate for filing.", "The 12% and 28% chips are kept for legacy invoices and transition cases."],
+    notes: ["Use the notified rate for the exact HSN/SAC classification and transaction date; this arithmetic tool does not determine classification, exemption or place of supply.", "Intra-state output splits rounded GST between CGST and SGST; inter-state output shows IGST. Invoice-level statutory rounding can differ.", "The 12% and 28% chips remain available for legacy invoices and transition cases; 40% applies only to specified de-merit supplies."],
   },
   salary: {
     slug: "salary",
@@ -205,6 +234,9 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
       };
     },
     notes: ["TDS uses the new tax regime estimate and may differ from employer payroll.", "Bonus, reimbursements, insurance, food cards and special allowances vary by company."],
+    validate: (inputs) => toNumber(inputs.variablePay) > toNumber(inputs.annualCtc)
+      ? { variablePay: "Annual Variable Pay cannot exceed Annual CTC." }
+      : {},
   },
   gratuity: {
     slug: "gratuity",
@@ -222,17 +254,17 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     calculate: (inputs) => {
       const result = calculateGratuity(toNumber(inputs.basicDaMonthly), toNumber(inputs.years), toNumber(inputs.months));
       return {
-        primaryLabel: "Gratuity Payable",
+        primaryLabel: "Estimated Gratuity Formula Amount",
         primaryValue: result.gratuity,
         summary: result.eligible ? `Service rounded to ${result.roundedYears} year(s).` : "Usually payable after 5 years of continuous service.",
         rows: [
           { label: "Rounded Service Years", value: `${result.roundedYears} years` },
           { label: "Formula Amount", value: result.formulaAmount },
-          { label: "Eligibility", value: result.eligible ? "Eligible" : "Below 5 years", tone: result.eligible ? "green" : "red" },
+          { label: "Standard five-year condition", value: result.eligible ? "Met" : "Not met", tone: result.eligible ? "green" : "red" },
         ],
       };
     },
-    notes: ["Formula: (Basic + DA) x 15 x years / 26.", "Actual tax exemption and employer policy can affect final payout."],
+    notes: ["For covered employees, the estimate uses (last-drawn Basic + DA) × 15 × formula service years ÷ 26.", "A part-year is rounded up only when it exceeds six months. The standard five-year condition has exceptions, including death and disablement, which are not modeled.", "This is not an entitlement decision; coverage, employer policy, forfeiture rules and tax treatment can affect the payout."],
   },
   epf: {
     slug: "epf",
@@ -267,24 +299,24 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
           { label: "Employee Share", value: result.employeeContribution },
           { label: "Employer Share", value: result.employerContribution },
           { label: "EPS Diversion", value: result.epsContribution },
-          { label: "Total Contribution", value: result.totalContribution },
+          { label: "Opening balance + projected contributions", value: result.totalContribution },
           { label: "Interest Earned", value: result.totalInterest, tone: "green" },
         ],
       };
     },
-    notes: ["Default interest is 8.25%, editable for future notifications.", "EPS is estimated at 8.33% of wage capped at Rs 15,000."],
+    notes: ["Employee and employer contribution rates are editable assumptions; EPFO guidance commonly uses 12%, with specified 10% cases.", "The illustrative EPS diversion uses 8.33% of wages capped at ₹15,000 and never exceeds the entered employer share; actual EPS membership and higher-wage arrangements can differ.", "The interest rate is user-entered. This simplified monthly-growth projection does not reproduce EPFO passbook credit timing or guarantee the final corpus."],
   },
   rd: {
     slug: "rd",
     title: "RD Calculator",
     eyebrow: "Deposit Planning",
-    description: "Calculate recurring deposit maturity using quarterly compounding.",
+    description: "Estimate recurring-deposit maturity using an editable rate and quarterly-credit approximation.",
     icon: PiggyBank,
     accent: "orange",
     inputs: { monthlyDeposit: 10000, annualRate: 7, months: 60 },
     fields: [
-      { name: "monthlyDeposit", label: "Monthly Deposit", min: 0, max: 1000000, step: 500 },
-      { name: "annualRate", label: "Interest Rate", suffix: "%", min: 0, max: 15, step: 0.1 },
+      { name: "monthlyDeposit", label: "Monthly Deposit", min: 0, max: 1000000, step: 1 },
+      { name: "annualRate", label: "Interest Rate", suffix: "%", min: 0, max: 15, step: 0.01 },
       { name: "months", label: "Tenure", suffix: "months", min: 6, max: 120, step: 1 },
     ],
     calculate: (inputs) => {
@@ -299,7 +331,7 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
         ],
       };
     },
-    notes: ["Banks may round interest differently by product.", "TDS and tax slab impact are not included in the maturity figure."],
+    notes: ["Each instalment is assumed to be deposited at the beginning of the month and earn interest using a quarterly-credit approximation.", "The 7% default is an editable example; verify the offered rate, deposit dates and compounding method with the bank.", "Bank rounding, premature closure, TDS and tax slab impact are not included in the maturity figure."],
   },
   lumpsum: {
     slug: "lumpsum",
@@ -310,25 +342,25 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     accent: "green",
     inputs: { principal: 500000, annualReturn: 12, years: 10, inflationRate: 6 },
     fields: [
-      { name: "principal", label: "Investment Amount", min: 0, max: 100000000, step: 10000 },
-      { name: "annualReturn", label: "Expected Return", suffix: "%", min: 0, max: 30, step: 0.5 },
+      { name: "principal", label: "Investment Amount", min: 0, max: 100000000, step: 1 },
+      { name: "annualReturn", label: "Expected Return", suffix: "%", min: -99.99, max: 30, step: 0.01 },
       { name: "years", label: "Investment Period", suffix: "years", min: 1, max: 40, step: 1 },
-      { name: "inflationRate", label: "Inflation Rate", suffix: "%", min: 0, max: 15, step: 0.5 },
+      { name: "inflationRate", label: "Inflation Rate", suffix: "%", min: 0, max: 15, step: 0.01 },
     ],
     calculate: (inputs) => {
       const result = calculateLumpsum(toNumber(inputs.principal), toNumber(inputs.annualReturn), toNumber(inputs.years), toNumber(inputs.inflationRate));
       return {
-        primaryLabel: "Future Value",
+        primaryLabel: "Estimated Future Value",
         primaryValue: result.maturityAmount,
-        summary: `Inflation-adjusted value is ${formatCurrency(result.inflationAdjustedValue)}.`,
+        summary: `Estimated value in today's money is ${formatCurrency(result.inflationAdjustedValue)}, discounted using your inflation assumption.`,
         rows: [
           { label: "Invested Amount", value: result.investedAmount },
-          { label: "Wealth Gain", value: result.wealthGain, tone: "green" },
-          { label: "Real Value", value: result.inflationAdjustedValue },
+          { label: result.wealthGain >= 0 ? "Nominal gain" : "Nominal loss", value: result.wealthGain, tone: result.wealthGain >= 0 ? "green" : "red" },
+          { label: "Value in today's money", value: result.inflationAdjustedValue },
         ],
       };
     },
-    notes: ["Returns are assumptions, not guarantees.", "Tax, exit load and expense ratios are not included."],
+    notes: ["The model assumes constant annual compounding with no interim cash flows; returns are assumptions, not guarantees.", "The inflation-adjusted result is a purchasing-power estimate using your entered inflation rate.", "Tax, exit load and expense ratios are not included."],
   },
   swp: {
     slug: "swp",
@@ -339,9 +371,9 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     accent: "blue",
     inputs: { corpus: 5000000, annualReturn: 8, monthlyWithdrawal: 40000, years: 20 },
     fields: [
-      { name: "corpus", label: "Starting Corpus", min: 0, max: 100000000, step: 50000 },
-      { name: "annualReturn", label: "Expected Return", suffix: "%", min: 0, max: 20, step: 0.5 },
-      { name: "monthlyWithdrawal", label: "Monthly Withdrawal", min: 0, max: 1000000, step: 1000 },
+      { name: "corpus", label: "Starting Corpus", min: 0, max: 100000000, step: 1 },
+      { name: "annualReturn", label: "Expected Return", suffix: "%", min: -99.99, max: 20, step: 0.01 },
+      { name: "monthlyWithdrawal", label: "Monthly Withdrawal", min: 0, max: 1000000, step: 1 },
       { name: "years", label: "Withdrawal Period", suffix: "years", min: 1, max: 40, step: 1 },
     ],
     calculate: (inputs) => {
@@ -349,15 +381,15 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
       return {
         primaryLabel: "Remaining Corpus",
         primaryValue: result.remainingCorpus,
-        summary: result.sustainable ? "Corpus lasts through the selected period." : `Corpus depletes around month ${result.depletionMonth}.`,
+        summary: result.sustainable ? "Under these constant-return assumptions, every planned withdrawal is funded." : `Under these assumptions, the first withdrawal shortfall occurs in month ${result.depletionMonth}.`,
         rows: [
           { label: "Total Withdrawn", value: result.totalWithdrawn, tone: "blue" },
-          { label: "Depletion Month", value: result.depletionMonth === null ? "Not depleted" : `${result.depletionMonth}` },
-          { label: "Status", value: result.sustainable ? "Sustainable" : "Depletes early", tone: result.sustainable ? "green" : "red" },
+          { label: "First shortfall month", value: result.depletionMonth === null ? "No shortfall" : `${result.depletionMonth}` },
+          { label: "Projection status", value: result.sustainable ? "Covers selected period" : "Depletes early", tone: result.sustainable ? "green" : "red" },
         ],
       };
     },
-    notes: ["Market returns are not linear in real life.", "This projection uses a constant monthly return assumption."],
+    notes: ["The expected annual return is converted to an equivalent constant monthly rate; return is applied before each monthly withdrawal.", "Market returns are not linear; this estimate does not model sequence-of-returns risk and does not guarantee sustainability.", "If a full withdrawal cannot be funded, total withdrawn includes the available partial payment and the simulation stops. Tax, exit load, inflation and withdrawal changes are excluded."],
   },
   inflation: {
     slug: "inflation",
@@ -368,24 +400,24 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     accent: "orange",
     inputs: { currentCost: 100000, inflationRate: 6, years: 10 },
     fields: [
-      { name: "currentCost", label: "Current Cost", min: 0, max: 100000000, step: 1000 },
-      { name: "inflationRate", label: "Inflation Rate", suffix: "%", min: 0, max: 20, step: 0.5 },
+      { name: "currentCost", label: "Current Cost", min: 0, max: 100000000, step: 1 },
+      { name: "inflationRate", label: "Inflation Rate", suffix: "%", min: 0, max: 20, step: 0.01 },
       { name: "years", label: "Years", min: 1, max: 50, step: 1 },
     ],
     calculate: (inputs) => {
       const result = calculateInflation(toNumber(inputs.currentCost), toNumber(inputs.inflationRate), toNumber(inputs.years));
       return {
-        primaryLabel: "Future Cost",
+        primaryLabel: "Estimated Future Cost",
         primaryValue: result.futureCost,
         summary: `${formatCurrency(result.currentCost)} today may cost ${formatCurrency(result.futureCost)} later.`,
         rows: [
           { label: "Current Cost", value: result.currentCost },
-          { label: "Present Value Later", value: result.presentValue },
+          { label: `Purchasing power after ${toNumber(inputs.years)} years (today's rupees)`, value: result.futurePurchasingPower },
           { label: "Purchasing Power Loss", value: result.purchasingPowerLoss, tone: "red" },
         ],
       };
     },
-    notes: ["Use long-term average inflation for planning.", "Education and healthcare inflation can differ from CPI."],
+    notes: ["The model assumes constant annual inflation compounded once per year; the entered rate is a planning assumption, not a forecast.", "The purchasing-power result is expressed in today's rupees and shows what the unchanged nominal amount may buy after the selected period.", "This inflation-only model does not cover deflation. Education, healthcare and other category inflation can differ from CPI; investment returns and taxes are excluded."],
   },
   "loan-eligibility": {
     slug: "loan-eligibility",
@@ -396,10 +428,10 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
     accent: "blue",
     inputs: { netMonthlyIncome: 100000, existingEmi: 20000, foirPercent: 50, annualRate: 9, tenureYears: 20 },
     fields: [
-      { name: "netMonthlyIncome", label: "Net Monthly Income", min: 0, max: 5000000, step: 5000 },
-      { name: "existingEmi", label: "Existing EMI", min: 0, max: 1000000, step: 1000 },
-      { name: "foirPercent", label: "FOIR", suffix: "%", min: 10, max: 80, step: 1, chips: [{ label: "40%", value: 40 }, { label: "50%", value: 50 }, { label: "60%", value: 60 }] },
-      { name: "annualRate", label: "Interest Rate", suffix: "%", min: 0, max: 25, step: 0.1 },
+      { name: "netMonthlyIncome", label: "Net Monthly Income", min: 0, max: 5000000, step: 1 },
+      { name: "existingEmi", label: "Existing EMI", min: 0, max: 1000000, step: 1 },
+      { name: "foirPercent", label: "FOIR", suffix: "%", min: 10, max: 80, step: 0.1, chips: [{ label: "40%", value: 40 }, { label: "50%", value: 50 }, { label: "60%", value: 60 }] },
+      { name: "annualRate", label: "Interest Rate", suffix: "%", min: 0, max: 25, step: 0.01 },
       { name: "tenureYears", label: "Tenure", suffix: "years", min: 1, max: 30, step: 1 },
     ],
     calculate: (inputs) => {
@@ -407,30 +439,40 @@ export const calculatorConfigs: Record<string, CalculatorConfig> = {
       return {
         primaryLabel: "Eligible Loan Amount",
         primaryValue: result.eligibleLoanAmount,
-        summary: `Available EMI capacity is ${formatCurrency(result.eligibleEmi)} per month.`,
+        summary: result.eligibleEmi === 0 ? "No additional EMI capacity under the selected FOIR assumption." : `Estimated available EMI capacity is ${formatCurrency(result.eligibleEmi)} per month.`,
         rows: [
           { label: "Max Total EMI", value: result.maxTotalEmi },
           { label: "Eligible EMI", value: result.eligibleEmi, tone: "blue" },
-          { label: "Total Interest", value: result.totalInterest },
-          { label: "Total Payment", value: result.totalPayment },
+          { label: "Projected interest on estimated loan", value: result.totalInterest },
+          { label: "Projected repayment on estimated loan", value: result.totalPayment },
         ],
       };
     },
-    notes: ["Banks use additional credit score, age, employer and collateral checks.", "FOIR policy varies by lender and loan product."],
+    notes: ["FOIR is a user-entered lender-policy assumption and varies by lender and loan product.", "This estimate is not a loan approval; lenders also assess credit score, age, employer, obligations, collateral and documentation.", "Processing fees, insurance and other lender charges are excluded. Zero additional capacity under one FOIR assumption does not mean every lender will reject an application."],
   },
 };
 
 export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof calculatorConfigs }) {
   const config = calculatorConfigs[slug];
   const seo = getSEOConfig(`/calculators/${config.slug}`);
+  const manifestEntry = getCalculatorByPath(`/calculators/${config.slug}`);
   const accent = accentClasses[config.accent];
-  const [inputs, setInputs] = useState<Record<string, FieldValue>>(config.inputs);
-  const result = useMemo(() => config.calculate(inputs), [config, inputs]);
+  const [inputs, setInputs] = useState<Record<string, FieldValue>>({ ...config.inputs });
+  const errors = useMemo(() => ({
+    ...validateInputs(config.fields, inputs),
+    ...(config.validate?.(inputs) ?? {}),
+  }), [config, inputs]);
+  const result = useMemo(
+    () => Object.keys(errors).length === 0 ? config.calculate(inputs) : null,
+    [config, errors, inputs],
+  );
   const Icon = config.icon;
 
   const setInput = (name: string, value: FieldValue) => {
     setInputs((current) => ({ ...current, [name]: value }));
   };
+
+  const resetCalculator = () => setInputs({ ...config.inputs });
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -474,23 +516,43 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
 
         <div className="grid gap-4 md:gap-6 lg:grid-cols-12 lg:items-start">
           <MobileCard as="section" className="lg:col-span-7 md:rounded-[28px] md:p-6">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm text-slate-500">Enter your assumptions to update the estimate.</p>
+              <button
+                type="button"
+                onClick={resetCalculator}
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                aria-label="Reset calculator"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </button>
+            </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-5">
-              {config.fields.map((field) => (
+              {config.fields.map((field) => {
+                const inputId = `${config.slug}-${field.name}`;
+                const helperId = `${inputId}-helper`;
+                const errorId = `${inputId}-error`;
+                const error = errors[field.name];
+                const describedBy = [field.helper ? helperId : null, error ? errorId : null].filter(Boolean).join(" ") || undefined;
+
+                return (
                 <div key={field.name} className="space-y-2">
-                  <label htmlFor={`${config.slug}-${field.name}`} className="flex items-center justify-between gap-3 text-sm font-medium text-slate-700">
-                    <span>{field.label}</span>
+                  <div className="flex items-center justify-between gap-3 text-sm font-medium text-slate-700">
+                    <label htmlFor={inputId}>{field.label}</label>
                     {field.type !== "select" && (
                       <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-500 md:bg-white">
-                        {String(inputs[field.name])}{field.suffix ? ` ${field.suffix}` : ""}
+                        {inputs[field.name] === "" ? "—" : String(inputs[field.name])}{field.suffix ? ` ${field.suffix}` : ""}
                       </span>
                     )}
-                  </label>
+                  </div>
                   {field.type === "select" ? (
                     <select
-                      id={`${config.slug}-${field.name}`}
+                      id={inputId}
                       name={field.name}
                       value={String(inputs[field.name])}
                       onChange={(event) => setInput(field.name, event.target.value)}
+                      aria-describedby={describedBy}
                       className={cn("h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-4 md:rounded-xl md:bg-slate-50", accent.ring)}
                     >
                       {field.options.map((option) => (
@@ -500,24 +562,27 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
                   ) : (
                     <>
                       <input
-                        id={`${config.slug}-${field.name}`}
+                        id={inputId}
                         name={field.name}
                         type="number"
-                        value={Number(inputs[field.name])}
+                        value={inputs[field.name]}
                         min={field.min}
                         max={field.max}
                         step={field.step}
-                        onChange={(event) => setInput(field.name, Number(event.target.value))}
+                        onChange={(event) => setInput(field.name, event.target.value === "" ? "" : Number(event.target.value))}
+                        aria-invalid={Boolean(error)}
+                        aria-describedby={describedBy}
                         className={cn("h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-4 md:rounded-xl md:bg-slate-50", accent.ring)}
                       />
                       {typeof field.min === "number" && typeof field.max === "number" && (
                         <input
                           type="range"
-                          value={Number(inputs[field.name])}
+                          value={inputs[field.name] === "" ? field.min : Number(inputs[field.name])}
                           min={field.min}
                           max={field.max}
                           step={field.step || 1}
                           onChange={(event) => setInput(field.name, Number(event.target.value))}
+                          aria-label={`${field.label} slider`}
                           className="hidden w-full accent-slate-900 md:block"
                         />
                       )}
@@ -528,6 +593,7 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
                               key={chip.label}
                               type="button"
                               onClick={() => setInput(field.name, chip.value)}
+                              aria-pressed={Number(inputs[field.name]) === chip.value}
                               className={cn("min-h-9 shrink-0 rounded-lg border px-3 text-xs font-medium transition-colors", Number(inputs[field.name]) === chip.value ? `${accent.bg} ${accent.border} ${accent.text}` : "border-slate-200 text-slate-500 hover:bg-slate-50")}
                             >
                               {chip.label}
@@ -537,27 +603,39 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
                       )}
                     </>
                   )}
-                  {field.helper && <p className="text-xs text-slate-400">{field.helper}</p>}
+                  {field.helper && <p id={helperId} className="text-xs text-slate-400">{field.helper}</p>}
+                  {error && <p id={errorId} role="alert" className="text-xs font-medium text-red-700">{error}</p>}
                 </div>
-              ))}
+              )})}
             </div>
           </MobileCard>
 
           <MobileCard as="aside" className="lg:col-span-5 md:rounded-[28px] md:p-6 lg:sticky lg:top-24">
-            <div className={cn("rounded-lg p-4 text-white md:rounded-[24px] md:p-5", accent.button)}>
-              <p className="text-xs uppercase tracking-[0.18em] text-white/75">{result.primaryLabel}</p>
-              <div className="type-page-title mt-2 font-semibold md:mt-3 md:font-normal">{formatCurrency(result.primaryValue)}</div>
-              <p className="mt-3 text-sm text-white/80">{result.summary}</p>
-            </div>
-
-            <div className="mt-4 grid gap-2 md:mt-5 md:gap-3">
-              {result.rows.map((row) => (
-                <div key={row.label} className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-3 py-2.5 md:rounded-2xl md:px-4 md:py-3">
-                  <span className="text-sm text-slate-500">{row.label}</span>
-                  <span className={cn("text-sm font-normal", resultTone[row.tone || "default"])}>{formatCurrency(row.value)}</span>
+            {result ? (
+              <>
+                <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                  {result.primaryLabel}: {formatCurrency(result.primaryValue)}
                 </div>
-              ))}
-            </div>
+                <div className={cn("rounded-lg p-4 text-white md:rounded-[24px] md:p-5", accent.button)}>
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/75">{result.primaryLabel}</p>
+                  <div className="type-page-title mt-2 font-semibold md:mt-3 md:font-normal">{formatCurrency(result.primaryValue)}</div>
+                  <p className="mt-3 text-sm text-white/80">{result.summary}</p>
+                </div>
+
+                <div className="mt-4 grid gap-2 md:mt-5 md:gap-3">
+                  {result.rows.map((row) => (
+                    <div key={row.label} className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-3 py-2.5 md:rounded-2xl md:px-4 md:py-3">
+                      <span className="text-sm text-slate-500">{row.label}</span>
+                      <span className={cn("text-sm font-normal", resultTone[row.tone || "default"])}>{formatCurrency(row.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 md:rounded-2xl">
+                Correct the highlighted inputs to see the estimate.
+              </div>
+            )}
 
             <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 md:mt-5 md:rounded-2xl md:bg-white md:p-4">
               <div className="flex items-center gap-2 text-sm font-normal text-slate-800">
@@ -567,6 +645,11 @@ export function SimpleFinancialCalculatorPage({ slug }: { slug: keyof typeof cal
               <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-slate-500 md:mt-3 md:space-y-2">
                 {config.notes.map((note) => <li key={note}>{note}</li>)}
               </ul>
+              {manifestEntry && (
+                <p className="mt-3 border-t border-slate-200 pt-3 text-xs leading-relaxed text-slate-500">
+                  <span className="font-medium text-slate-700">Rules basis:</span> {manifestEntry.ruleVersion}
+                </p>
+              )}
             </div>
           </MobileCard>
         </div>

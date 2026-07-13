@@ -53,7 +53,7 @@ describe("public performance cache policy", () => {
     expect(html).not.toContain("fonts.googleapis.com");
     expect(html).not.toContain("fonts.gstatic.com");
     expect(html).toContain('<link rel="preload" as="image" href="/icons/icon-192.png"');
-    expect(html).toContain('content="https://myeca.in/og-image.jpg"');
+    expect(html).toContain('content="https://myeca.in/og-default.png"');
     expect(app).toContain("import('@/components/pwa/PwaInstallBanner')");
     expect(app).not.toContain("import { PwaInstallBanner } from '@/components/pwa/PwaInstallBanner'");
     expect(main).not.toContain('import { initClientSentry } from "./telemetry/sentry.client"');

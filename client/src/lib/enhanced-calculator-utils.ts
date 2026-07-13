@@ -58,16 +58,37 @@ export function calculateEnhancedSIP(
   years: number,
   annualReturn: number
 ): SIPResult {
+  if (![monthlyAmount, years, annualReturn].every(Number.isFinite)) {
+    throw new RangeError("SIP inputs must be finite numbers");
+  }
+  if (monthlyAmount < 0 || annualReturn < 0) {
+    throw new RangeError("SIP inputs cannot be negative");
+  }
+  if (!Number.isInteger(years) || years <= 0) {
+    throw new RangeError("SIP years must be a positive integer");
+  }
+  if (monthlyAmount > 100000000 || years > 100) {
+    throw new RangeError("SIP inputs exceed the supported planning range");
+  }
+  if (annualReturn > 100) {
+    throw new RangeError("SIP return must be 100 or less");
+  }
+
   const monthlyReturn = annualReturn / 100 / 12;
   const totalMonths = years * 12;
   const totalInvestment = monthlyAmount * totalMonths;
 
   // Calculate maturity value using SIP formula
-  const maturityValue = monthlyAmount *
-    (((Math.pow(1 + monthlyReturn, totalMonths) - 1) / monthlyReturn) *
-    (1 + monthlyReturn));
+  const maturityValue = monthlyReturn === 0
+    ? totalInvestment
+    : monthlyAmount *
+      (((Math.pow(1 + monthlyReturn, totalMonths) - 1) / monthlyReturn) *
+      (1 + monthlyReturn));
 
   const wealthGain = maturityValue - totalInvestment;
+  if (![totalInvestment, maturityValue, wealthGain].every(Number.isFinite)) {
+    throw new RangeError("SIP result is outside the supported range");
+  }
 
   // Generate yearly breakdown
   const yearlyBreakdown = [];
@@ -80,9 +101,11 @@ export function calculateEnhancedSIP(
 
     // Calculate value at end of this year
     const monthsCompleted = year * 12;
-    runningValue = monthlyAmount *
-      (((Math.pow(1 + monthlyReturn, monthsCompleted) - 1) / monthlyReturn) *
-      (1 + monthlyReturn));
+    runningValue = monthlyReturn === 0
+      ? runningInvestment
+      : monthlyAmount *
+        (((Math.pow(1 + monthlyReturn, monthsCompleted) - 1) / monthlyReturn) *
+        (1 + monthlyReturn));
 
     yearlyBreakdown.push({
       year,
@@ -106,6 +129,10 @@ export function calculateEnhancedPPF(
   years: number = 15,
   interestRate: number = 7.1
 ): PPFResult {
+  if (![annualAmount, years, interestRate].every(Number.isFinite)) throw new Error("PPF inputs must be finite numbers");
+  if (annualAmount < 0 || annualAmount > 150000 || !Number.isInteger(years) || years < 1 || years > 50 || interestRate < 0 || interestRate > 100) {
+    throw new RangeError("PPF inputs are outside the supported planning range");
+  }
   const rate = interestRate / 100;
   const totalInvestment = annualAmount * years;
 
@@ -128,14 +155,11 @@ export function calculateEnhancedPPF(
   const maturityValue = Math.round(balance);
   const interestEarned = maturityValue - totalInvestment;
 
-  // Tax savings calculation (30% tax bracket assumed)
-  const taxSaved = Math.min(annualAmount, 150000) * 0.30 * years;
-
   return {
     totalInvestment,
     maturityValue,
     interestEarned,
-    taxSaved: Math.round(taxSaved),
+    taxSaved: 0,
     yearlyBreakdown
   };
 }
@@ -148,12 +172,17 @@ export function calculateEnhancedFD(
   compoundingFrequency: number = 4,
   taxRate: number = 30
 ): FDResult {
-  // Sanitize inputs to enforce positive-only behavior
-  const safePrincipal = Math.max(0, principal);
-  const safeRate = Math.max(0, rate);
-  const safeYears = Math.max(0, years);
-  const safeFreq = Math.max(1, compoundingFrequency);
-  const safeTax = Math.max(0, taxRate);
+  const inputs = [principal, rate, years, compoundingFrequency, taxRate];
+  if (!inputs.every(Number.isFinite)) throw new Error("FD inputs must be finite numbers");
+  if (principal < 0 || rate < 0 || taxRate < 0) throw new Error("FD inputs cannot be negative");
+  if (!Number.isInteger(years) || years <= 0) throw new Error("FD tenure must be a positive integer");
+  if (![1, 2, 4, 12].includes(compoundingFrequency)) throw new Error("FD compounding frequency is unsupported");
+  if (principal > 100_000_000 || rate > 100 || years > 100 || taxRate > 100) throw new Error("FD inputs exceed the supported planning range");
+  const safePrincipal = principal;
+  const safeRate = rate;
+  const safeYears = years;
+  const safeFreq = compoundingFrequency;
+  const safeTax = taxRate;
 
   const annualRate = safeRate / 100;
   const periodicRate = annualRate / safeFreq;

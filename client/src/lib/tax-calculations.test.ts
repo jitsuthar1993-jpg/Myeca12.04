@@ -1,7 +1,39 @@
 import { describe, expect, it } from "vitest";
-import { calculateIncomeTax } from "@/lib/tax-calculations";
+import { calculateEMI, calculateIncomeTax } from "@/lib/tax-calculations";
 import { computeIndividualIncomeTax } from "@/lib/income-tax-engine";
 import { getSectionReference } from "@/lib/tax-law-reference";
+
+describe("calculateEMI", () => {
+  it("calculates a finite zero-interest repayment schedule", () => {
+    const result = calculateEMI(1200000, 0, 10);
+
+    expect(result.emi).toBe(10000);
+    expect(result.totalPayment).toBe(1200000);
+    expect(result.totalInterest).toBe(0);
+    expect(result.monthlyBreakdown[0]).toMatchObject({ interestPaid: 0, principalPaid: 10000 });
+  });
+
+  it("returns a zero result for a zero principal", () => {
+    expect(calculateEMI(0, 8.5, 20)).toMatchObject({ emi: 0, totalPayment: 0, totalInterest: 0 });
+  });
+
+  it("rejects invalid tenure and non-finite inputs", () => {
+    expect(() => calculateEMI(1000000, 8.5, 0)).toThrow("Tenure must be greater than zero");
+    expect(() => calculateEMI(Number.NaN, 8.5, 20)).toThrow("EMI inputs must be finite numbers");
+    expect(() => calculateEMI(1000000, Number.MAX_VALUE, 20)).toThrow("Rate must be 100 or less");
+    expect(() => calculateEMI(1000000, 8.5, 1.01)).toThrow("Tenure must resolve to whole months");
+  });
+
+  it("preserves the standard positive-rate amortization contract", () => {
+    const result = calculateEMI(800000, 9.5, 7);
+
+    expect(result.emi).toBe(13075);
+    expect(result.totalPayment).toBe(result.totalInterest + 800000);
+    expect(result.monthlyBreakdown).toHaveLength(60);
+    expect(result.monthlyBreakdown[0].interestPaid).toBeGreaterThan(0);
+    expect(result.monthlyBreakdown[1].remainingBalance).toBeLessThan(result.monthlyBreakdown[0].remainingBalance);
+  });
+});
 
 describe("calculateIncomeTax AY 2026-27", () => {
   it("applies new-regime slabs, standard deduction, and Section 87A rebate", () => {

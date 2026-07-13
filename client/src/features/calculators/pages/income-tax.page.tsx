@@ -23,6 +23,7 @@ import { DEFAULT_ASSESSMENT_YEAR, TAX_TRANSITION_NOTE, type AgeCategory } from "
 import CalcLayout from "@/features/calculators/components/CalcLayout";
 import CalcHero from "@/features/calculators/components/CalcHero";
 import { CalculatorMiniBlog } from "@/features/calculators/components/CalculatorMiniBlog";
+import ItrLeadCaptureCard from "@/components/conversion/ItrLeadCaptureCard";
 
 export default function IncomeTaxCalculator() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -865,6 +866,15 @@ export default function IncomeTaxCalculator() {
                 </div>
               </div>
             </div>
+
+            <ItrLeadCaptureCard
+              caseType="income-tax-estimate"
+              source="income_tax_calculator_lead_capture"
+              title="Get the filing checklist for this estimate"
+              description="Share contact details if you want the AY 2026-27 checklist and a scope-first ITR follow-up."
+              checklistLabel="Income tax estimate checklist"
+              className="mt-5"
+            />
           </div>
         </div>
 
@@ -895,8 +905,8 @@ export default function IncomeTaxCalculator() {
           {[
             { icon: <Headphones className="w-5 h-5" />, label: "Return Review Option", desc: "Check calculator inputs against source records" },
             { icon: <Award className="w-5 h-5" />, label: "Current Slabs", desc: "Common AY 2026-27 cases" },
-            { icon: <Lock className="w-5 h-5" />, label: "Secure & Private", desc: "Your data is fully encrypted" },
-            { icon: <PieChart className="w-5 h-5" />, label: "Save & Compare", desc: "Save scenarios and compare later" }
+             { icon: <Lock className="w-5 h-5" />, label: "Browser-Based", desc: "Calculates in your browser" },
+             { icon: <PieChart className="w-5 h-5" />, label: "Live Estimate", desc: "Updates with your inputs" }
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4 p-4">
               <div className="w-10 h-10 rounded-xl bg-white border border-[#EAECF0] flex items-center justify-center text-[#101828] shrink-0">
