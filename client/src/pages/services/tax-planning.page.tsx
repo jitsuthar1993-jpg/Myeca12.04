@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import SEO from "@/components/SEO";
+import { getColorClasses } from "@/utils/colorClasses";
 
 const TaxPlanningPage = () => {
   const [selectedSection, setSelectedSection] = useState("startup");
@@ -186,8 +187,8 @@ const TaxPlanningPage = () => {
                 <Card className="h-full hover:shadow-xl transition-shadow duration-300 border-slate-200">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <div className={`w-12 h-12 bg-${benefit.color}-100 rounded-lg flex items-center justify-center`}>
-                        <benefit.icon className={`h-6 w-6 text-${benefit.color}-600`} />
+                      <div className={`w-12 h-12 ${getColorClasses(benefit.color).bg} rounded-lg flex items-center justify-center`}>
+                        <benefit.icon className={`h-6 w-6 ${getColorClasses(benefit.color).text}`} />
                       </div>
                       <Badge variant="secondary" className="bg-green-100 text-green-700">
                         {benefit.savings}

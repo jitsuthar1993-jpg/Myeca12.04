@@ -385,7 +385,7 @@ export default function ISOCertificationPage() {
               <Card key={index} className={`border-l-4 border-l-${iso.color}-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center bg-${iso.color}-100 text-${iso.color}-600`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${getColorClasses(iso.color).bg} ${getColorClasses(iso.color).text}`}>
                       <iso.icon className="w-8 h-8" />
                     </div>
                     <div>
@@ -398,7 +398,7 @@ export default function ISOCertificationPage() {
                   <div className="space-y-3 mb-4 text-sm">
                     <div className="flex justify-between">
                       <span className="font-medium">Small Business:</span>
-                      <Badge className={`bg-${iso.color}-100 text-${iso.color}-700`}>
+                      <Badge className={`${getColorClasses(iso.color).bg} ${getColorClasses(iso.color).textLight}`}>
                         {iso.smallBusinessCost}
                       </Badge>
                     </div>
@@ -421,7 +421,7 @@ export default function ISOCertificationPage() {
                     <ul className="space-y-1">
                       {iso.benefits.slice(0, 3).map((benefit, benefitIndex) => (
                         <li key={benefitIndex} className="flex items-start text-xs">
-                          <CheckCircle className={`w-3 h-3 mr-2 text-${iso.color}-500 flex-shrink-0 mt-0.5`} />
+                          <CheckCircle className={`w-3 h-3 mr-2 ${getColorClasses(iso.color).textSoft} flex-shrink-0 mt-0.5`} />
                           {benefit}
                         </li>
                       ))}
@@ -498,7 +498,7 @@ export default function ISOCertificationPage() {
             {requiredDocuments.map((docCategory, index) => (
               <Card key={index} className={`border-l-4 border-l-${docCategory.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${docCategory.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(docCategory.color).textDark}`}>
                     <docCategory.icon className="w-6 h-6" />
                     {docCategory.category}
                   </CardTitle>

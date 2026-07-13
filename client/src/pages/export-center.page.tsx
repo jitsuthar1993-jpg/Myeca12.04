@@ -160,7 +160,6 @@ export default function ExportCenterPage() {
         <div className="lg:w-96 h-full overflow-y-auto pr-2 shrink-0 w-full scrollbar-none pb-10 space-y-6">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-28 bg-gradient-to-br from-indigo-500 to-purple-500 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
              </div>
              <CardContent className="relative px-6 pb-8">
                 <div className="flex flex-col items-center -mt-14">

@@ -286,50 +286,50 @@ export default function BankAnalyzerPage() {
           >
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+              <Card className="border-emerald-200 bg-emerald-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-green-100">Total Credits</p>
+                      <p className="text-sm text-emerald-800">Total Credits</p>
                       <p className="text-2xl font-bold">{formatCurrency(parsedData.summary.totalCredits)}</p>
                     </div>
-                    <TrendingUp className="h-8 w-8 text-green-200" />
+                    <TrendingUp className="h-8 w-8 text-emerald-700" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-red-500 to-rose-600 text-white">
+              <Card className="border-red-200 bg-red-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-red-100">Total Debits</p>
+                      <p className="text-sm text-red-800">Total Debits</p>
                       <p className="text-2xl font-bold">{formatCurrency(parsedData.summary.totalDebits)}</p>
                     </div>
-                    <TrendingDown className="h-8 w-8 text-red-200" />
+                    <TrendingDown className="h-8 w-8 text-red-700" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+              <Card className="border-blue-200 bg-blue-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-blue-100">Income Identified</p>
+                      <p className="text-sm text-blue-800">Income Identified</p>
                       <p className="text-2xl font-bold">{formatCurrency(parsedData.taxRelevantSummary.totalIncome)}</p>
                     </div>
-                    <Banknote className="h-8 w-8 text-blue-200" />
+                    <Banknote className="h-8 w-8 text-blue-700" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white">
+              <Card className="border-purple-200 bg-purple-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-purple-100">Deductions Found</p>
+                      <p className="text-sm text-purple-800">Deductions Found</p>
                       <p className="text-2xl font-bold">{formatCurrency(parsedData.taxRelevantSummary.totalDeductions)}</p>
                     </div>
-                    <PiggyBank className="h-8 w-8 text-purple-200" />
+                    <PiggyBank className="h-8 w-8 text-purple-700" />
                   </div>
                 </CardContent>
               </Card>

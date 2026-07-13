@@ -48,6 +48,7 @@ import MetaSEO from "@/components/seo/MetaSEO";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
 import StandardPricingSection from "@/components/pricing/StandardPricingSection";
 import { getCheckoutAmount, getPricingByServiceId, getServicePriceForSchema } from "@/data/pricing";
+import { getColorClasses } from "@/utils/colorClasses";
 
 export default function TrademarkRegistrationPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -191,6 +192,7 @@ export default function TrademarkRegistrationPage() {
       category: "Identity Documents",
       icon: User,
       color: "blue",
+      iconTone: "text-blue-500",
       documents: [
         "PAN Card of applicant (individual/company)",
         "Aadhaar Card (for individual applicants)",
@@ -204,6 +206,7 @@ export default function TrademarkRegistrationPage() {
       category: "Business Documents",
       icon: Building2,
       color: "green",
+      iconTone: "text-green-500",
       documents: [
         "Certificate of Incorporation (companies)",
         "Partnership deed (partnerships)",
@@ -217,6 +220,7 @@ export default function TrademarkRegistrationPage() {
       category: "Trademark Documents",
       icon: Shield,
       color: "purple",
+      iconTone: "text-purple-500",
       documents: [
         "Trademark logo in JPG format (high resolution)",
         "Word mark details (if text-based)",
@@ -513,9 +517,9 @@ export default function TrademarkRegistrationPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {feeStructure2025.map((fee, index) => (
-              <Card key={index} className={`border-l-4 border-l-${fee.color}-500 hover:shadow-lg transition-shadow ${index === 0 ? 'ring-2 ring-green-200' : ''}`}>
+              <Card key={index} className={`border-l-4 ${getColorClasses(fee.color).border} hover:shadow-lg transition-shadow ${index === 0 ? 'ring-2 ring-green-200' : ''}`}>
                 <CardHeader>
-                  <CardTitle className={`text-${fee.color}-900`}>{fee.applicantType}</CardTitle>
+                  <CardTitle className={getColorClasses(fee.color).textDark}>{fee.applicantType}</CardTitle>
                   {index === 0 && (
                     <Badge className="bg-green-100 text-green-700 w-fit">Most Popular</Badge>
                   )}
@@ -544,7 +548,7 @@ export default function TrademarkRegistrationPage() {
                     </div>
                   </div>
 
-                  <Badge className={`w-full justify-center bg-${fee.color}-100 text-${fee.color}-700`}>
+                  <Badge className={`w-full justify-center ${getColorClasses(fee.color).bg} ${getColorClasses(fee.color).textLight}`}>
                     {fee.savings}
                   </Badge>
                 </CardContent>
@@ -625,9 +629,9 @@ export default function TrademarkRegistrationPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {requiredDocuments.map((docCategory, index) => (
-              <Card key={index} className={`border-l-4 border-l-${docCategory.color}-500 hover:shadow-lg transition-shadow`}>
+              <Card key={index} className={`border-l-4 ${getColorClasses(docCategory.color).border} hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${docCategory.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(docCategory.color).textDark}`}>
                     <docCategory.icon className="w-6 h-6" />
                     {docCategory.category}
                   </CardTitle>
@@ -636,7 +640,7 @@ export default function TrademarkRegistrationPage() {
                   <ul className="space-y-3">
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${docCategory.iconTone} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
@@ -667,7 +671,7 @@ export default function TrademarkRegistrationPage() {
             {trademarkBenefits.map((benefit, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
-                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 bg-${benefit.color}-100 text-${benefit.color}-600`}>
+                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 ${getColorClasses(benefit.color).bg} ${getColorClasses(benefit.color).text}`}>
                     <benefit.icon className="w-6 h-6" />
                   </div>
                   <CardTitle className="text-lg font-bold text-slate-900">{benefit.benefit}</CardTitle>
@@ -700,7 +704,7 @@ export default function TrademarkRegistrationPage() {
             {renewalTimeline.map((renewal, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
-                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 bg-${renewal.color}-100 text-${renewal.color}-600`}>
+                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-3 ${getColorClasses(renewal.color).bg} ${getColorClasses(renewal.color).text}`}>
                     <renewal.icon className="w-6 h-6" />
                   </div>
                   <CardTitle className="text-lg font-bold text-slate-900">{renewal.period}</CardTitle>
@@ -894,7 +898,7 @@ export default function TrademarkRegistrationPage() {
           <div className="max-w-4xl mx-auto text-left">
             <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">The 2025 Intellectual Property Guide for Indian Brands</h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-8">
-              In a digital-first economy, your <span className="text-purple-600 font-bold">Trademark</span> is your most valuable asset. The Office of the Controller General of Patents, Designs & Trademarks (CGPDTM) has simplified the filing process, but the <span className="font-bold">Trademark Search</span> remains the single most critical step to avoid infringement suits.
+               A <span className="text-purple-600 font-bold">trademark</span> can become an important business asset when it distinguishes the goods or services offered under the mark. Before filing, a <span className="font-bold">trademark search</span> can help identify similar marks and filing risks that need closer review.
             </p>
 
             <div className="grid md:grid-cols-2 gap-12">

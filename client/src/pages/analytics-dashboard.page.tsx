@@ -135,7 +135,6 @@ export default function AnalyticsDashboardPage() {
         <div className="lg:w-96 h-full overflow-y-auto pr-2 shrink-0 w-full scrollbar-none pb-10 space-y-6">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-32 bg-gradient-to-br from-slate-900 to-slate-800 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
                 <div className="absolute top-6 left-6 flex items-center gap-3">
                    <div className="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
                       <BarChart3 className="h-6 w-6 text-white" />
@@ -272,17 +271,17 @@ export default function AnalyticsDashboardPage() {
                     <h3 className="text-xl font-black text-slate-900 tracking-tight mb-8">Yield Breakdown</h3>
                     <div className="space-y-8">
                       {[
-                        { name: "ITR Filing", val: 45, color: "blue" },
-                        { name: "GST Returns", val: 20, color: "emerald" },
-                        { name: "Company Reg", val: 15, color: "amber" },
-                        { name: "Other Ops", val: 20, color: "slate" }
+                        { name: "ITR Filing", val: 45, indicatorTone: "bg-blue-500" },
+                        { name: "GST Returns", val: 20, indicatorTone: "bg-emerald-500" },
+                        { name: "Company Reg", val: 15, indicatorTone: "bg-amber-500" },
+                        { name: "Other Ops", val: 20, indicatorTone: "bg-slate-500" }
                       ].map((s, i) => (
                         <div key={i} className="space-y-3">
                            <div className="flex justify-between text-xs font-black uppercase tracking-widest">
                               <span className="text-slate-400">{s.name}</span>
                               <span className="text-slate-900">{s.val}%</span>
                            </div>
-                           <Progress value={s.val} className="h-2 bg-slate-50" indicatorClassName={`bg-${s.color}-500`} />
+                           <Progress value={s.val} className="h-2 bg-slate-50" indicatorClassName={s.indicatorTone} />
                         </div>
                       ))}
                     </div>
@@ -367,14 +366,14 @@ export default function AnalyticsDashboardPage() {
              </div>
              <div className="grid grid-cols-1 gap-4">
                 {[
-                  { time: "2m", action: "Transaction Executed", node: "Mumbai, MH", icon: Zap, color: "blue" },
-                  { time: "5m", action: "Submission Received", node: "Bangalore, KA", icon: FileText, color: "emerald" },
-                  { time: "8m", action: "Node Authorization", node: "Delhi, DL", icon: Users, color: "indigo" },
-                  { time: "12m", action: "Payment Pipeline", node: "Chennai, TN", icon: IndianRupee, color: "amber" }
+                  { time: "2m", action: "Transaction Executed", node: "Mumbai, MH", icon: Zap, tone: "bg-blue-50 text-blue-600" },
+                  { time: "5m", action: "Submission Received", node: "Bangalore, KA", icon: FileText, tone: "bg-emerald-50 text-emerald-600" },
+                  { time: "8m", action: "Node Authorization", node: "Delhi, DL", icon: Users, tone: "bg-indigo-50 text-indigo-600" },
+                  { time: "12m", action: "Payment Pipeline", node: "Chennai, TN", icon: IndianRupee, tone: "bg-amber-50 text-amber-600" }
                 ].map((act, i) => (
                   <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100/50 shadow-sm flex items-center justify-between group hover:shadow-lg transition-all">
                      <div className="flex items-center gap-6">
-                        <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-colors", `bg-${act.color}-50 text-${act.color}-600`)}>
+                        <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-colors", act.tone)}>
                            <act.icon className="h-6 w-6" />
                         </div>
                         <div>

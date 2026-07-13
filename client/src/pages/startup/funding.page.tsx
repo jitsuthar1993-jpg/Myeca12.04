@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import SEO from "@/components/SEO";
+import { getColorClasses } from "@/utils/colorClasses";
 
 const FundingPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("government");
@@ -448,7 +449,7 @@ const FundingPage = () => {
                   <Card className="h-full hover:shadow-xl transition-all duration-300 border-t-4 border-t-blue-500">
                     <CardHeader>
                       <div className="flex items-start justify-between mb-2">
-                        <Badge className={`bg-${scheme.color}-100 text-${scheme.color}-700 border-0`}>
+                        <Badge className={`${getColorClasses(scheme.color).bg} ${getColorClasses(scheme.color).textLight} border-0`}>
                           Government Funded
                         </Badge>
                         <IndianRupee className="w-5 h-5 text-slate-400" />

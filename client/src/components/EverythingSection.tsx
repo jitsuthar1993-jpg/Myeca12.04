@@ -72,11 +72,11 @@ export default function EverythingSection() {
 
               <div className="mt-6 grid gap-3">
                 {path.steps.map((step, stepIndex) => (
-                  <div key={step} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">
+                  <div key={step} className="grid min-h-12 grid-cols-[2rem_minmax(0,1fr)] items-center gap-4 rounded-lg border border-slate-200 bg-white px-4 py-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold leading-none text-blue-700">
                       {stepIndex + 1}
                     </div>
-                    <p className="text-sm font-semibold text-slate-700">{step}</p>
+                    <p className="m-0 flex min-h-8 items-center text-sm font-semibold leading-5 text-slate-700">{step}</p>
                   </div>
                 ))}
               </div>

@@ -39,6 +39,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MetaSEO from "@/components/seo/MetaSEO";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import { getColorClasses } from "@/utils/colorClasses";
 
 export default function MSMEUdyamRegistrationPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -306,7 +307,7 @@ export default function MSMEUdyamRegistrationPage() {
             {msmeCategories.map((category, index) => (
               <Card key={index} className={`border-l-4 border-l-${category.color}-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                 <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 bg-${category.color}-100 text-${category.color}-600`}>
+                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${getColorClasses(category.color).bg} ${getColorClasses(category.color).text}`}>
                     <category.icon className="w-8 h-8" />
                   </div>
                   <CardTitle className="text-xl font-bold">{category.category}</CardTitle>
@@ -390,7 +391,7 @@ export default function MSMEUdyamRegistrationPage() {
             {requiredInformation.map((info, index) => (
               <Card key={index} className={`border-l-4 border-l-${info.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${info.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(info.color).textDark}`}>
                     <info.icon className="w-6 h-6" />
                     {info.category}
                   </CardTitle>
@@ -399,7 +400,7 @@ export default function MSMEUdyamRegistrationPage() {
                   <ul className="space-y-3">
                     {info.items.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${info.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(info.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}
@@ -445,7 +446,7 @@ export default function MSMEUdyamRegistrationPage() {
             {registrationBenefits.map((benefit, index) => (
               <Card key={index} className={`border-l-4 border-l-${benefit.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${benefit.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(benefit.color).textDark}`}>
                     <benefit.icon className="w-6 h-6" />
                     {benefit.category}
                   </CardTitle>
@@ -454,7 +455,7 @@ export default function MSMEUdyamRegistrationPage() {
                   <ul className="space-y-3">
                     {benefit.benefits.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${benefit.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(benefit.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}

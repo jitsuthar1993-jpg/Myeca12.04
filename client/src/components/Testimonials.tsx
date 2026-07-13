@@ -31,12 +31,12 @@ const evidenceTracks = [
   "Notice or portal trail",
 ];
 
-const situationTones = [
-  "border-sky-200 hover:border-sky-300",
-  "border-emerald-200 hover:border-emerald-300",
-  "border-violet-200 hover:border-violet-300",
-  "border-red-200 hover:border-red-300",
-  "border-amber-200 hover:border-amber-300",
+const situationAccents = [
+  { edge: "border-t-sky-500", icon: "bg-sky-50 text-sky-700" },
+  { edge: "border-t-emerald-500", icon: "bg-emerald-50 text-emerald-700" },
+  { edge: "border-t-violet-500", icon: "bg-violet-50 text-violet-700" },
+  { edge: "border-t-rose-500", icon: "bg-rose-50 text-rose-700" },
+  { edge: "border-t-amber-500", icon: "bg-amber-50 text-amber-700" },
 ];
 
 const situationSpans = [
@@ -108,28 +108,34 @@ export default function Testimonials() {
               key={situation.id}
               href={situation.href}
               className={cn(
-                "group flex h-full flex-col rounded-lg border bg-white p-5 shadow-sm transition-colors hover:bg-white",
-                situationTones[index],
+                "group flex h-full flex-col overflow-hidden rounded-xl border-x border-b border-t-4 border-x-slate-200 border-b-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-x-slate-300 hover:border-b-slate-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2",
+                situationAccents[index % situationAccents.length].edge,
                 situationSpans[index]
               )}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between gap-4 px-5 pb-4 pt-5">
                 <div className="flex min-w-0 items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-800 transition-colors group-hover:bg-blue-50 group-hover:text-blue-700">
+                  <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", situationAccents[index % situationAccents.length].icon)}>
                     <FileText className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">{situation.profile}</p>
-                    <h3 className="mt-2 text-lg font-extrabold leading-snug text-slate-950">{situation.title}</h3>
+                    <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-blue-700">Situation {index + 1}</p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">{situation.profile}</p>
+                    <h3 className="mt-2 text-lg font-extrabold leading-snug text-slate-950 sm:min-h-[3.5rem]">{situation.title}</h3>
                   </div>
                 </div>
                 <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-700" />
               </div>
 
-              <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                <div>
+              <div
+                className={cn(
+                  "grid flex-1 divide-y divide-slate-100 border-y border-slate-100 bg-slate-50/60",
+                  index < 2 ? "sm:grid-cols-2 sm:divide-x sm:divide-y-0" : "",
+                )}
+              >
+                <div className="p-5">
                   <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">Documents to line up</p>
-                  <ul className="mt-2 space-y-2">
+                  <ul className="mt-3 space-y-2.5">
                     {situation.documents.slice(0, 3).map((item) => (
                       <li key={item} className="flex gap-2 text-sm leading-5 text-slate-600">
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -138,9 +144,9 @@ export default function Testimonials() {
                     ))}
                   </ul>
                 </div>
-                <div>
+                <div className="p-5">
                   <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">Review lens</p>
-                  <ul className="mt-2 space-y-2">
+                  <ul className="mt-3 space-y-2.5">
                     {situation.checks.slice(0, 3).map((item) => (
                       <li key={item} className="flex gap-2 text-sm leading-5 text-slate-600">
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -151,7 +157,7 @@ export default function Testimonials() {
                 </div>
               </div>
 
-              <span className="mt-auto inline-flex items-center pt-5 text-sm font-bold text-blue-700">
+              <span className="inline-flex items-center px-5 py-4 text-sm font-bold text-blue-700 transition-colors group-hover:text-blue-800">
                 {situation.nextStep}
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>

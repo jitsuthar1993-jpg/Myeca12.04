@@ -41,6 +41,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getColorClasses } from "@/utils/colorClasses";
 
 export default function GSTReturnsPage() {
   const [selectedReturn, setSelectedReturn] = useState<string>("");
@@ -362,12 +363,12 @@ export default function GSTReturnsPage() {
               <Card key={index} className={`border-l-4 border-l-${returnType.color}-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center bg-${returnType.color}-100 text-${returnType.color}-600`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${getColorClasses(returnType.color).bg} ${getColorClasses(returnType.color).text}`}>
                       <returnType.icon className="w-8 h-8" />
                     </div>
                     <div>
                       <CardTitle className="text-xl font-bold">{returnType.return}</CardTitle>
-                      <Badge className={`mt-1 bg-${returnType.color}-100 text-${returnType.color}-700`}>
+                      <Badge className={`mt-1 ${getColorClasses(returnType.color).bg} ${getColorClasses(returnType.color).textLight}`}>
                         {returnType.frequency}
                       </Badge>
                     </div>
@@ -504,7 +505,7 @@ export default function GSTReturnsPage() {
             {documentRequirements.map((docCategory, index) => (
               <Card key={index} className={`border-l-4 border-l-${docCategory.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${docCategory.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(docCategory.color).textDark}`}>
                     <docCategory.icon className="w-6 h-6" />
                     {docCategory.category}
                   </CardTitle>
@@ -513,7 +514,7 @@ export default function GSTReturnsPage() {
                   <ul className="space-y-3">
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(docCategory.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}

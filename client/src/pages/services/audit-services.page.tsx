@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
 import { RouteSeo } from "@/components/seo/RouteSeo";
 import { ServiceCheckoutModal } from "@/components/services/ServiceCheckoutModal";
+import { getColorClasses } from "@/utils/colorClasses";
 
 const AuditServicesPage = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -225,8 +226,8 @@ const AuditServicesPage = () => {
                     <Card className="h-full hover:shadow-xl transition-shadow duration-300">
                       <CardHeader>
                         <div className="flex items-start justify-between">
-                          <div className={`w-12 h-12 bg-${service.color}-100 rounded-lg flex items-center justify-center`}>
-                            <service.icon className={`h-6 w-6 text-${service.color}-600`} />
+                          <div className={`w-12 h-12 ${getColorClasses(service.color).bg} rounded-lg flex items-center justify-center`}>
+                            <service.icon className={`h-6 w-6 ${getColorClasses(service.color).text}`} />
                           </div>
                           <Badge variant="secondary" className="bg-purple-100 text-purple-700">
                             Mandatory

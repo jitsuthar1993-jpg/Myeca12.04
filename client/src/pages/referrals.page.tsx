@@ -58,10 +58,19 @@ interface Reward {
    earnedAt: string;
 }
 
-const statusColors: Record<string, string> = {
-   pending: "yellow",
-   converted: "green",
-   expired: "gray"
+const statusTones: Record<string, { icon: string; badge: string }> = {
+   pending: {
+      icon: "bg-yellow-50 border-yellow-100 text-yellow-600",
+      badge: "bg-yellow-50 text-yellow-600"
+   },
+   converted: {
+      icon: "bg-green-50 border-green-100 text-green-600",
+      badge: "bg-green-50 text-green-600"
+   },
+   expired: {
+      icon: "bg-slate-50 border-slate-100 text-slate-600",
+      badge: "bg-slate-50 text-slate-600"
+   }
 };
 
 const statusIcons: Record<string, any> = {
@@ -261,7 +270,6 @@ export default function ReferralsPage() {
             <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
                <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
                   <div className="h-28 bg-gradient-to-br from-purple-500 to-indigo-600 relative">
-                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
                   </div>
                   <CardContent className="relative px-6 pb-8">
                      <div className="flex flex-col items-center -mt-14">
@@ -280,13 +288,13 @@ export default function ReferralsPage() {
 
                      <div className="mt-10 grid grid-cols-2 gap-3">
                         {[
-                           { label: "Referrals", value: stats.totalReferrals, icon: Users, color: "blue" },
-                           { label: "Converted", value: stats.successfulReferrals, icon: TrendingUp, color: "emerald" },
-                           { label: "Account Credit", value: `₹${stats.totalRewards}`, icon: Coins, color: "amber" },
-                           { label: "Rank", value: "#04", icon: Trophy, color: "indigo" }
+                           { label: "Referrals", value: stats.totalReferrals, icon: Users, tone: "text-blue-600" },
+                           { label: "Converted", value: stats.successfulReferrals, icon: TrendingUp, tone: "text-emerald-600" },
+                           { label: "Account Credit", value: `₹${stats.totalRewards}`, icon: Coins, tone: "text-amber-600" },
+                           { label: "Rank", value: "#04", icon: Trophy, tone: "text-indigo-600" }
                         ].map((stat, i) => (
                            <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
-                              <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
+                              <stat.icon className={cn("h-4 w-4 mb-2", stat.tone)} />
                               <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
                               <span className="text-sm font-black text-slate-900 leading-none">{stat.value}</span>
                            </div>
@@ -396,7 +404,7 @@ export default function ReferralsPage() {
                                     return (
                                        <div key={referral.id} className="p-10 flex items-center justify-between hover:bg-indigo-50/20 transition-colors group">
                                           <div className="flex items-center gap-6">
-                                             <div className={cn("h-16 w-16 rounded-[24px] flex items-center justify-center border transition-all", `bg-${statusColors[referral.status]}-50 border-${statusColors[referral.status]}-100 text-${statusColors[referral.status]}-600`)}>
+                                             <div className={cn("h-16 w-16 rounded-[24px] flex items-center justify-center border transition-all", statusTones[referral.status]?.icon)}>
                                                 <StatusIcon className="h-7 w-7" />
                                              </div>
                                              <div>
@@ -416,7 +424,7 @@ export default function ReferralsPage() {
                                                 </Button>
                                              )}
                                              <div className="text-right">
-                                                <Badge className={cn("border-none font-black type-meta uppercase px-4 py-1.5 rounded-xl", `bg-${statusColors[referral.status]}-50 text-${statusColors[referral.status]}-600`)}>
+                                                <Badge className={cn("border-none font-black type-meta uppercase px-4 py-1.5 rounded-xl", statusTones[referral.status]?.badge)}>
                                                    {referral.status}
                                                 </Badge>
                                                 {referral.rewardEarned && (
@@ -609,14 +617,14 @@ export default function ReferralsPage() {
                                  </div>
                                  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                                     {[
-                                       { label: "Total Outreach", value: analytics.conversionFunnel.total, color: "blue" },
-                                       { label: "Active Pending", value: analytics.conversionFunnel.pending, color: "amber" },
-                                       { label: "Successful Conversions", value: analytics.conversionFunnel.converted, color: "emerald" },
-                                       { label: "Conversion Yield", value: `${analytics.conversionFunnel.conversionRate.toFixed(1)}%`, color: "indigo" }
+                                       { label: "Total Outreach", value: analytics.conversionFunnel.total, tone: "text-blue-600" },
+                                       { label: "Active Pending", value: analytics.conversionFunnel.pending, tone: "text-amber-600" },
+                                       { label: "Successful Conversions", value: analytics.conversionFunnel.converted, tone: "text-emerald-600" },
+                                       { label: "Conversion Yield", value: `${analytics.conversionFunnel.conversionRate.toFixed(1)}%`, tone: "text-indigo-600" }
                                     ].map((f, i) => (
                                        <div key={i} className="p-8 rounded-[32px] bg-slate-50 border border-slate-100/50">
                                           <p className="type-meta font-black text-slate-400 uppercase tracking-widest mb-2">{f.label}</p>
-                                          <p className={cn("text-3xl font-black tracking-tighter", `text-${f.color}-600`)}>{f.value}</p>
+                                          <p className={cn("text-3xl font-black tracking-tighter", f.tone)}>{f.value}</p>
                                        </div>
                                     ))}
                                  </div>

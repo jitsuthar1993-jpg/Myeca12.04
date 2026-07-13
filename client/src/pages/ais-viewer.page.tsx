@@ -280,50 +280,50 @@ export default function AISViewerPage() {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+              <Card className="border-blue-200 bg-blue-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm opacity-80">Total Reported Income</p>
+                      <p className="text-sm text-blue-800">Total Reported Income</p>
                       <p className="text-2xl font-bold">{formatCurrency(parsedData.incomeSummary.totalReportedIncome)}</p>
                     </div>
-                    <TrendingUp className="h-8 w-8 opacity-80" />
+                    <TrendingUp className="h-8 w-8 text-blue-700" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+              <Card className="border-emerald-200 bg-emerald-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm opacity-80">Total TDS Credit</p>
+                      <p className="text-sm text-emerald-800">Total TDS Credit</p>
                       <p className="text-2xl font-bold">{formatCurrency(parsedData.tdsSummary.totalTDSCredit)}</p>
                     </div>
-                    <PiggyBank className="h-8 w-8 opacity-80" />
+                    <PiggyBank className="h-8 w-8 text-emerald-700" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white">
+              <Card className="border-purple-200 bg-purple-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm opacity-80">Income Sources</p>
+                      <p className="text-sm text-purple-800">Income Sources</p>
                       <p className="text-2xl font-bold">{incomeChartData.length}</p>
                     </div>
-                    <Building2 className="h-8 w-8 opacity-80" />
+                    <Building2 className="h-8 w-8 text-purple-700" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white">
+              <Card className="border-amber-200 bg-amber-50 text-slate-950">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm opacity-80">Discrepancies</p>
+                      <p className="text-sm text-amber-900">Discrepancies</p>
                       <p className="text-2xl font-bold">{parsedData.discrepancies.count}</p>
                     </div>
-                    <AlertTriangle className="h-8 w-8 opacity-80" />
+                    <AlertTriangle className="h-8 w-8 text-amber-700" />
                   </div>
                 </CardContent>
               </Card>
@@ -489,7 +489,7 @@ export default function AISViewerPage() {
                       </div>
                     </div>
 
-                    <div className="p-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg">
+                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-slate-950">
                       <div className="flex justify-between items-center">
                         <span className="font-medium">Total TDS/TCS Credit Available</span>
                         <span className="text-2xl font-bold">{formatCurrency(parsedData.tdsSummary.totalTDSCredit)}</span>

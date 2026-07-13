@@ -21,6 +21,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { getColorClasses } from "@/utils/colorClasses";
 import {
   TAX_GUIDES,
   GUIDE_CATEGORIES,
@@ -86,7 +87,7 @@ export default function GuidesPage() {
         <Card className="h-full group cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-blue-300">
           <CardHeader>
             <div className="flex items-start justify-between">
-              <div className={`p-2 rounded-lg bg-${category?.color}-100`}>
+              <div className={`p-2 rounded-lg ${getColorClasses(category?.color ?? "gray").bg}`}>
                 {CATEGORY_ICONS[guide.category]}
               </div>
               {progress > 0 && (

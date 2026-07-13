@@ -41,6 +41,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getColorClasses } from "@/utils/colorClasses";
 
 export default function TradeLicensePage() {
   const [selectedBusinessType, setSelectedBusinessType] = useState<string>("");
@@ -354,7 +355,7 @@ export default function TradeLicensePage() {
             {licenseCategories.map((category, index) => (
               <Card key={index} className={`border-l-4 border-l-${category.color}-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                 <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 bg-${category.color}-100 text-${category.color}-600`}>
+                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${getColorClasses(category.color).bg} ${getColorClasses(category.color).text}`}>
                     <category.icon className="w-8 h-8" />
                   </div>
                   <CardTitle className="text-xl font-bold">{category.category}</CardTitle>
@@ -367,7 +368,7 @@ export default function TradeLicensePage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Fees:</span>
-                      <span className={`font-bold text-${category.color}-600`}>{category.fees}</span>
+                      <span className={`font-bold ${getColorClasses(category.color).text}`}>{category.fees}</span>
                     </div>
                   </div>
 
@@ -376,7 +377,7 @@ export default function TradeLicensePage() {
                     <ul className="space-y-1">
                       {category.businesses.slice(0, 3).map((business, businessIndex) => (
                         <li key={businessIndex} className="flex items-start text-xs">
-                          <CheckCircle className={`w-3 h-3 mr-2 text-${category.color}-500 flex-shrink-0 mt-0.5`} />
+                          <CheckCircle className={`w-3 h-3 mr-2 ${getColorClasses(category.color).textSoft} flex-shrink-0 mt-0.5`} />
                           {business}
                         </li>
                       ))}
@@ -444,7 +445,7 @@ export default function TradeLicensePage() {
             {requiredDocuments.map((docCategory, index) => (
               <Card key={index} className={`border-l-4 border-l-${docCategory.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${docCategory.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(docCategory.color).textDark}`}>
                     <docCategory.icon className="w-6 h-6" />
                     {docCategory.category}
                   </CardTitle>
@@ -453,7 +454,7 @@ export default function TradeLicensePage() {
                   <ul className="space-y-3">
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(docCategory.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
@@ -595,7 +596,7 @@ export default function TradeLicensePage() {
             {additionalRequirements.map((req, index) => (
               <Card key={index} className={`border-l-4 border-l-${req.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${req.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(req.color).textDark}`}>
                     <req.icon className="w-6 h-6" />
                     {req.category}
                   </CardTitle>
@@ -604,7 +605,7 @@ export default function TradeLicensePage() {
                   <ul className="space-y-3">
                     {req.requirements.map((requirement, reqIndex) => (
                       <li key={reqIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${req.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(req.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{requirement}</span>
                       </li>
                     ))}

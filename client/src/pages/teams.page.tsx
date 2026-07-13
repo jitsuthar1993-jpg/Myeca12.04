@@ -57,11 +57,11 @@ interface Task {
   createdAt: string;
 }
 
-const priorityColors: Record<string, string> = {
-  low: "gray",
-  medium: "yellow",
-  high: "orange",
-  urgent: "red"
+const priorityTones: Record<string, string> = {
+  low: "bg-slate-50 text-slate-600",
+  medium: "bg-yellow-50 text-yellow-600",
+  high: "bg-orange-50 text-orange-600",
+  urgent: "bg-red-50 text-red-600"
 };
 
 const roleIcons: Record<string, any> = {
@@ -185,7 +185,6 @@ export default function TeamsPage() {
         <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-28 bg-gradient-to-br from-indigo-500 to-blue-600 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
              </div>
              <CardContent className="relative px-6 pb-8">
                 <div className="flex flex-col items-center -mt-14">
@@ -315,13 +314,13 @@ export default function TeamsPage() {
                    <TabsContent value="overview" className="space-y-10 outline-none">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                          {[
-                           { label: "Tasks Cleared", value: completedTasks, icon: CheckSquare, color: "emerald", trend: "Actual" },
-                           { label: "Pending Reviews", value: pendingTasks, icon: Clock, color: "amber", trend: "Queue" },
-                           { label: "Unit Activity", value: activities.length, icon: Activity, color: "indigo", trend: latestActivity ? "Recent" : "None" }
+                           { label: "Tasks Cleared", value: completedTasks, icon: CheckSquare, tone: "bg-emerald-50 text-emerald-600", trend: "Actual" },
+                           { label: "Pending Reviews", value: pendingTasks, icon: Clock, tone: "bg-amber-50 text-amber-600", trend: "Queue" },
+                           { label: "Unit Activity", value: activities.length, icon: Activity, tone: "bg-indigo-50 text-indigo-600", trend: latestActivity ? "Recent" : "None" }
                          ].map((s, i) => (
                            <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-8">
                               <div className="flex items-center justify-between mb-6">
-                                 <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center", `bg-${s.color}-50 text-${s.color}-600`)}>
+                                 <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center", s.tone)}>
                                     <s.icon className="h-7 w-7" />
                                  </div>
                                  <Badge className="border-none bg-blue-50 px-2 py-0.5 type-meta font-black uppercase text-blue-600 rounded-full">
@@ -385,7 +384,7 @@ export default function TeamsPage() {
                                     <div>
                                       <h4 className="text-lg font-black text-slate-900 leading-none mb-3">{task.title}</h4>
                                       <div className="flex items-center gap-6">
-                                         <Badge className={cn("border-none font-black type-meta uppercase px-3 py-1 rounded-full", `bg-${priorityColors[task.priority]}-50 text-${priorityColors[task.priority]}-600`)}>
+                                         <Badge className={cn("border-none font-black type-meta uppercase px-3 py-1 rounded-full", priorityTones[task.priority])}>
                                             {task.priority} Priority
                                          </Badge>
                                          {task.dueDate && (

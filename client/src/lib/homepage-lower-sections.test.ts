@@ -44,6 +44,8 @@ describe("homepage lower-section redesign", () => {
     expect(personaPaths).toContain("For Salaried Professionals");
     expect(personaPaths).toContain("For Business / GST");
     expect(personaPaths).toContain("Start ITR Filing");
+    expect(personaPaths).toContain("grid min-h-12 grid-cols-[2rem_minmax(0,1fr)] items-center gap-4");
+    expect(personaPaths).toContain("m-0 flex min-h-8 items-center text-sm font-semibold leading-5 text-slate-700");
     expect(advisory).toContain("Scope-first pricing");
     expect(advisory).toContain("Request scoped review");
   });

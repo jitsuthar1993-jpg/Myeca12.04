@@ -42,6 +42,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getColorClasses } from "@/utils/colorClasses";
 
 export default function LabourLawCompliancePage() {
   const [selectedCompliance, setSelectedCompliance] = useState<string>("");
@@ -378,12 +379,12 @@ export default function LabourLawCompliancePage() {
               <Card key={index} className={`border-l-4 border-l-${compliance.color}-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center bg-${compliance.color}-100 text-${compliance.color}-600`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${getColorClasses(compliance.color).bg} ${getColorClasses(compliance.color).text}`}>
                       <compliance.icon className="w-8 h-8" />
                     </div>
                     <div>
                       <CardTitle className="text-xl font-bold">{compliance.area}</CardTitle>
-                      <Badge className={`mt-1 bg-${compliance.color}-100 text-${compliance.color}-700`}>
+                      <Badge className={`mt-1 ${getColorClasses(compliance.color).bg} ${getColorClasses(compliance.color).textLight}`}>
                         {compliance.coverage}
                       </Badge>
                     </div>
@@ -489,7 +490,7 @@ export default function LabourLawCompliancePage() {
             {essentialDocuments.map((docCategory, index) => (
               <Card key={index} className={`border-l-4 border-l-${docCategory.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${docCategory.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(docCategory.color).textDark}`}>
                     <docCategory.icon className="w-6 h-6" />
                     {docCategory.category}
                   </CardTitle>
@@ -498,7 +499,7 @@ export default function LabourLawCompliancePage() {
                   <ul className="space-y-3">
                     {docCategory.documents.map((doc, docIndex) => (
                       <li key={docIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${docCategory.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(docCategory.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{doc}</span>
                       </li>
                     ))}
@@ -659,7 +660,7 @@ export default function LabourLawCompliancePage() {
             {compliancePractices2025.map((practice, index) => (
               <Card key={index} className={`border-l-4 border-l-${practice.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${practice.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(practice.color).textDark}`}>
                     <practice.icon className="w-6 h-6" />
                     {practice.category}
                   </CardTitle>
@@ -668,7 +669,7 @@ export default function LabourLawCompliancePage() {
                   <ul className="space-y-3">
                     {practice.practices.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${practice.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(practice.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{item}</span>
                       </li>
                     ))}

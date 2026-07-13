@@ -125,7 +125,6 @@ export default function ReportsPage() {
         <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-28 bg-gradient-to-br from-blue-500 to-indigo-500 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
              </div>
              <CardContent className="relative px-6 pb-8">
                 <div className="flex flex-col items-center -mt-14">
@@ -144,13 +143,13 @@ export default function ReportsPage() {
 
                 <div className="mt-10 grid grid-cols-2 gap-3">
                    {[
-                     { label: "Reports", value: history.length, icon: FileText, color: "indigo" },
-                     { label: "Format", value: exportFormat.toUpperCase(), icon: Download, color: "blue" },
-                     { label: "Filters", value: dateRange.from || dateRange.to ? "Set" : "Open", icon: Filter, color: "amber" },
-                     { label: "Mode", value: "Secure", icon: Shield, color: "emerald" }
+                     { label: "Reports", value: history.length, icon: FileText, tone: "text-indigo-600" },
+                     { label: "Format", value: exportFormat.toUpperCase(), icon: Download, tone: "text-blue-600" },
+                     { label: "Filters", value: dateRange.from || dateRange.to ? "Set" : "Open", icon: Filter, tone: "text-amber-600" },
+                     { label: "Mode", value: "Secure", icon: Shield, tone: "text-emerald-600" }
                    ].map((stat, i) => (
                      <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
-                        <stat.icon className={cn("h-4 w-4 mb-2", `text-${stat.color}-600`)} />
+                        <stat.icon className={cn("h-4 w-4 mb-2", stat.tone)} />
                         <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
                         <span className="text-sm font-black text-slate-900 leading-none">{stat.value}</span>
                      </div>

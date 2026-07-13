@@ -21,6 +21,7 @@ import {
   Star
 } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { getColorClasses } from "@/utils/colorClasses";
 import {
   VIDEO_TUTORIALS,
   VIDEO_CATEGORIES,
@@ -95,7 +96,7 @@ export default function VideoTutorialsPage() {
         </div>
         <CardContent className={`${size === 'small' ? 'p-3' : 'p-4'}`}>
           <div className="flex items-start gap-2 mb-2">
-            <Badge variant="outline" className={`text-xs ${category ? `border-${category.color}-300 text-${category.color}-700` : ''}`}>
+            <Badge variant="outline" className={`text-xs ${category ? `${getColorClasses(category.color).borderSoft} ${getColorClasses(category.color).textLight}` : ""}`}>
               {category?.name}
             </Badge>
             <Badge className={`text-xs ${DIFFICULTY_COLORS[video.difficulty]}`}>

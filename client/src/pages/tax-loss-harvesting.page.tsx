@@ -240,54 +240,54 @@ export default function TaxLossHarvestingPage() {
 
           {/* Summary Cards */}
           <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <Card className={`${analysis.netGainLoss >= 0 ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-red-500 to-rose-600'} text-white border-0`}>
+            <Card className={`${analysis.netGainLoss >= 0 ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'} text-slate-950`}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/80 text-sm">Net Position</p>
+                    <p className="text-sm text-slate-700">Net Position</p>
                     <p className="text-2xl font-bold">{formatCurrency(analysis.netGainLoss)}</p>
                   </div>
                   {analysis.netGainLoss >= 0 ? (
-                    <TrendingUp className="h-8 w-8 text-white/60" />
+                    <TrendingUp className="h-8 w-8 text-emerald-700" />
                   ) : (
-                    <TrendingDown className="h-8 w-8 text-white/60" />
+                    <TrendingDown className="h-8 w-8 text-red-700" />
                   )}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0">
+            <Card className="border-emerald-200 bg-emerald-50 text-slate-950">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/80 text-sm">Unrealized Gains</p>
+                    <p className="text-sm text-emerald-800">Unrealized Gains</p>
                     <p className="text-2xl font-bold">{formatCurrency(analysis.totalUnrealizedGain)}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-white/60" />
+                  <TrendingUp className="h-8 w-8 text-emerald-700" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-red-500 to-rose-600 text-white border-0">
+            <Card className="border-red-200 bg-red-50 text-slate-950">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/80 text-sm">Unrealized Losses</p>
+                    <p className="text-sm text-red-800">Unrealized Losses</p>
                     <p className="text-2xl font-bold">{formatCurrency(analysis.totalUnrealizedLoss)}</p>
                   </div>
-                  <TrendingDown className="h-8 w-8 text-white/60" />
+                  <TrendingDown className="h-8 w-8 text-red-700" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-500 to-violet-600 text-white border-0">
+            <Card className="border-purple-200 bg-purple-50 text-slate-950">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/80 text-sm">Potential Tax Savings</p>
+                    <p className="text-sm text-purple-800">Potential Tax Savings</p>
                     <p className="text-2xl font-bold">{formatCurrency(analysis.totalPotentialSavings)}</p>
                   </div>
-                  <Sparkles className="h-8 w-8 text-white/60" />
+                  <Sparkles className="h-8 w-8 text-purple-700" />
                 </div>
               </CardContent>
             </Card>

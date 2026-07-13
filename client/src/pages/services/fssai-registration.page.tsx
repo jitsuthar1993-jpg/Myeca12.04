@@ -39,6 +39,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MetaSEO from "@/components/seo/MetaSEO";
+import { getColorClasses } from "@/utils/colorClasses";
 
 export default function FSSAIRegistrationPage() {
   const [selectedLicenseType, setSelectedLicenseType] = useState<string>("");
@@ -323,7 +324,7 @@ export default function FSSAIRegistrationPage() {
             {licenseTypes.map((license, index) => (
               <Card key={index} className={`border-l-4 border-l-${license.color}-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
                 <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 bg-${license.color}-100 text-${license.color}-600`}>
+                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${getColorClasses(license.color).bg} ${getColorClasses(license.color).text}`}>
                     <license.icon className="w-8 h-8" />
                   </div>
                   <CardTitle className="text-xl font-bold">{license.type}</CardTitle>
@@ -347,7 +348,7 @@ export default function FSSAIRegistrationPage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">Fees:</span>
-                      <span className={`font-bold text-${license.color}-600`}>{license.fees}</span>
+                      <span className={`font-bold ${getColorClasses(license.color).text}`}>{license.fees}</span>
                     </div>
                   </div>
 
@@ -356,7 +357,7 @@ export default function FSSAIRegistrationPage() {
                     <ul className="space-y-1">
                       {license.suitable.slice(0, 2).map((item, itemIndex) => (
                         <li key={itemIndex} className="flex items-center text-xs">
-                          <CheckCircle className={`w-3 h-3 mr-2 text-${license.color}-500`} />
+                          <CheckCircle className={`w-3 h-3 mr-2 ${getColorClasses(license.color).textSoft}`} />
                           {item}
                         </li>
                       ))}
@@ -557,7 +558,7 @@ export default function FSSAIRegistrationPage() {
             {complianceRequirements.map((compliance, index) => (
               <Card key={index} className={`border-l-4 border-l-${compliance.color}-500 hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <CardTitle className={`flex items-center gap-2 text-${compliance.color}-900`}>
+                  <CardTitle className={`flex items-center gap-2 ${getColorClasses(compliance.color).textDark}`}>
                     <compliance.icon className="w-6 h-6" />
                     {compliance.category}
                   </CardTitle>
@@ -566,7 +567,7 @@ export default function FSSAIRegistrationPage() {
                   <ul className="space-y-3">
                     {compliance.requirements.map((req, reqIndex) => (
                       <li key={reqIndex} className="flex items-start">
-                        <CheckCircle className={`w-4 h-4 mr-3 text-${compliance.color}-500 flex-shrink-0 mt-0.5`} />
+                        <CheckCircle className={`w-4 h-4 mr-3 ${getColorClasses(compliance.color).textSoft} flex-shrink-0 mt-0.5`} />
                         <span className="text-sm text-slate-700">{req}</span>
                       </li>
                     ))}

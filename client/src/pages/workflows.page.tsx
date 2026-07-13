@@ -175,7 +175,6 @@ export default function WorkflowsPage() {
         <div className="lg:w-96 shrink-0 w-full space-y-6 lg:sticky lg:top-[112px]">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-28 bg-gradient-to-br from-purple-500 to-indigo-500 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
              </div>
              <CardContent className="relative px-6 pb-8">
                 <div className="flex flex-col items-center -mt-14">
@@ -196,14 +195,14 @@ export default function WorkflowsPage() {
                    <Label className="type-meta font-black text-slate-400 uppercase tracking-widest ml-1">Workflow Status</Label>
                    <div className="grid grid-cols-2 gap-3">
                       {[
-                        { label: "Healthy", value: workflowStats.healthy, color: "emerald" },
-                        { label: "Warning", value: workflowStats.warning, color: "orange" },
-                        { label: "Failed", value: workflowStats.failed, color: "red" },
-                        { label: "Paused", value: workflowStats.paused, color: "slate" }
+                        { label: "Healthy", value: workflowStats.healthy, tone: "text-emerald-600" },
+                        { label: "Warning", value: workflowStats.warning, tone: "text-orange-600" },
+                        { label: "Failed", value: workflowStats.failed, tone: "text-red-600" },
+                        { label: "Paused", value: workflowStats.paused, tone: "text-slate-600" }
                       ].map((stat, i) => (
                         <div key={i} className="p-4 rounded-3xl bg-slate-50 border border-slate-100/50 flex flex-col items-center text-center">
                            <span className="type-meta font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{stat.label}</span>
-                           <span className={cn("text-sm font-black leading-none", `text-${stat.color}-600`)}>{String(stat.value).padStart(2, "0")}</span>
+                           <span className={cn("text-sm font-black leading-none", stat.tone)}>{String(stat.value).padStart(2, "0")}</span>
                         </div>
                       ))}
                    </div>

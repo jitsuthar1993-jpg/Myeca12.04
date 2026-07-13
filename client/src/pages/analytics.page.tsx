@@ -129,10 +129,10 @@ export default function AnalyticsPage() {
     const maxDeductions = 150000; // Section 80C limit
     const utilizationRate = (analytics.totalDeductions / maxDeductions) * 100;
 
-    if (utilizationRate >= 80) return { score: 90, label: 'Excellent', color: 'emerald' };
-    if (utilizationRate >= 60) return { score: 70, label: 'Good', color: 'blue' };
-    if (utilizationRate >= 40) return { score: 50, label: 'Average', color: 'amber' };
-    return { score: 30, label: 'Needs Improvement', color: 'red' };
+    if (utilizationRate >= 80) return { score: 90, label: 'Excellent', badgeTone: 'bg-emerald-50 text-emerald-600', indicatorTone: 'bg-emerald-600' };
+    if (utilizationRate >= 60) return { score: 70, label: 'Good', badgeTone: 'bg-blue-50 text-blue-600', indicatorTone: 'bg-blue-600' };
+    if (utilizationRate >= 40) return { score: 50, label: 'Average', badgeTone: 'bg-amber-50 text-amber-600', indicatorTone: 'bg-amber-600' };
+    return { score: 30, label: 'Needs Improvement', badgeTone: 'bg-red-50 text-red-600', indicatorTone: 'bg-red-600' };
   };
 
   const optimizationScore = getTaxOptimizationScore();
@@ -149,7 +149,6 @@ export default function AnalyticsPage() {
         <div className="lg:w-96 h-full overflow-y-auto pr-2 shrink-0 w-full scrollbar-none pb-10 space-y-6">
           <Card className="border-none shadow-sm rounded-[40px] bg-white overflow-hidden border border-slate-100/50">
              <div className="h-28 bg-gradient-to-br from-blue-500 to-indigo-600 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
              </div>
              <CardContent className="relative px-6 pb-8">
                 <div className="flex flex-col items-center -mt-14">
@@ -209,11 +208,11 @@ export default function AnalyticsPage() {
                     <div className="p-6 rounded-[32px] bg-slate-50 border border-slate-100/50">
                         <div className="flex items-center justify-between mb-4">
                             <span className="text-3xl font-black text-slate-900 tracking-tight">{optimizationScore.score}</span>
-                            <Badge className={cn("border-none font-black text-[9px] uppercase px-2 py-0.5 rounded-full", `bg-${optimizationScore.color}-50 text-${optimizationScore.color}-600`)}>
+                            <Badge className={cn("border-none font-black text-[9px] uppercase px-2 py-0.5 rounded-full", optimizationScore.badgeTone)}>
                                 {optimizationScore.label}
                             </Badge>
                         </div>
-                        <Progress value={optimizationScore.score} className="h-2 bg-slate-200" indicatorClassName={cn(`bg-${optimizationScore.color}-600`)} />
+                        <Progress value={optimizationScore.score} className="h-2 bg-slate-200" indicatorClassName={optimizationScore.indicatorTone} />
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-3 leading-relaxed">
                             Based on your deduction utilization vs the maximum allowable ₹1.5L cap.
                         </p>
@@ -260,14 +259,14 @@ export default function AnalyticsPage() {
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { label: "Total Income", value: formatCurrency(analytics.totalIncome), icon: Coins, color: "blue", trend: "+12%" },
-              { label: "Tax Liability", value: formatCurrency(analytics.totalTax), icon: Target, color: "red", trend: `${((analytics.totalTax / analytics.totalIncome) * 100).toFixed(1)}%` },
-              { label: "Total Deductions", value: formatCurrency(analytics.totalDeductions), icon: TrendingUp, color: "emerald", trend: `${analytics.taxEfficiency.toFixed(1)}% eff.` },
-              { label: "Returns Filed", value: analytics.filedReturns, icon: FileText, color: "indigo", trend: `${analytics.draftReturns} drafts` }
+              { label: "Total Income", value: formatCurrency(analytics.totalIncome), icon: Coins, tone: "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white", trend: "+12%" },
+              { label: "Tax Liability", value: formatCurrency(analytics.totalTax), icon: Target, tone: "bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white", trend: `${((analytics.totalTax / analytics.totalIncome) * 100).toFixed(1)}%` },
+              { label: "Total Deductions", value: formatCurrency(analytics.totalDeductions), icon: TrendingUp, tone: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white", trend: `${analytics.taxEfficiency.toFixed(1)}% eff.` },
+              { label: "Returns Filed", value: analytics.filedReturns, icon: FileText, tone: "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white", trend: `${analytics.draftReturns} drafts` }
             ].map((stat, i) => (
               <Card key={i} className="border-none shadow-sm rounded-[40px] bg-white p-8 group hover:shadow-xl transition-all">
                 <div className="flex items-center justify-between mb-6">
-                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-colors", `bg-${stat.color}-50 text-${stat.color}-600 group-hover:bg-${stat.color}-600 group-hover:text-white`)}>
+                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-colors", stat.tone)}>
                     <stat.icon className="h-7 w-7" />
                   </div>
                   <Badge variant="outline" className="border-slate-100 font-black text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-full text-slate-400 group-hover:text-slate-600">
