@@ -101,6 +101,11 @@ const financialMetadata: Record<string, Partial<GeneratorCatalogueEntry>> = {
   },
 };
 
+function inferComplianceClass(category: string): GeneratorComplianceClass {
+  if (category === "legal" || category === "real-estate") return "legal-draft";
+  return "general-document";
+}
+
 export const GENERATOR_CATALOGUE: GeneratorCatalogueEntry[] = generatorRegistry.generators
   .map((entry) => {
     const financial = financialMetadata[entry.id] || {};
@@ -113,7 +118,7 @@ export const GENERATOR_CATALOGUE: GeneratorCatalogueEntry[] = generatorRegistry.
       status: entry.status === "available" ? "active" : "soon",
       validity: "All India",
       features: ["Guided fields", "Live preview", "Printable export"],
-      complianceClass: "general-document",
+      complianceClass: inferComplianceClass(entry.category),
       exportFormats: ["pdf", "html"],
       conversionTargets: [],
       ...financial,
