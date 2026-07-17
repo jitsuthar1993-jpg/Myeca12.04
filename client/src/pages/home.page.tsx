@@ -142,11 +142,11 @@ const HomePage = () => {
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap md:mt-7">
                 <Link
                   href="/which-itr-form-to-file?source=homepage_hero"
-                  onClick={() => trackPublicCtaClick("Start Filing Now", "homepage_hero")}
+                  onClick={() => trackPublicCtaClick("Find my ITR and price", "homepage_hero")}
                   className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-slate-800 px-8 text-base font-black text-white shadow-lg shadow-slate-300 transition hover:bg-slate-900 active:scale-[0.98] sm:w-auto"
                 >
                   <Rocket className="h-5 w-5" />
-                  Start Filing Now
+                  Find my ITR and price
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
@@ -585,7 +585,7 @@ const HomePage = () => {
                   <Link href="/which-itr-form-to-file?source=homepage_final_cta">
                     <Button variant="brand" size="xl" className="h-11 w-full rounded-lg px-6 shadow-sm shadow-brand-500/25 transition-all sm:w-auto md:px-8 md:hover:-translate-y-0.5">
                       <Rocket className="mr-2 h-5 w-5" />
-                       Start ITR Filing
+                       Find my ITR and price
                     </Button>
                   </Link>
                   <Link href="/expert-consultation?service=itr-filing&source=homepage_final_cta">

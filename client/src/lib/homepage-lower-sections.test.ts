@@ -13,7 +13,7 @@ describe("homepage lower-section redesign", () => {
     // Mobile pricing renders as compact rows; full cards stay desktop-only.
     expect(home).toContain("sm:hidden");
     expect(home).toContain("hidden gap-3 sm:grid sm:grid-cols-3");
-    expect(home).toContain("Start ITR Filing");
+    expect(home).toContain("Find my ITR and price");
 
     // Removed duplicated mobile sections must not return.
     expect(home).not.toContain("LowerHomepageMobileSummary");

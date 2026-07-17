@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Bell, Check, AlertCircle, Info, X, MessageSquare, TrendingUp, Calendar } from "lucide-react";
+import { useState } from "react";
+import { Bell, Check, AlertCircle, Info, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,6 +13,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { m, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
+import { getNotificationActionHref } from "@/lib/notification-navigation";
 
 interface Notification {
   id: string;
@@ -22,10 +24,13 @@ interface Notification {
   read: boolean;
   createdAt: string;
   icon?: string;
+  actionUrl?: string;
+  metadata?: Record<string, unknown> | null;
 }
 
 export default function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -170,6 +175,11 @@ export default function NotificationCenter() {
                     onClick={() => {
                       if (!notification.read) {
                         markAsReadMutation.mutate(notification.id);
+                      }
+                      const actionHref = getNotificationActionHref(notification);
+                      if (actionHref) {
+                        setIsOpen(false);
+                        setLocation(actionHref);
                       }
                     }}
                   >

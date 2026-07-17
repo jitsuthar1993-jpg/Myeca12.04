@@ -3,9 +3,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   Briefcase,
+  CheckCircle2,
   ChevronRight,
   Clock,
   FileText,
+  MessageCircle,
+  AlertCircle,
   Plus,
   Search,
   ShieldCheck,
@@ -18,6 +21,8 @@ import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { Input } from '@/components/ui/input';
 import { apiRequest } from '@/lib/queryClient';
+import { buildDocumentReadiness, buildFilingTimeline, type DashboardTaxReturn } from '@/lib/user-dashboard-workspace';
+import { buildClientActionPlan } from '@/lib/client-action-plan';
 
 type DashboardService = {
   id: string;
@@ -51,6 +56,7 @@ type DashboardData = {
   };
   nextActions?: DashboardNextAction[];
   activeServices?: DashboardService[];
+  taxReturns?: DashboardTaxReturn[];
 };
 
 function assignedCaLabel(service: DashboardService) {
@@ -97,6 +103,17 @@ export default function UserDashboard() {
   const activeServices = data?.activeServices || [];
   const nextActions = data?.nextActions || [];
   const stats = data?.stats || {};
+  const latestReturn = data?.taxReturns?.[0];
+  const documentReadiness = buildDocumentReadiness({
+    documentsUploaded: stats.documentsUploaded ?? 0,
+    taxReturn: latestReturn,
+  });
+  const filingTimeline = latestReturn ? buildFilingTimeline(latestReturn) : [];
+  const actionPlan = buildClientActionPlan({
+    latestReturn,
+    documentReadiness,
+    activeServices,
+  });
   const displayName = user?.firstName || user?.email?.split('@')[0] || 'User';
 
   return (
@@ -175,6 +192,127 @@ export default function UserDashboard() {
             </div>
           </div>
         </section>
+        <section aria-label="Filing workspace overview" className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <div className="rounded-lg border border-slate-200 bg-white p-4 md:p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="type-meta font-bold uppercase text-slate-400">Document readiness</p>
+                <h2 className="type-card-title mt-1 text-slate-900">Prepare your next review</h2>
+                <p className="type-support mt-1 text-slate-500">Checklist progress only; it is not a tax correctness guarantee.</p>
+              </div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                {documentReadiness.percentage === 100 ? <CheckCircle2 className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
+              </div>
+            </div>
+            <div className="mt-5 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-3xl font-black tracking-tight text-slate-900">{documentReadiness.percentage}%</p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{documentReadiness.label}</p>
+              </div>
+              <Link href={documentReadiness.href}>
+                <Button variant="outline" className="h-9 rounded-lg border-slate-200 px-3 text-xs font-bold text-slate-700">
+                  Review documents
+                  <ChevronRight className="ml-1 h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100" aria-label="Document readiness progress">
+              <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: documentReadiness.percentage + '%' }} />
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-200 bg-white p-4 md:p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="type-meta font-bold uppercase text-slate-400">Filing timeline</p>
+                <h2 className="type-card-title mt-1 text-slate-900">Know what happens next</h2>
+                <p className="type-support mt-1 text-slate-500">{latestReturn ? 'Your latest return, from saved draft to filing.' : 'Start an ITR workspace to see its live progress here.'}</p>
+              </div>
+              <Link href={latestReturn?.id ? '/itr/filing/' + latestReturn.id : '/itr/filing/new'} aria-label="Open filing workspace">
+                <Button variant="ghost" className="h-9 rounded-lg px-2 text-blue-700 hover:bg-blue-50">
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+            {filingTimeline.length ? (
+              <div className="mt-5 grid gap-3 sm:grid-cols-4">
+                {filingTimeline.map((step, index) => (
+                  <div key={step.id} className="relative min-w-0">
+                    {index < filingTimeline.length - 1 && <div className="absolute left-3 top-3 hidden h-px w-full bg-slate-200 sm:block" aria-hidden="true" />}
+                    <div className="relative flex items-start gap-2 sm:block">
+                      <div className={cn(
+                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-white',
+                        step.state === 'complete' && 'border-emerald-500 text-emerald-600',
+                        step.state === 'current' && 'border-blue-500 text-blue-600',
+                        step.state === 'attention' && 'border-amber-500 text-amber-600',
+                        step.state === 'upcoming' && 'border-slate-200 text-slate-300',
+                      )}>
+                        {step.state === 'complete' ? <CheckCircle2 className="h-3.5 w-3.5" /> : step.state === 'attention' ? <AlertCircle className="h-3.5 w-3.5" /> : <span className="h-2 w-2 rounded-full bg-current" />}
+                      </div>
+                      <div className="min-w-0 sm:mt-2">
+                        <p className="text-xs font-bold text-slate-800">{step.label}</p>
+                        <p className="mt-1 text-[11px] font-medium leading-snug text-slate-500">{step.detail}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Link href="/itr/filing/new" className="mt-5 flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50/60 p-3">
+                <FileText className="h-5 w-5 shrink-0 text-blue-600" />
+                <span className="text-sm font-bold text-blue-800">Start an ITR workspace to track filing progress.</span>
+                <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-blue-500" />
+              </Link>
+            )}
+          </div>
+        </section>
+
+        <section aria-label="Support shortcuts" className="flex flex-col gap-3 rounded-lg border border-emerald-100 bg-emerald-50/60 px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-600 shadow-sm"><MessageCircle className="h-4 w-4" /></div>
+            <div>
+              <h2 className="text-sm font-bold text-slate-900">Need help with a document or case?</h2>
+              <p className="mt-1 text-xs font-medium text-slate-600">Continue in your workspace or ask the MyeCA team for the next action.</p>
+            </div>
+          </div>
+          <Link href="/expert-consultation" className="shrink-0">
+            <Button variant="outline" className="h-9 rounded-lg border-emerald-200 bg-white px-3 text-xs font-bold text-emerald-800 hover:bg-emerald-100">Contact support</Button>
+          </Link>
+        </section>
+        <section aria-label="Your action plan" className="rounded-lg border border-slate-200 bg-white p-4 md:p-5">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="type-meta font-bold uppercase text-slate-400">Personal action plan</p>
+              <h2 className="type-card-title mt-1 text-slate-900">Your next useful steps</h2>
+              <p className="type-support mt-1 text-slate-500">Based on your current filing and service workspace.</p>
+            </div>
+            <span className="text-xs font-bold text-slate-400">{actionPlan.length} step{actionPlan.length === 1 ? '' : 's'} in view</span>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {actionPlan.map((item, index) => (
+              <Link key={item.id} href={item.href}>
+                <div className="flex min-h-[112px] items-start gap-3 rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition hover:border-blue-200 hover:bg-blue-50/40">
+                  <div className={cn(
+                    'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black',
+                    item.tone === 'urgent' && 'bg-amber-100 text-amber-700',
+                    item.tone === 'next' && 'bg-blue-100 text-blue-700',
+                    item.tone === 'later' && 'bg-emerald-100 text-emerald-700',
+                  )}>
+                    {item.tone === 'urgent' ? <AlertCircle className="h-4 w-4" /> : <span>{index + 1}</span>}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold leading-tight text-slate-900">{item.title}</p>
+                    <p className="mt-1 line-clamp-3 text-xs font-medium leading-snug text-slate-500">{item.detail}</p>
+                    <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-blue-700">Open step</p>
+                  </div>
+                  <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-slate-300" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+
 
         <div className="rounded-lg border border-slate-200 bg-white px-4 py-4 md:px-5">
           <div className="flex flex-wrap items-center justify-between gap-6">

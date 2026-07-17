@@ -90,6 +90,7 @@ describe("ITR start form selector page", () => {
     expect(screen.queryByText(/Recommended plan/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/payment link/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Compare pricing/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Save this result and get your document checklist/i)).not.toBeInTheDocument();
   });
 
   it("moves through one section at a time with bottom navigation", async () => {
@@ -126,6 +127,7 @@ describe("ITR start form selector page", () => {
     expect(screen.getByText("ITR-2")).toBeInTheDocument();
     expect(screen.getByText("ITR-1 cannot be used for short-term capital gains.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Continue to MY ITR/i })).toBeInTheDocument();
+    expect(screen.getByText(/Save this result and get your document checklist/i)).toBeInTheDocument();
   });
 
   it("keeps selected boolean facts light like the other selected choices", async () => {

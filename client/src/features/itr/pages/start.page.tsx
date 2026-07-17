@@ -667,14 +667,16 @@ export default function ITRStartPage() {
           </m.section>
         </AnimatePresence>
 
-        <ItrLeadCaptureCard
-          caseType="itr-selector"
-          source="itr_selector_lead_capture"
-          title="Want the AY 2026-27 filing checklist?"
-          description="Share contact details if you want the checklist and a scoped filing follow-up before payment."
-          checklistLabel="AY 2026-27 ITR checklist"
-          className="mt-5"
-        />
+        {isResultStep ? (
+          <ItrLeadCaptureCard
+            caseType="itr-selector"
+            source="itr_selector_lead_capture"
+            title="Save this result and get your document checklist"
+            description="You have your likely ITR form. Share contact details only if you want the checklist and a scoped filing follow-up before payment."
+            checklistLabel="AY 2026-27 ITR checklist"
+            className="mt-5"
+          />
+        ) : null}
       </main>
 
       <div

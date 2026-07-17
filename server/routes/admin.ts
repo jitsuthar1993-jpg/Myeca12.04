@@ -333,7 +333,7 @@ router.patch(
             title: "Payment link ready",
             message: `${current.serviceTitle || "Your service"} payment link is ready in your workspace.`,
             type: "info",
-            metadata: { paymentLinkRequestId: req.params.id, userServiceId: current.userServiceId ?? null },
+            metadata: { actionUrl: current.userServiceId ? `/dashboard/services/${current.userServiceId}` : "/payments", paymentLinkRequestId: req.params.id, userServiceId: current.userServiceId ?? null },
           }),
           createReminder({
             title: "Payment link ready",

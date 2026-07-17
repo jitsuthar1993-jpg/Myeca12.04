@@ -793,6 +793,7 @@ async function importWhatsAppMedia(input: {
       message: "Your document was attached to the linked MyeCA case.",
       type: "success",
       metadata: {
+        actionUrl: input.caseLink.userServiceId ? `/dashboard/services/${input.caseLink.userServiceId}` : "/documents",
         documentId: docRef.id,
         userServiceId: input.caseLink.userServiceId || null,
         taxReturnId: input.caseLink.taxReturnId || null,

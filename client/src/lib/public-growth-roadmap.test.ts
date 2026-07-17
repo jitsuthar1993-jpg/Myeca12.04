@@ -55,7 +55,7 @@ describe("public growth roadmap implementation", () => {
     expect(source).not.toContain("with expert CA assistance");
     expect(source).not.toContain("HeroTypewriter");
     expect(source).not.toContain("animate-pulse");
-    expect(source).toContain("Start Filing Now");
+    expect(source).toContain("Find my ITR and price");
     expect(source).toContain("Free Tax Calculator");
     expect(source).toContain("heroProofItems");
     expect(source).toContain("Document handling");

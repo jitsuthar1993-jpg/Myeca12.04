@@ -11,6 +11,6 @@ test("shows the redesigned homepage hero on desktop and mobile", async ({ page }
   await expect(page.getByText(/Expert eCA Assistance/i)).toBeVisible();
   await expect(page.getByText(/Free Notice Assistance/i)).toBeVisible();
   await expect(page.locator(".animate-pulse").first()).toBeVisible();
-  await expect(page.getByRole("link", { name: /Start Filing Now/i }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Find my ITR and price/i }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Free Tax Calculator/i }).first()).toBeVisible();
 });

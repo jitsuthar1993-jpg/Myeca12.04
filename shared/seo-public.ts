@@ -152,6 +152,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/services/msme-udyam-registration",
   "/services/notice-compliance",
   "/services/startup-india-registration",
+  "/services/tan-registration",
   "/services/tax-planning",
   "/services/tds-filing",
   "/services/trade-license",

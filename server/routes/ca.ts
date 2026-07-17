@@ -6,7 +6,17 @@ import { canAccessUserData, isAdmin } from "../utils/access-control.js";
 import { buildServiceCaseDetail, buildServiceCaseQueue } from "../utils/case-queue.js";
 import { createReminder } from "../utils/reminders.js";
 import { recordWorkflowEvent } from "../utils/workflow-events.js";
+import { enqueueWhatsAppTemplateForUser } from "../services/whatsapp-client-workflow.js";
+import { whatsappTemplateForCaseStatus } from "../../shared/whatsapp-status.js";
 import { notifyAdmins, notifyUser } from "../utils/workflow-notifications.js";
+
+async function runWhatsAppSideEffect(label: string, task: () => Promise<unknown>) {
+  try {
+    await task();
+  } catch (error) {
+    console.warn("[WHATSAPP] " + label + " failed; primary CA case update was already saved.", error);
+  }
+}
 
 const router = Router();
 const updateCaseSchema = z.object({
@@ -185,6 +195,20 @@ router.patch("/cases/:id", requireAuth, requireCA, async (req: AuthRequest, res:
     const payload: Record<string, any> = { metadata, updatedAt: new Date() };
     if (updates.status) payload.status = updates.status;
     await serviceRef.update(payload);
+    const whatsappTemplate = whatsappTemplateForCaseStatus(updates.status);
+    if (whatsappTemplate && serviceCase.userId) {
+      await runWhatsAppSideEffect("queue case status update", () => enqueueWhatsAppTemplateForUser({
+        userId: String(serviceCase.userId),
+        templateName: whatsappTemplate,
+        sourceType: "user_service",
+        sourceId: req.params.id,
+        caseId: req.params.id,
+        variables: {
+          service_name: serviceCase.serviceTitle || "your MyeCA case",
+          case_status: updates.status,
+        },
+      }));
+    }
 
     await recordWorkflowEvent({
       type: updates.status === "completed" ? "filing_completed" : "case_ca_updated",
@@ -216,7 +240,7 @@ router.patch("/cases/:id", requireAuth, requireCA, async (req: AuthRequest, res:
             title: "Action needed on your case",
             message: updates.caNote || "Your CA needs more information on your service case.",
             type: "warning",
-            metadata: { userServiceId: req.params.id },
+            metadata: { actionUrl: `/dashboard/services/${req.params.id}`, userServiceId: req.params.id },
           })
         : Promise.resolve(),
       updates.reminderMessage && serviceCase.userId

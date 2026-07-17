@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Layout } from "@/components/admin/Layout";
 import { normalizeAppRole } from "@shared/app-roles";
 import { useToast } from "@/hooks/use-toast";
+import { buildCaActionQueue } from "@/lib/ca-action-queue";
 
 export default function CADashboard() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -96,6 +97,10 @@ export default function CADashboard() {
     reminder.message?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     reminder.caseId?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const actionQueue = buildCaActionQueue({
+    cases: assignedCases,
+    reminders,
+  });
   const activeReminderCount = reminders.filter((reminder: any) => (reminder.status || "pending") === "pending").length;
 
   if (authLoading || statsLoading) {
@@ -219,6 +224,47 @@ export default function CADashboard() {
             </div>
           </Card>
         </div>
+        <section aria-label="CA action inbox" className="rounded-lg border border-amber-200 bg-amber-50/60 p-4 md:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-700">Action inbox</p>
+              <h2 className="mt-1 text-lg font-bold text-slate-900">Cases needing a next move</h2>
+              <p className="mt-1 text-xs font-medium text-slate-600">Prioritized from reminders, client responses, and missing case documents.</p>
+            </div>
+            <Badge className="w-fit border-none bg-white px-3 py-1 text-xs font-bold text-amber-800">{actionQueue.length} open action{actionQueue.length === 1 ? '' : 's'}</Badge>
+          </div>
+          {actionQueue.length ? (
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {actionQueue.map((action) => (
+                <Link key={action.id} href={action.href}>
+                  <div className="flex min-h-[112px] items-start gap-3 rounded-lg border border-white bg-white p-3 shadow-sm transition hover:border-amber-300 hover:shadow-md">
+                    <div className={cn(
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                      action.tone === "urgent" && "bg-rose-50 text-rose-600",
+                      action.tone === "attention" && "bg-amber-50 text-amber-600",
+                      action.tone === "routine" && "bg-blue-50 text-blue-600",
+                    )}>
+                      {action.kind === "reminder" ? <Clock className="h-4 w-4" /> : action.kind === "documents" ? <FolderOpen className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-bold leading-tight text-slate-900">{action.title}</p>
+                      <p className="mt-1 line-clamp-3 text-xs font-medium leading-snug text-slate-500">{action.detail}</p>
+                      <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-blue-700">Open client records</p>
+                    </div>
+                    <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-slate-300" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4 flex items-center gap-3 rounded-lg border border-white bg-white p-3 text-sm font-semibold text-slate-600">
+              <CheckCircle className="h-5 w-5 text-emerald-600" />
+              No unresolved client actions are waiting in the current queue.
+            </div>
+          )}
+        </section>
+
+
 
         {/* Portfolio Tabs */}
         <Tabs defaultValue="clients" className="space-y-6">

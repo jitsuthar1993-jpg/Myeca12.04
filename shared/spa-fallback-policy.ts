@@ -1,4 +1,4 @@
-import { SITE_URL, isPrivateRoute, normalizePublicPath } from "./seo-public.js";
+import { PUBLIC_STATIC_ROUTES, SITE_URL, isPrivateRoute, normalizePublicPath } from "./seo-public.js";
 import generatorRegistry from "../client/src/data/generator-registry.json";
 
 export const SPA_FALLBACK_EXACT_ROUTES = [
@@ -9,6 +9,11 @@ export const SPA_FALLBACK_EXACT_ROUTES = [
   "/bank-analyzer",
   "/business/virtual-cfo",
   "/calculators/general",
+  "/calculators/deductions",
+  "/calculators/elss",
+  "/calculators/hsn-finder",
+  "/calculators/penalty",
+  "/calculators/vda-tax",
   "/calculators/withdrawal-planner",
   "/consultation",
   "/itr/compact-filing",
@@ -22,9 +27,29 @@ export const SPA_FALLBACK_EXACT_ROUTES = [
   "/salary",
   "/search",
   "/services/company-incorporation",
+  "/services/advisory",
+  "/services/audit",
+  "/services/business-advisory",
+  "/services/director-identification",
+  "/services/document-storage",
+  "/services/dsc",
+  "/services/esi-registration",
+  "/services/foreign-remittance",
   "/services/funding-assistance",
+  "/services/gst-return",
+  "/services/home-loan",
+  "/services/investment-advisory",
+  "/services/itr-filing",
   "/services/marketplace",
+  "/services/msme-registration",
+  "/services/pan-card",
+  "/services/professional-tax",
   "/services/selection",
+  "/services/tax-consultation",
+  "/services/wealth-management",
+  "/startup/accounting",
+  "/startup/growth",
+  "/startup/planning",
 ] as const;
 
 const CITY_LANDING_SERVICE_SLUGS = ["company-registration", "gst-registration"] as const;
@@ -133,6 +158,19 @@ export function classifySpaFallbackPath(
   }
 
   if (SPA_FALLBACK_EXACT_ROUTES.includes(path as (typeof SPA_FALLBACK_EXACT_ROUTES)[number])) {
+    return { ...base, known: true, reason: "exact-route", status: 200 };
+  }
+
+  if (PUBLIC_STATIC_ROUTES.includes(path as (typeof PUBLIC_STATIC_ROUTES)[number])) {
+    return { ...base, known: true, reason: "exact-route", status: 200 };
+  }
+
+  const segments = segmentList(path);
+  if (
+    segments.length >= 2 &&
+    (segments[0] === "blog" || segments[0] === "learn") &&
+    segments.slice(1).every((segment) => /^[a-z0-9%][a-z0-9%\-]{0,160}$/i.test(segment))
+  ) {
     return { ...base, known: true, reason: "exact-route", status: 200 };
   }
 
