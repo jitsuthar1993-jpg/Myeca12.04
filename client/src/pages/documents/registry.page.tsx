@@ -15,13 +15,16 @@ import MetaSEO from "@/components/seo/MetaSEO";
 import { Layout } from "@/components/admin/Layout";
 import { useAuth } from "@/components/AuthProvider";
 import { GENERATOR_CATALOGUE } from "@/data/generator-catalog";
+import { getDocumentLegalProfile } from "@/data/document-legal-profile";
 import {
   incomeTaxFormDownloads,
-  incomeTaxFormsAssessmentYear,
+              incomeTaxFormsAssessmentYear,
   incomeTaxFormsFinancialYearLabel,
   incomeTaxFormsLastSynced,
   incomeTaxFormsSourceUrl,
 } from "@/data/income-tax-forms";
+
+const reviewLabels = { "draft-only": "Draft only", "statutory-sensitive": "Statutory review", "issuer-controlled": "Issuer controlled" } as const
 
 const CATEGORIES = [
   { id: "all", name: "All Documents", icon: FileText, style: "bg-slate-100 text-slate-700" },
@@ -159,11 +162,15 @@ export default function DocumentGeneratorRegistry() {
                 {filteredDocs.map((doc) => {
                   const category = CATEGORIES.find((item) => item.id === doc.category) || CATEGORIES[0];
                   const Icon = category.icon;
+                  const legalProfile = getDocumentLegalProfile(doc.id);
                   return (
                     <article key={doc.id} className="flex min-h-[290px] flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md">
                       <div className="flex items-start justify-between gap-3">
                         <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${category.style}`}><Icon className="h-5 w-5" /></div>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 type-meta font-black uppercase tracking-wide text-slate-600">{complianceLabels[doc.complianceClass]}</span>
+                        <div className="flex flex-wrap justify-end gap-1">
+                          <span className="rounded-md bg-slate-100 px-2 py-1 type-meta font-black uppercase tracking-wide text-slate-600">{complianceLabels[doc.complianceClass]}</span>
+                          {legalProfile && <span className="rounded-md bg-amber-50 px-2 py-1 type-meta font-black uppercase tracking-wide text-amber-800">{reviewLabels[legalProfile.reviewStatus]}</span>}
+                        </div>
                       </div>
                       <h3 className="mt-4 type-card-title font-black text-slate-950">{doc.title}</h3>
                       <p className="mt-2 line-clamp-3 type-support leading-5 text-slate-600">{doc.description}</p>
