@@ -84,3 +84,17 @@ test("representative financial generators render their required warnings and def
     )).toBeLessThanOrEqual(1);
   }
 });
+
+test("paginates long quotation tables and repeats the table header", async ({ page }) => {
+  await page.goto("/documents/generator/gst-quotation");
+
+  const addLineItem = page.getByRole("button", { name: "Add line item", exact: true });
+  for (let index = 0; index < 18; index += 1) {
+    await addLineItem.click();
+  }
+
+  await expect.poll(() => page.locator(".print-exact").count()).toBeGreaterThan(1);
+  const pageCount = await page.locator(".print-exact").count();
+  expect(await page.locator(".print-exact thead").count()).toBe(pageCount);
+  expect(await page.locator(".print-exact table tbody tr").count()).toBeGreaterThan(18);
+});

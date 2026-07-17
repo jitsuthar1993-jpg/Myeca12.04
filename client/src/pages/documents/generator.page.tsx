@@ -38,6 +38,7 @@ import { useToast } from '@/hooks/use-toast';
 import { captureTelemetryEvent } from '@/telemetry/browser';
 import { apiRequest } from '@/lib/queryClient';
 import { wrapPrintableDocument } from './generators/document-print';
+import { getDocumentLegalProfile } from '@/data/document-legal-profile';
 
 const A4_PAGE_HEIGHT_MM = 297;
 
@@ -118,22 +119,45 @@ function DocumentPreview({ htmlContent }: { htmlContent: string }) {
 
     let activeRoot = createPageRoot();
 
-    sourceChildren.forEach((child) => {
-      const clonedChild = child.cloneNode(true);
-      activeRoot.appendChild(clonedChild);
+    const pageIsOverfull = () =>
+      activeRoot.scrollHeight > pageHeightPx;
 
-      const pageElement = activeRoot.parentElement;
-      if (
-        pageElement &&
-        pageElement.scrollHeight > pageHeightPx &&
-        activeRoot.childNodes.length > 1
-      ) {
-        activeRoot.removeChild(clonedChild);
-        activeRoot = createPageRoot();
-        activeRoot.appendChild(clonedChild);
+    const rowsPerPreviewPage = 14;
+    const splitNestedTable = (child: Node): Node[] => {
+      if (child.nodeType !== Node.ELEMENT_NODE) return [child];
+
+      const element = child as HTMLElement;
+      const table = element.querySelector('table');
+      const rows = table ? Array.from(table.querySelectorAll('tbody > tr')) : [];
+      if (!table || rows.length <= rowsPerPreviewPage) {
+        return [element.cloneNode(true)];
       }
-    });
 
+      const fragments: Node[] = [];
+      for (let start = 0; start < rows.length; start += rowsPerPreviewPage) {
+        const fragment = element.cloneNode(true) as HTMLElement;
+        const fragmentBody = fragment.querySelector('table tbody');
+        if (!fragmentBody) return [element.cloneNode(true)];
+
+        fragmentBody.innerHTML = '';
+        rows.slice(start, start + rowsPerPreviewPage).forEach((row) => {
+          fragmentBody.appendChild(row.cloneNode(true));
+        });
+        fragments.push(fragment);
+      }
+      return fragments;
+    };
+    sourceChildren.forEach((child) => {
+      splitNestedTable(child).forEach((clonedChild) => {
+        activeRoot.appendChild(clonedChild);
+
+        if (pageIsOverfull() && activeRoot.childNodes.length > 1) {
+          activeRoot.removeChild(clonedChild);
+          activeRoot = createPageRoot();
+          activeRoot.appendChild(clonedChild);
+        }
+      });
+    });
     const nextPages = measuredPages
       .filter((pageRoot) => pageRoot.textContent?.trim() || pageRoot.children.length > 0)
       .map((pageRoot) => pageRoot.outerHTML);
@@ -550,6 +574,7 @@ export default function DocumentGenerator() {
   const FormComponent = config.FormComponent;
   const currentTitle = `${config.title} Generator | MyeCA.in`;
   const offersCaReview = ['msme-cash-flow', 'projected-balance-sheet', 'net-worth-statement'].includes(documentType);
+  const legalProfile = getDocumentLegalProfile(documentType);
 
   return (
     <div
@@ -709,6 +734,39 @@ export default function DocumentGenerator() {
                 <ShieldCheck className="h-4 w-4" />
                 <AlertDescription className="font-semibold">{config.complianceNotice}</AlertDescription>
               </Alert>
+            )}
+            {legalProfile && (
+              <Card className="mb-4 border-slate-200 bg-white">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Review before using this draft</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 text-sm text-slate-700">
+                  <p className="mb-0">
+                    This is a <span className="font-bold">{legalProfile.documentClass.replaceAll('-', ' ')}</span> for{' '}
+                    <span className="font-bold">{legalProfile.jurisdiction}</span>. Last reviewed {legalProfile.versionDate}.
+                  </p>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <section>
+                      <h2 className="mb-2 font-black text-slate-950">Have these details ready</h2>
+                      <ul className="list-disc space-y-1 pl-5">
+                        {legalProfile.requiredFields.map((field) => <li key={field}>{field}</li>)}
+                      </ul>
+                    </section>
+                    <section>
+                      <h2 className="mb-2 font-black text-slate-950">Before signing or submitting</h2>
+                      <ul className="list-disc space-y-1 pl-5">
+                        {legalProfile.executionRequirements.map((requirement) => <li key={requirement}>{requirement}</li>)}
+                      </ul>
+                    </section>
+                  </div>
+                  <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+                    <p className="mb-1 font-black text-amber-950">Important limitations</p>
+                    <ul className="list-disc space-y-1 pl-5 text-amber-900">
+                      {legalProfile.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
             )}
             {(config.conversionTargets?.length || config.relatedLinks?.length || offersCaReview) && (
               <Card className="mb-4 border-blue-100 bg-blue-50/60">
