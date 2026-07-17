@@ -37,6 +37,7 @@ import { convertFinancialDocument, type FinancialDocumentKind } from './financia
 import { useToast } from '@/hooks/use-toast';
 import { captureTelemetryEvent } from '@/telemetry/browser';
 import { apiRequest } from '@/lib/queryClient';
+import { wrapPrintableDocument } from './generators/document-print';
 
 const A4_PAGE_HEIGHT_MM = 297;
 
@@ -432,14 +433,16 @@ export default function DocumentGenerator() {
         case 'pdf':
           const printWindow = window.open('', '_blank');
           if (printWindow) {
-            printWindow.document.write(htmlContent);
+            printWindow.document.write(wrapPrintableDocument(htmlContent, config.title, config.complianceNotice));
             printWindow.document.close();
-            printWindow.print();
+            printWindow.onload = () => window.setTimeout(() => printWindow.print(), 150);
+          } else {
+            throw new Error('The browser blocked the print window. Allow pop-ups and try again.');
           }
           break;
         case 'word':
           downloadFile(
-            buildWordDocumentHtml(htmlContent, config.title),
+            buildWordDocumentHtml(wrapPrintableDocument(htmlContent, config.title, config.complianceNotice), config.title),
             `${documentType}_${Date.now()}.doc`,
             'application/msword',
           );

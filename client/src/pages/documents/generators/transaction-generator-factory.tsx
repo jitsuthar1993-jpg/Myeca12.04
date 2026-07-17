@@ -550,7 +550,7 @@ export function createTransactionGenerator(
 
     function renderDocument(copy?: string) {
       return `
-        <div style="font-family:Arial,sans-serif;color:#0f172a;max-width:900px;margin:0 auto;font-size:12px;line-height:1.5;">
+        <div class="mye-ca-document" style="font-family:Arial,sans-serif;color:#0f172a;max-width:900px;margin:0 auto;font-size:12px;line-height:1.5;">
           <div style="border:2px solid #0f4c81;padding:16px;">
             <div style="display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #0f4c81;padding-bottom:12px;">
               <div>

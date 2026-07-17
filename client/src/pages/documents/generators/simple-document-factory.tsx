@@ -91,7 +91,7 @@ export function createSimpleDocumentGenerator(
   const FormComponent = ({ register }: any) => (
     <div className="space-y-6">
       <h3 className="text-lg font-bold border-b pb-2">Document Details</h3>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {definition.fields.map((field) => {
           const className = field.colSpan === 2 || field.type === 'textarea' ? 'col-span-2' : '';
 
@@ -146,7 +146,7 @@ export function createSimpleDocumentGenerator(
       .join('');
 
     return `
-      <div style="font-family: 'Times New Roman', serif; font-size: 15px; color: #111; line-height: 1.75; max-width: 800px; margin: 0 auto; padding: 42px;">
+      <div class="mye-ca-document" style="font-family: 'Times New Roman', serif; font-size: 15px; color: #111; line-height: 1.75; max-width: 800px; margin: 0 auto; padding: 12px;">
         <div style="display: flex; justify-content: space-between; gap: 24px; margin-bottom: 34px;">
           <div>
             <div style="font-weight: bold;">From:</div>

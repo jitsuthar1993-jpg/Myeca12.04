@@ -213,7 +213,7 @@ export function createFinancialStatementGenerator(
     </tr>`).join("");
     const blocked = definition.exportBlockReason?.(values);
 
-    return `<div style="max-width:900px;margin:0 auto;font-family:Arial,sans-serif;color:#0f172a;font-size:12px;">
+    return `<div class="mye-ca-document" style="max-width:900px;margin:0 auto;font-family:Arial,sans-serif;color:#0f172a;font-size:12px;">
       <h1 style="text-align:center;color:#0f4c81;">${escapeFinancialHtml(definition.documentTitle)}</h1>
       <p style="text-align:center;color:#9a3412;font-weight:700;">${escapeFinancialHtml(definition.complianceNotice)}</p>
       <div style="display:flex;justify-content:space-between;border:1px solid #cbd5e1;padding:12px;margin:18px 0;">
