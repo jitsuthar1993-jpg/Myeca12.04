@@ -28,6 +28,7 @@ test("guest quotation preview recalculates GST and preserves the draft through t
   }
 
   await page.getByRole("button", { name: "Sign in to Export" }).click();
+  await page.getByRole("menuitem", { name: "Export as PDF" }).click();
 
   await expect(page).toHaveURL(/\/auth\/login\?next=%2Fdocuments%2Fgenerator%2Fgst-quotation$/);
   expect(page.url()).not.toContain("Sample");

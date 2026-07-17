@@ -6,11 +6,10 @@ test("shows the redesigned homepage hero on desktop and mobile", async ({ page }
   const heroHeading = page.locator("h1").first();
   await expect(heroHeading).toBeVisible();
   await expect(heroHeading).toContainText(/File your/i);
-  await expect(heroHeading).toContainText(/Income Tax Returns|GST Returns|TDS Returns|Compliances/i);
+  await expect(heroHeading).toContainText(/Income Tax Return for AY 2026-27/i);
   await expect(heroHeading).not.toContainText(/assistance/i);
   await expect(page.getByText(/Expert eCA Assistance/i)).toBeVisible();
-  await expect(page.getByText(/Free Notice Assistance/i)).toBeVisible();
-  await expect(page.locator(".animate-pulse").first()).toBeVisible();
+  await expect(page.getByText(/Notice guidance included for eligible filing cases/i)).toBeVisible();
   await expect(page.getByRole("link", { name: /Find my ITR and price/i }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Free Tax Calculator/i }).first()).toBeVisible();
 });

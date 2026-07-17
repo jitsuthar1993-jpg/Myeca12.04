@@ -90,7 +90,7 @@ export default function NoticeComplianceSection() {
             {noticeTypes.map((notice) => (
               <div
                 key={notice.title}
-                className="rounded-lg bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="rounded-lg bg-white p-6 text-center shadow-sm transition-shadow duration-300 hover:shadow-lg"
               >
                 <div className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg ${notice.color}`}>
                   <notice.icon className="h-6 w-6" />
