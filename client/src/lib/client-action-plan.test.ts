@@ -12,6 +12,16 @@ describe('client action plan', () => {
     expect(plan.map((item) => item.id)).toEqual(['review-response', 'documents', 'payment-service-1']);
     expect(plan[0]).toMatchObject({ tone: 'urgent', href: '/itr/filing/return-1' });
   });
+  it('uses the review status when it is the current workflow state', () => {
+    const plan = buildClientActionPlan({
+      latestReturn: { id: 'return-1', status: 'draft', reviewStatus: 'changes_requested' },
+      documentReadiness: { percentage: 100 },
+      activeServices: [],
+    });
+
+    expect(plan[0]).toMatchObject({ id: 'review-response', tone: 'urgent' });
+  });
+
 
   it('suggests starting a filing when the workspace has no return', () => {
     const plan = buildClientActionPlan({ documentReadiness: { percentage: 0 }, activeServices: [] });

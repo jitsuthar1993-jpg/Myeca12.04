@@ -62,6 +62,10 @@ const EXPERT_PROFILE_SLUGS = [
   "ca-priya-nair",
   "ca-amit-verma",
 ] as const;
+const KNOWN_CONTENT_FALLBACK_ROUTES = new Set([
+  "/blog/ay-2026-27-crypto-vda-tax-records-checklist",
+  "/learn/guide/salary-tax-calculator-guide-ay-2026-27",
+]);
 const LEGACY_SERVICE_ACTIVATION_SLUGS = ["partnership-deed"] as const;
 const API_ROUTE_PREFIX = "/api";
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,120}$/;
@@ -165,12 +169,7 @@ export function classifySpaFallbackPath(
     return { ...base, known: true, reason: "exact-route", status: 200 };
   }
 
-  const segments = segmentList(path);
-  if (
-    segments.length >= 2 &&
-    (segments[0] === "blog" || segments[0] === "learn") &&
-    segments.slice(1).every((segment) => /^[a-z0-9%][a-z0-9%\-]{0,160}$/i.test(segment))
-  ) {
+  if (KNOWN_CONTENT_FALLBACK_ROUTES.has(path)) {
     return { ...base, known: true, reason: "exact-route", status: 200 };
   }
 

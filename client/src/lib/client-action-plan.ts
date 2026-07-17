@@ -1,6 +1,7 @@
 type ActionPlanReturn = {
   id?: string | number;
   status?: string | null;
+  reviewStatus?: string | null;
   assessmentYear?: string | null;
 };
 
@@ -35,7 +36,7 @@ export function buildClientActionPlan({
   activeServices: ActionPlanService[];
 }): ClientActionPlanItem[] {
   const plan: ClientActionPlanItem[] = [];
-  const status = String(latestReturn?.status || '').toLowerCase();
+  const status = String(latestReturn?.reviewStatus || latestReturn?.status || '').toLowerCase();
   const returnHref = latestReturn?.id ? '/itr/filing/' + latestReturn.id : '/itr/filing/new';
 
   if (!latestReturn) {
