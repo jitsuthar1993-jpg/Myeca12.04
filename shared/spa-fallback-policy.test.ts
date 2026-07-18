@@ -8,6 +8,11 @@ describe("SPA fallback public route policy", () => {
       status: 200,
       reason: "exact-route",
     });
+    expect(classifySpaFallbackPath("/forms")).toMatchObject({
+      known: true,
+      status: 200,
+      reason: "exact-route",
+    });
   });
 
   it("keeps published blog and learning details on the app shell", () => {

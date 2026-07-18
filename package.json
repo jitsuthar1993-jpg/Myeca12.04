@@ -78,7 +78,9 @@
     "android:sync": "npm run build:android && cap sync android",
     "android:open": "cap open android",
     "vercel:build": "vercel build",
-    "generate:sitemap": "tsx server/scripts/generate-sitemap.ts"
+    "generate:sitemap": "tsx server/scripts/generate-sitemap.ts",
+    "import:genius-source-catalog": "tsx scripts/import-genius-source-catalog.ts",
+    "review:genius-readable-forms": "npm --prefix tools/genius-readable-review run review"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.848.0",

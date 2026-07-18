@@ -142,6 +142,30 @@ describe("document generator page", () => {
     expect(window.location.search).toContain("next=");
   });
 
+  it("sends a guest to login before validating required save fields", async () => {
+    vi.mocked(loadDocumentGenerator).mockResolvedValue({
+      id: "will",
+      title: "Simple WILL",
+      description: "Test generator",
+      icon: null,
+      schema: z.object({ executionDate: z.string().min(1) }),
+      defaultValues: { executionDate: "" },
+      generateHTML: (data: Record<string, unknown>) => `<p>${data.executionDate}</p>`,
+      generateMarkdown: () => "",
+      FormComponent: ({ register }: any) => <input aria-label="Execution date" {...register("executionDate")} />,
+    });
+
+    render(<DocumentGenerator />);
+    await waitFor(() => expect(screen.getByTestId("focused-document-editor")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign in to Save" }));
+
+    expect(JSON.parse(window.sessionStorage.getItem("myeca_generator_pending_will") || "{}"))
+      .toMatchObject({ executionDate: "" });
+    expect(window.location.pathname).toBe("/auth/login");
+    expect(window.location.search).toContain("next=");
+  });
+
   it("saves signed-in generator drafts into the document vault", async () => {
     mockAuthState.user = { id: "user_1", email: "user@example.com" };
     const fetchMock = vi.spyOn(window, "fetch").mockResolvedValue(

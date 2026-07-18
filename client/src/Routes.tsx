@@ -87,6 +87,7 @@ const ServicesMarketplacePage = lazyWithRetry(() => import("@/pages/services/mar
 const ServiceSelectionPage = lazyWithRetry(() => import("@/pages/services/selection.page"));
 const DocumentGeneratorPage = lazyWithRetry(() => import("@/pages/documents/generator.page"));
 const DocumentGeneratorRegistry = lazyWithRetry(() => import("@/pages/documents/registry.page"));
+const FormsPage = lazyWithRetry(() => import("@/pages/forms.page"));
 const BusinessDashboardPage = lazyWithRetry(() => import("@/pages/business/dashboard.page"));
 const VirtualCFOPage = lazyWithRetry(() => import("@/pages/business/virtual-cfo.page"));
 
@@ -296,6 +297,7 @@ function RouteSwitch() {
         <Route path="/documents/generator" component={DocumentGeneratorRegistry} />
         <Route path="/documents/generator_page" component={DocumentGeneratorRegistry} />
         <Route path="/documents/generator/:type" component={DocumentGeneratorPage} />
+        <Route path="/forms" component={FormsPage} />
         <Route path="/business/dashboard" component={() => <RequireAuth><BusinessDashboardPage /></RequireAuth>} />
         <Route path="/business/virtual-cfo" component={VirtualCFOPage} />
 

@@ -113,6 +113,7 @@ export const PUBLIC_STATIC_ROUTES = [
   "/features/fastest-itr-filing",
   "/features/tax-calculator",
   "/form16-parser",
+  "/forms",
   "/help",
   "/help/faq",
   "/help/knowledge-base",

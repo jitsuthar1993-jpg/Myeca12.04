@@ -5,13 +5,46 @@ import {
   injectStaticRootFallback,
   minifyStaticRouteHtml,
   prepareStaticRouteTemplate,
+  UNUSED_PUBLIC_ASSET_PATHS,
   renderSeoHead,
   renderStaticRootFallback,
   routeMeta,
 } from "../../../scripts/generate-seo-assets";
 import { defaultBlogPosts } from "../../../server/data/default-blog-content";
+import { FINANCIAL_GENERATOR_CATALOGUE } from "../data/generator-catalog";
+import { SEO_CONFIG } from "../config/seo.config";
 
 describe("SEO asset static root fallback", () => {
+  it("prunes superseded public assets from production output", () => {
+    expect(UNUSED_PUBLIC_ASSET_PATHS).toEqual(
+      expect.arrayContaining([
+        "assets/blog/business-compliance/header.svg",
+        "assets/blog/income-tax/header.svg",
+        "assets/blog/itr-filing/header.svg",
+        "assets/blog/tax-regime/header.svg",
+      ]),
+    );
+    expect(new Set(UNUSED_PUBLIC_ASSET_PATHS).size).toBe(UNUSED_PUBLIC_ASSET_PATHS.length);
+  });
+  it("keeps superseded Income Tax form numbers out of search indexing", () => {
+    expect(SEO_CONFIG["/documents/generator/form-15g"]?.noindex).toBe(true);
+    expect(SEO_CONFIG["/documents/generator/form-15h"]?.noindex).toBe(true);
+    expect(SEO_CONFIG["/documents/generator/form-12bb"]?.noindex).toBe(true);
+  });
+  it("builds authored static content for every indexable financial generator", () => {
+    for (const generator of FINANCIAL_GENERATOR_CATALOGUE.filter((entry) => entry.status === "active")) {
+      const meta = routeMeta(`/documents/generator/${generator.id}`);
+
+      expect(meta.body?.sections?.length, generator.id).toBeGreaterThanOrEqual(3);
+      expect(meta.description, generator.id).toBeTruthy();
+      if (generator.id === "form-15g" || generator.id === "form-15h") {
+        expect(JSON.stringify(meta.body), generator.id).toContain("Form 121");
+      }
+      if (generator.id === "form-12bb") {
+        expect(JSON.stringify(meta.body), generator.id).toContain("Form 124");
+      }
+    }
+  });
   it("renders homepage hero content before React hydration", () => {
     const fallback = renderStaticRootFallback({
       path: "/",

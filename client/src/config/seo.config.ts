@@ -1053,6 +1053,8 @@ SEO_CONFIG["/documents/generator"] = {
   breadcrumbs: [{ name: "Home", url: "/" }, { name: "Document Generator", url: "/documents/generator" }],
 };
 
+const LEGACY_INCOME_TAX_GENERATOR_IDS = new Set(["form-15g", "form-15h", "form-12bb"]);
+
 FINANCIAL_GENERATOR_CATALOGUE.forEach((entry) => {
   const featureSummary = entry.features.slice(0, 2).join(" and ").toLowerCase();
   SEO_CONFIG[`/documents/generator/${entry.id}`] = {
@@ -1065,6 +1067,7 @@ FINANCIAL_GENERATOR_CATALOGUE.forEach((entry) => {
       "Indian document generator",
     ],
     type: "calculator",
+    noindex: LEGACY_INCOME_TAX_GENERATOR_IDS.has(entry.id),
     calculatorData: {
       type: entry.title,
       features: entry.features,

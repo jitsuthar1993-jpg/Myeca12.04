@@ -7,6 +7,7 @@ import type { FinancialDocumentKind } from "@/pages/documents/financial";
 
 export type GeneratorComplianceClass =
   | "statutory-gst"
+  | "statutory-income-tax"
   | "commercial-non-tax"
   | "legal-draft"
   | "internal-record"
@@ -29,6 +30,18 @@ export interface GeneratorCatalogueEntry {
 }
 
 const financialMetadata: Record<string, Partial<GeneratorCatalogueEntry>> = {
+  "form-15g": {
+    complianceClass: "statutory-income-tax",
+    validity: "Legacy through 31 March 2026; use Form 121 from Tax Year 2026-27",
+  },
+  "form-15h": {
+    complianceClass: "statutory-income-tax",
+    validity: "Legacy through 31 March 2026; use Form 121 from Tax Year 2026-27",
+  },
+  "form-12bb": {
+    complianceClass: "statutory-income-tax",
+    validity: "Legacy for FY 2025-26; use Form 124 from Tax Year 2026-27",
+  },
   "gst-quotation": {
     complianceClass: "commercial-non-tax",
     validity: "Commercial Draft",

@@ -1,0 +1,14 @@
+{
+  "name": "myeca-genius-readable-review-tool",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "review": "tsx run.ts"
+  },
+  "dependencies": {
+    "myeca-in": "file:../..",
+    "officeparser": "7.3.0",
+    "tsx": "4.22.2"
+  }
+}

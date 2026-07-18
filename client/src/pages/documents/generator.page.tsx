@@ -679,7 +679,7 @@ export default function DocumentGenerator() {
             <Button
               variant="default"
               size="sm"
-              onClick={handleSubmit(onSubmit)}
+              onClick={user ? handleSubmit(onSubmit) : () => requireAuthenticatedGeneratorAction('save')}
               disabled={isSaving}
               className="h-9 shrink-0 rounded-lg bg-blue-700 px-3 font-black text-white shadow-none hover:bg-blue-800"
             >

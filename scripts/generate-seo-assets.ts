@@ -891,6 +891,7 @@ const ROUTE_AUDIENCE_OVERRIDES: Record<string, string> = {
   "/features/expert-tax-review": "Taxpayers with complex income, record mismatches, notices, or uncertain filing treatment",
   "/features/fastest-itr-filing": "Taxpayers with filing-ready records who want to resolve blockers before submitting an ITR",
   "/features/tax-calculator": "Taxpayers comparing regimes, deductions, credits, and estimated liability before filing",
+  "/forms": "Indian individuals, businesses, and professionals choosing a public legal, tax, or commercial draft before saving it to a workspace",
   "/help": "Customers resolving account, filing, document-upload, calculator, payment, or service questions",
   "/help/faq": "Customers checking common filing, payment, document, privacy, and service-scope questions",
   "/help/knowledge-base": "Customers troubleshooting a specific account, filing, document, calculator, or compliance step",
@@ -1573,6 +1574,15 @@ const AUTHORED_STATIC_ROUTE_PROFILES: Record<string, AuthoredStaticRouteProfile>
   ),
 };
 
+AUTHORED_STATIC_ROUTE_PROFILES["/forms"] = authoredStaticRouteProfile(
+  ["Choose a form by purpose", "Check the legal status", "Preview or save the draft"],
+  [
+    "Search the public catalogue by the document or business outcome you need. Read the category, draft label, and limitation before entering information so a commercial record is not mistaken for an official return, certificate, or completed filing.",
+    "Check whether the entry is a non-statutory record, a legal draft, or a statutory form. MyeCA publishes statutory forms only after the applicable Act, rules, effective date, version, and official source have been reviewed.",
+    "Fill and preview a public template without signing in. Sign in only when saving the completed draft to a MyeCA workspace, linking it to a client or service, requesting professional review, or exporting a workspace copy.",
+  ],
+);
+
 AUTHORED_STATIC_ROUTE_PROFILES["/documents/generator"] = authoredStaticRouteProfile(
   ["Choose the document by purpose", "Prepare and review the draft", "Complete required external steps"],
   [
@@ -1583,6 +1593,30 @@ AUTHORED_STATIC_ROUTE_PROFILES["/documents/generator"] = authoredStaticRouteProf
 );
 
 const FINANCIAL_GENERATOR_STATIC_PROFILES: Record<string, AuthoredStaticRouteProfile> = {
+  "form-15g": authoredStaticRouteProfile(
+    ["Check non-senior legacy eligibility", "Match every income account", "Switch at the statutory cut-off"],
+    [
+      "For an old-framework declaration ending by 31 March 2026, confirm that the declarant is resident, below 60 where individual age matters, and not a company or firm. Test estimated total income and tax liability under section 197A before preparing the legacy Form 15G.",
+      "List each deposit, security, unit, rent stream, insurance receipt, or other specified income with the payer and account reference. Reconcile earlier declarations, aggregate expected amounts, PAN, assessment year, and the signed verification instead of relying on a bank balance alone.",
+      "Do not use this layout for a period starting 1 April 2026. The replacement is Form 121 under section 393(6) of the Income-tax Act 2025; the payer must complete the applicable UIN, quarterly reporting, portal validation, and e-verification workflow separately.",
+    ],
+  ),
+  "form-15h": authoredStaticRouteProfile(
+    ["Establish senior-citizen status", "Review the nil-tax declaration", "Move current declarations to Form 121"],
+    [
+      "This historical senior declaration is limited to a resident individual who had attained 60 years and whose estimated tax for the relevant old-law period was nil. Check date of birth, address, PAN status, previous assessment history, and the computation supporting the declaration.",
+      "Capture the expected receipts for which non-deduction was requested and compare them with pension, interest, dividend, rent, and all other taxable amounts. Keep age evidence and the signed declaration with the financial institution's acknowledgement; eligibility is not proved by the document heading.",
+      "Form 15H ceased to be the prescribed current-year format after 31 March 2026. Tax Year 2026-27 uses unified Form 121, while the deductor remains responsible for obtaining the UIN and completing its upload and verification obligations on the Income Tax portal.",
+    ],
+  ),
+  "form-12bb": authoredStaticRouteProfile(
+    ["Choose the correct salary-tax period", "Reconcile claims and evidence", "Use Form 124 for current tax years"],
+    [
+      "Use Form 12BB for employee claims relating to FY 2025-26 and AY 2026-27 under the Income-tax Act 1961 framework. Enter the employee, employer, HRA, leave-travel, home-loan-interest, and deduction particulars from actual evidence.",
+      "Reconcile landlord, lender, investment, payment, and supporting-document details with the employer payroll cut-off. A prepared draft does not establish deduction eligibility or require an employer to accept an unsupported claim.",
+      "For Tax Year 2026-27 under the Income-tax Act 2025 and Income-tax Rules 2026, use Form 124 rather than legacy Form 12BB. This generator does not submit the form to an employer or replace the current prescribed format.",
+    ],
+  ),
   "gst-quotation": authoredStaticRouteProfile(
     ["Set the commercial offer", "Check estimated GST and validity", "Move an accepted quote forward"],
     [
@@ -1688,6 +1722,9 @@ FINANCIAL_GENERATOR_CATALOGUE.forEach((entry) => {
 
 const DOCUMENT_GENERATOR_AUDIENCES: Record<string, string> = {
   "/documents/generator": "Indian individuals, MSMEs, finance teams, employers, and founders choosing a self-service document draft",
+  "/documents/generator/form-15g": "Eligible declarants preparing a legacy Form 15G for a period ending no later than 31 March 2026",
+  "/documents/generator/form-15h": "Eligible resident senior citizens preparing a legacy Form 15H for a period ending no later than 31 March 2026",
+  "/documents/generator/form-12bb": "Employees preparing legacy FY 2025-26 salary-tax claims for employer review before using Form 124 for current tax years",
   "/documents/generator/gst-quotation": "Indian sellers and service providers preparing a priced commercial offer before supply",
   "/documents/generator/proforma-invoice": "Indian suppliers requesting approval or advance payment before issuing a tax invoice",
   "/documents/generator/purchase-order": "Indian buyers placing a documented order with a supplier or vendor",
@@ -1717,8 +1754,23 @@ const GST_DOCUMENT_SOURCES = [
   documentGeneratorSource("CBIC GST Invoice Rules", "https://cbic-gst.gov.in/gst-invoice-rules.html"),
   documentGeneratorSource("GST E-Invoice Portal", "https://einvoice1.gst.gov.in/"),
 ];
+const INCOME_TAX_FORM_TRANSITION_SOURCES = [
+  MYECA_DOCUMENT_GENERATOR_SOURCE,
+  documentGeneratorSource("Income Tax form transition FAQ", "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/income-tax-forms?mobile-app=1"),
+  documentGeneratorSource("Income Tax Rules 2026", "https://www.incometax.gov.in/iec/foportal/sites/default/files/2026-03/En-Notified-IT-Rules-2026-20-03-2026.pdf"),
+];
 const DOCUMENT_GENERATOR_SOURCES: Record<string, PublicContentContext["officialSources"]> = {
-  "/documents/generator": [
+  "/forms": [
+    documentGeneratorSource("MyeCA Forms catalog", "https://myeca.in/forms"),
+    documentGeneratorSource("Income Tax Department", "https://www.incometax.gov.in/"),
+    documentGeneratorSource("GST Portal", "https://www.gst.gov.in/"),
+    documentGeneratorSource("Ministry of Corporate Affairs", "https://www.mca.gov.in/"),
+    documentGeneratorSource("Reserve Bank of India", "https://www.rbi.org.in/"),
+    documentGeneratorSource("India Code", "https://www.indiacode.nic.in/"),
+  ],
+  "/documents/generator/form-15g": INCOME_TAX_FORM_TRANSITION_SOURCES,
+  "/documents/generator/form-15h": INCOME_TAX_FORM_TRANSITION_SOURCES,
+  "/documents/generator/form-12bb": INCOME_TAX_FORM_TRANSITION_SOURCES,  "/documents/generator": [
     MYECA_DOCUMENT_GENERATOR_SOURCE,
     documentGeneratorSource("CBIC GST Invoice Rules", "https://cbic-gst.gov.in/gst-invoice-rules.html"),
     documentGeneratorSource("ICAI UDIN Portal", "https://udin.icai.org/"),
@@ -1756,6 +1808,8 @@ const DOCUMENT_GENERATOR_SOURCES: Record<string, PublicContentContext["officialS
 };
 
 const AUTHORED_ROUTE_DESCRIPTIONS: Record<string, string> = {
+  "/forms":
+    "Browse public Indian business, legal, personal, and tax-form drafts, check each template status, preview it publicly, and sign in only when saving work to a MyeCA workspace.",
   "/expert-consultation":
     "Prepare a focused tax, GST, notice, startup, or compliance question, confirm the consultation scope, and keep the written conclusion with the case records.",
   "/features/document-scanner":
@@ -2064,27 +2118,37 @@ function writeTextAssets(blogPosts: StaticMdxBlogPost[]) {
   });
 }
 
-function pruneUnusedPublicAssets() {
-  const unusedLogoFiles = [
-    "lic.png",
-    "icici.svg",
-    "sbi.png",
-    "asian_paints.png",
-    "infosys.png",
-    "dlf.png",
-    "icici.png",
-    "hdfc.png",
-    "zomato.png",
-    "reliance.png",
-    "paytm.png",
-    "itc.svg",
-    "wipro.svg",
-    "infosys.svg",
-    "phonepe.svg",
-  ];
+export const UNUSED_PUBLIC_ASSET_PATHS = [
+  "assets/logos/lic.png",
+  "assets/logos/icici.svg",
+  "assets/logos/sbi.png",
+  "assets/logos/asian_paints.png",
+  "assets/logos/infosys.png",
+  "assets/logos/dlf.png",
+  "assets/logos/icici.png",
+  "assets/logos/hdfc.png",
+  "assets/logos/zomato.png",
+  "assets/logos/reliance.png",
+  "assets/logos/paytm.png",
+  "assets/logos/itc.svg",
+  "assets/logos/wipro.svg",
+  "assets/logos/infosys.svg",
+  "assets/logos/phonepe.svg",
+  "assets/blog/business-compliance/header.svg",
+  "assets/blog/business-freelancers/header.svg",
+  "assets/blog/capital-gains/header.svg",
+  "assets/blog/foreign-assets-nri-tax/header.svg",
+  "assets/blog/income-tax/header.svg",
+  "assets/blog/itr-filing/header.svg",
+  "assets/blog/mye-ca-guides/header.svg",
+  "assets/blog/refunds-notices/header.svg",
+  "assets/blog/tax-planning/header.svg",
+  "assets/blog/tax-regime/header.svg",
+] as const;
 
-  unusedLogoFiles.forEach((fileName) => {
-    fs.rmSync(path.join(distDir, "assets", "logos", fileName), { force: true });
+function pruneUnusedPublicAssets() {
+  UNUSED_PUBLIC_ASSET_PATHS.forEach((relativePath) => {
+    fs.rmSync(path.join(distDir, ...relativePath.split("/")), { force: true });
   });
 }
 

@@ -1,4 +1,4 @@
-﻿import { Router } from "express";
+import { Router } from "express";
 import memoize from "memoizee";
 import { defaultBlogCategories } from "../data/default-blog-content.js";
 import { adminDb } from "../data-admin.js";
@@ -10,6 +10,7 @@ import {
   toPublicBlogSummary,
 } from "../services/blog.js";
 import type { BlogCategory, PublicBlogDetail, PublicBlogSummary } from "@shared/blog";
+import { getGeniusSourceCatalogPayload } from "../data/genius-source-catalog.js";
 
 const router = Router();
 
@@ -224,6 +225,10 @@ export function clearPublicBlogCaches() {
   (getCachedCategories as unknown as { clear: () => void }).clear();
 }
 
+router.get("/forms/source-catalog", (_req, res) => {
+  res.set("Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
+  res.json({ success: true, ...getGeniusSourceCatalogPayload() });
+});
 router.get("/updates/active", async (_req, res) => {
   try {
     const activeUpdates = await getCachedActiveUpdates();

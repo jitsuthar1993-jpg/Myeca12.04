@@ -9,7 +9,7 @@ describe("document legal profiles", () => {
     );
 
     for (const profile of Object.values(DOCUMENT_LEGAL_PROFILES)) {
-      expect(profile.versionDate).toBe("2026-07-17");
+      expect(profile.versionDate).toBe("2026-07-18");
       expect(profile.requiredFields.length).toBeGreaterThan(0);
       expect(profile.limitations.length).toBeGreaterThan(0);
       expect(profile.reviewer).toBeTruthy();
@@ -22,6 +22,12 @@ describe("document legal profiles", () => {
       documentClass: "statutory-gst",
       reviewStatus: "statutory-sensitive",
     });
+    expect(getDocumentLegalProfile("form-15g")).toMatchObject({
+      documentClass: "statutory-income-tax",
+      reviewStatus: "statutory-sensitive",
+    });
+    expect(getDocumentLegalProfile("form-15g")?.limitations.join(" ")).toContain("Form 121");
+    expect(getDocumentLegalProfile("form-12bb")?.limitations.join(" ")).toContain("Form 124");
     expect(getDocumentLegalProfile("will")).toMatchObject({
       documentClass: "legal-draft",
       reviewStatus: "draft-only",

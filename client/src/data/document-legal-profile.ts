@@ -19,7 +19,7 @@ export interface DocumentLegalProfile {
   reviewer: string;
 }
 
-const PROFILE_VERSION_DATE = "2026-07-17";
+const PROFILE_VERSION_DATE = "2026-07-18";
 const REVIEWER = "MyeCA document review queue";
 
 const CLASS_DEFAULTS: Record<GeneratorComplianceClass, Omit<DocumentLegalProfile, "generatorId" | "documentClass">> = {
@@ -30,6 +30,19 @@ const CLASS_DEFAULTS: Record<GeneratorComplianceClass, Omit<DocumentLegalProfile
     requiredFields: ["supplier and recipient identity", "document number and date", "tax treatment and totals"],
     executionRequirements: ["verify against the GST portal and current notified rules before issue"],
     limitations: ["draft output only", "does not file returns, generate an IRN, or create an e-way bill unless separately stated"],
+    reviewStatus: "statutory-sensitive",
+    reviewer: REVIEWER,
+  },
+  "statutory-income-tax": {
+    jurisdiction: "India; current notified income-tax form, tax year, and eligibility rules apply",
+    statutorySources: [
+      "Income Tax Department forms and instructions: https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/income-tax-forms",
+      "Income-tax Act transition guidance: https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/objective-and-scope-new-act-faq",
+    ],
+    versionDate: PROFILE_VERSION_DATE,
+    requiredFields: ["declarant identity and PAN", "applicable tax or financial year", "eligibility facts, income, and declaration details"],
+    executionRequirements: ["use the currently notified form and instructions", "confirm eligibility and submit to the correct deductor or employer"],
+    limitations: ["draft preparation only", "does not submit the declaration or confirm eligibility, acceptance, or non-deduction"],
     reviewStatus: "statutory-sensitive",
     reviewer: REVIEWER,
   },
@@ -85,6 +98,38 @@ const CLASS_DEFAULTS: Record<GeneratorComplianceClass, Omit<DocumentLegalProfile
   },
 };
 
+const GENERATOR_LEGAL_OVERRIDES: Record<string, Pick<DocumentLegalProfile, "statutorySources" | "limitations">> = {
+  "form-15g": {
+    statutorySources: [
+      "Income Tax Department transition FAQ: https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/income-tax-forms?mobile-app=1",
+      "Income Tax Department Form 121 manual: https://www.incometax.gov.in/iec/foportal/newformpage/forms/from121-um",
+    ],
+    limitations: [
+      "legacy Form 15G applies only to the old statutory framework through 31 March 2026",
+      "use current Form 121 for a tax year beginning on or after 1 April 2026",
+    ],
+  },
+  "form-15h": {
+    statutorySources: [
+      "Income Tax Department transition FAQ: https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/income-tax-forms?mobile-app=1",
+      "Income Tax Department Form 121 manual: https://www.incometax.gov.in/iec/foportal/newformpage/forms/from121-um",
+    ],
+    limitations: [
+      "legacy Form 15H applies only to the old statutory framework through 31 March 2026",
+      "use current Form 121 for a tax year beginning on or after 1 April 2026",
+    ],
+  },
+  "form-12bb": {
+    statutorySources: [
+      "Income Tax Department AY 2026-27 salaried guidance: https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "Income Tax Rules 2026 Form 124: https://www.incometax.gov.in/iec/foportal/sites/default/files/2026-03/En-Notified-IT-Rules-2026-20-03-2026.pdf",
+    ],
+    limitations: [
+      "legacy Form 12BB applies to FY 2025-26 under the Income-tax Act 1961 framework",
+      "use current Form 124 for Tax Year 2026-27 under the Income-tax Rules 2026",
+    ],
+  },
+};
 export const DOCUMENT_LEGAL_PROFILES: Record<string, DocumentLegalProfile> = Object.fromEntries(
   GENERATOR_CATALOGUE.map((entry) => [
     entry.id,
@@ -92,9 +137,15 @@ export const DOCUMENT_LEGAL_PROFILES: Record<string, DocumentLegalProfile> = Obj
       generatorId: entry.id,
       documentClass: entry.complianceClass,
       ...CLASS_DEFAULTS[entry.complianceClass],
+      ...(GENERATOR_LEGAL_OVERRIDES[entry.id] ?? {}),
+      statutorySources: Array.from(new Set([
+        ...CLASS_DEFAULTS[entry.complianceClass].statutorySources,
+        ...(GENERATOR_LEGAL_OVERRIDES[entry.id]?.statutorySources ?? []),
+      ])),
       limitations: Array.from(new Set([
         ...CLASS_DEFAULTS[entry.complianceClass].limitations,
         ...(entry.seo?.limitations ?? []),
+        ...(GENERATOR_LEGAL_OVERRIDES[entry.id]?.limitations ?? []),
       ])),
     },
   ]),
